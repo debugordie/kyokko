@@ -1,0 +1,116 @@
+// ----------------------------------------------------------------------
+// "THE BEER-WARE LICENSE" (Revision 42):
+//    <yasu@prosou.nu> and <tmr@lut.eee.u-ryukyu.ac.jp> wrote this
+//    file. As long as you retain this notice you can do whatever you
+//    want with this stuff. If we meet some day, and you think this
+//    stuff is worth it, you can buy me a beer in return Yasunori
+//    Osana and Akinobu Tomori at University of the Ryukyus, Japan.
+// ----------------------------------------------------------------------
+// OpenFC project: an open FPGA accelerated cluster toolkit
+// Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
+//
+// Modules in this file:
+//    kyokko: NFC transmission control in Kyokko Tx subsystem
+// ----------------------------------------------------------------------
+
+`default_nettype none
+
+module kyokko
+  ( input wire         CLK,   CLK100,
+    input wire         RXCLK, TXCLK,
+    input wire         RXRST, TXRST,
+    output wire        CH_UP,
+
+    // Rx signals
+    input wire [1:0]   RXHDR,
+    input wire [63:0]  RXS,
+    output wire        RXSLIP, RXPATH_RST,
+
+    // Tx signals
+    output wire [1:0]  TXHDR,
+    output wire [63:0] TXS,
+
+    // AXIS data
+    input wire         S_AXIS_TVALID, S_AXIS_TLAST,
+    input wire [63:0]  S_AXIS_TDATA,
+    output wire        S_AXIS_TREADY,
+
+    output wire        M_AXIS_TVALID, M_AXIS_TLAST,
+    output wire [63:0] M_AXIS_TDATA,
+
+    // UFC signals
+    input wire         UFC_REQ,
+    input wire [7:0]   UFC_MS,
+
+    input wire         S_AXIS_UFC_TVALID,
+    input wire [63:0]  S_AXIS_UFC_TDATA,
+    output wire        S_AXIS_UFC_TREADY,
+    
+    output wire        M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
+    output wire [63:0] M_AXIS_UFC_TDATA,
+
+    // NFC signals
+    input wire         S_AXIS_NFC_TVALID,
+    output wire        S_AXIS_NFC_TREADY,
+    input wire [15:0]  S_AXIS_NFC_TDATA
+   );
+
+   wire [3:0]          RX_STAT;
+   wire                RXSLIP_LIMIT;
+   wire                NFC_PAUSE;
+   
+   kyokko_rx_ctrl rx
+     ( .CLK(RXCLK),   .RST(RXRST),
+       .TXCLK(TXCLK), .TXRST(TXRST),
+       .RXS(RXS), .RXHDRi(RXHDR),
+       .RX_STAT(RX_STAT),
+       .RXSLIP (RXSLIP),
+       .RXSLIP_LIMIT (RXSLIP_LIMIT),
+       .NFC_PAUSE    (NFC_PAUSE),
+       
+       .M_AXIS_TVALID(M_AXIS_TVALID),
+       .M_AXIS_TLAST (M_AXIS_TLAST ),
+       .M_AXIS_TDATA (M_AXIS_TDATA ),
+       
+       .M_AXIS_UFC_TVALID(M_AXIS_UFC_TVALID),
+       .M_AXIS_UFC_TLAST (M_AXIS_UFC_TLAST),
+       .M_AXIS_UFC_TDATA (M_AXIS_UFC_TDATA) );
+
+   rxpath_rst rxrst
+     ( .CLK(CLK100), .RST(RXRST), 
+       .RXSLIP_LIMIT(RXSLIP_LIMIT), .RXPATH_RST(RXPATH_RST) );
+   
+   kyokko_tx_ctrl tx
+     ( .CLK(TXCLK), 
+       .TXRST(TXRST), 
+       .RXRST(RXRST),
+       .RX_STAT(RX_STAT),
+       .TXHDRi(TXHDR),
+       .TXS  (TXS),
+       .TX_READY(CH_UP),
+
+       // UFC Rx
+       .NFC_PAUSE(NFC_PAUSE),
+
+       // Data Tx
+       .S_AXIS_TVALID(S_AXIS_TVALID),
+       .S_AXIS_TREADY(S_AXIS_TREADY),
+       .S_AXIS_TLAST (S_AXIS_TLAST),
+       .S_AXIS_TDATA (S_AXIS_TDATA),
+
+       // UFC Tx
+       .UFC_REQ(UFC_REQ),
+       .UFC_MS(UFC_MS),
+       .S_AXIS_UFC_TVALID(S_AXIS_UFC_TVALID),
+       .S_AXIS_UFC_TREADY(S_AXIS_UFC_TREADY),
+       .S_AXIS_UFC_TDATA (S_AXIS_UFC_TDATA),
+
+       // NFC Tx
+       .S_AXIS_NFC_TVALID(S_AXIS_NFC_TVALID),
+       .S_AXIS_NFC_TREADY(S_AXIS_NFC_TREADY),
+       .S_AXIS_NFC_TDATA (S_AXIS_NFC_TDATA)
+       );
+   
+endmodule // kyokko
+
+`default_nettype wire
