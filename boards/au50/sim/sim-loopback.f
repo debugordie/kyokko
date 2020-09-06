@@ -1,5 +1,4 @@
-      +xm64bit
-      +access+r
+      -f ${KYOKKO}/sim/sim-common.f
 
       ${KYOKKO}/boards/au50/sim/tb-loopback.v
       ${KYOKKO}/boards/au50/src/top.v
@@ -8,4 +7,4 @@
       -f ${KYOKKO}/boards/au50/sim/au50-kyokko.f
 
       +define+NO_JTAG
-      -y /home/cad/Xilinx/Vivado/2019.2/data/verilog/src/retarget
+      -y ${XILINX_VIVADO}/data/verilog/src/retarget

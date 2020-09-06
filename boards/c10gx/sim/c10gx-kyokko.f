@@ -1,6 +1,4 @@
-      +sv
-      -allowredefinition      
-      +ncnamemap_mixgen
+      -f ${KYOKKO}/sim/sim-common.f
 
       ${KYOKKO}/boards/c10gx/src/c10gx-kyokko.v
       ${KYOKKO}/boards/c10gx/src/c10-xcvr-2ch.v
@@ -17,8 +15,6 @@
       
       ${KYOKKO}/boards/c10gx/ip/phy_10g/sim/phy_10g.v
       ${KYOKKO}/boards/c10gx/ip/phy_10g/altera_xcvr_native_a10_191/sim/*sv
-
-#      +xmcdslib+/home/cad/intelFPGA/libs/XCELIUM1903_Quartus20_1/cds.lib
 
      $QUARTUS/quartus/eda/sim_lib/altera_mf.v
       

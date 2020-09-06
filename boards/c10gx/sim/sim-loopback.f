@@ -1,5 +1,4 @@
-      +xm64bit
-      +access+r
+      -f ${KYOKKO}/sim/sim-common.f
       +define+NO_JTAG
 
       ${KYOKKO}/boards/c10gx/sim/tb-loopback.v

@@ -1,4 +1,4 @@
-      +xm64bit
+      -f ${KYOKKO}/sim-common.f
 
       ${KYOKKO}/boards/ku040/src/top-aurora-single.v
       ${KYOKKO}/src-aurora/ku-aurora-boot.v
@@ -15,14 +15,14 @@
       ${KYOKKO}/boards/ku040/ip/iploc/aurora_sfp2/ip_1/sim/*.v
 
       +libext+.v
-      -y /home/cad/Xilinx/Vivado/2019.2/data/verilog/src/unisims
-      -y /home/cad/Xilinx/Vivado/2019.2/data/verilog/src/retarget
+      -y ${XILINX_VIVADO}/data/verilog/src/unisims
+      -y ${XILINX_VIVADO}/data/verilog/src/retarget
 
-      -f /home/cad/Xilinx/Vivado/2019.2/data/secureip/gthe3_common/gthe3_common_cell.list.vf
-      -f /home/cad/Xilinx/Vivado/2019.2/data/secureip/gthe3_channel/gthe3_channel_cell.list.vf
+      -f ${XILINX_VIVADO}/data/secureip/gthe3_common/gthe3_common_cell.list.vf
+      -f ${XILINX_VIVADO}/data/secureip/gthe3_channel/gthe3_channel_cell.list.vf
 
       # FIFO generator required by Aurora core
-      +xmcdslib+/home/cad/Xilinx/libs/XCELIUM1903_Vivado2019_2/cds.lib
+      -f ${KYOKKO}/sim/xilinx-lib.f
       
       +define+NO_JTAG
       

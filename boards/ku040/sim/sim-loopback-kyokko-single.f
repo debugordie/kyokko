@@ -1,5 +1,4 @@
-      +xm64bit
-      +access+r
+      -f ${KYOKKO}/sim-common.f
 
       ${KYOKKO}/boards/ku040/sim/tb-loopback-kyokko-single.v
       ${KYOKKO}/boards/ku040/src/top-kyokko-single.v

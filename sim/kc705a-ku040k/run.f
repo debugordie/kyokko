@@ -1,3 +1,4 @@
+      -f ${KYOKKO}/sim/sim-common.f
       +define+NO_LOOPBACK
 
      ${KYOKKO}/sim/kc705a-ku040k/tb.v

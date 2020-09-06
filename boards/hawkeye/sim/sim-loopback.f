@@ -1,7 +1,5 @@
-      +xm64bit
-      +access+r
-      -allowredefinition
-
+      -f ${KYOKKO}/sim/sim-common.f
+      
       +define+NO_JTAG
 
       ${KYOKKO}/boards/hawkeye/sim/tb-loopback.v
