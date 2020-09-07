@@ -111,8 +111,18 @@ All these scripts have link-down (or hotplug) events scheduled in the
 middle of the simulation runtime. An example is:
  % xmverilog -f ${KYOKKO}/sim/kc705a-ku040k/run.f
 
+- - - - - - - - - - - - - - - - - - - -
+Note for other simulators
+
+
+Most of Cadence simulator (or environment) specific stuff is in:
+ - sim/sim-common.f (simulator script)
+ - sim/wave-record.vh (Verilog system tasks for waveform recording)
+ - sim/xilinx-lib.f (options to use Vivado pre-compiled library)
+Also, board/*/sim/*.f need simulator spefic modifications for Quartus library.
+
 ----------------------------------------
-Getting started with Vivado/Quartus
+Testing with FPGA boards
 ----------------------------------------
 
 Kyokko has pre-defined Vivado/Quartus project setup scripts for:
