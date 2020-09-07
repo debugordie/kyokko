@@ -125,8 +125,7 @@ module tb();
    reg RST;
 
    initial begin
-      $shm_open();
-      $shm_probe("SA");
+      `include "wave-record.vh"
       RST <= 1;
 
       #(10.1*StepIn)
@@ -195,8 +194,7 @@ module tb();
    reg RST;
 
    initial begin
-      $shm_open();
-      $shm_probe("SA");
+      `include "wave-record.vh"
       RST <= 1;
 
       #(10.1*StepIn)

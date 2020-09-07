@@ -18,8 +18,7 @@ module tb();
        .SFP_RXN(LINK_UP ? KC705_TXN : 0) );
        
    initial begin
-      $shm_open();
-      $shm_probe("SA");
+      `include "wave-record.vh"
       LINK_UP <= 1;
 
       #(300*1000)  LINK_UP <= 0;

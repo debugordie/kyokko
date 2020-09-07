@@ -1,4 +1,4 @@
-      -f ${KYOKKO}/sim-common.f
+      -f ${KYOKKO}/sim/sim-common.f
       
       ${KYOKKO}/sim/kcu1500k-au50k-hawkeye/tb.v
       +define+NO_LOOPBACK

@@ -51,8 +51,7 @@ module tb_au50
 
 `ifndef NO_LOOPBACK
    initial begin
-      $shm_open();
-      $shm_probe("SA");
+      `include "wave-record.vh"
       
       #(300*1000) $finish;
    end

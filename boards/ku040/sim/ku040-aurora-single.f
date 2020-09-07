@@ -1,4 +1,4 @@
-      -f ${KYOKKO}/sim-common.f
+      -f ${KYOKKO}/sim/sim-common.f
 
       ${KYOKKO}/boards/ku040/src/top-aurora-single.v
       ${KYOKKO}/src-aurora/ku-aurora-boot.v

@@ -28,8 +28,7 @@ module tb();
        .SFP_RXP(LINK_UP ? KCU1500_TXP1 : 4'b0) );
 
    initial begin
-      $shm_open();
-      $shm_probe("SA");
+      `include "wave-record.vh"
       LINK_UP <= 1;
 
       #(300*1000)  LINK_UP <= 0;

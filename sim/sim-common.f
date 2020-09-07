@@ -6,3 +6,5 @@
         +sv
         -allowredefinition
         +xmnamemap_mixgen
+
+        +incdir+${KYOKKO}/sim/

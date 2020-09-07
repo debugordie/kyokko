@@ -1,4 +1,4 @@
-      -f ${KYOKKO}/sim-common.f
+      -f ${KYOKKO}/sim/sim-common.f
 
       ${KYOKKO}/boards/ku040/sim/tb-loopback-kyokko-single.v
       ${KYOKKO}/boards/ku040/src/top-kyokko-single.v

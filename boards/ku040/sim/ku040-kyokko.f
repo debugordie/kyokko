@@ -1,4 +1,4 @@
-      -f ${KYOKKO}/sim-common.f
+      -f ${KYOKKO}/sim/sim-common.f
 
       ${KYOKKO}/boards/ku040/src/ku040-kyokko.v
       ${KYOKKO}/src/*.v
