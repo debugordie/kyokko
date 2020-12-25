@@ -113,7 +113,7 @@ module a10_xcvr_4ch # ( parameter NumCh=4 )
              .RX_DATAi (RX_DATAi),  .RX_DATA(RX_DATA[63+64*ch : 64*ch]),
              .TX_DATAi (TX_DATAi),  .TX_DATA(TX_DATA[63+64*ch : 64*ch]),
              .RX_CTRLi (RX_CTRLi),  .RX_CTRL(RX_CTRL[ 1+ 2*ch :  2*ch]),
-p             .TX_CTRLi (TX_CTRLi),  .TX_CTRL(TX_CTRL[ 1+ 2*ch :  2*ch]) );
+             .TX_CTRLi (TX_CTRLi),  .TX_CTRL(TX_CTRL[ 1+ 2*ch :  2*ch]) );
       end // block: phy_gen
    endgenerate
 

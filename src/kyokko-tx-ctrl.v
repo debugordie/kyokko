@@ -23,6 +23,9 @@ module kyokko_tx_ctrl
     output reg [1:0]   TXHDRi,
     output wire        TX_READY,
 
+    input wire         TX_WFR_CB_I, TX_SEND_CC_I,
+    output wire        TX_WFR_CB_O, TX_SEND_CC_O,
+    
     input wire         UFC_REQ,
     input wire [7:0]   UFC_MS,
 
@@ -41,19 +44,25 @@ module kyokko_tx_ctrl
     input wire [15:0]  S_AXIS_NFC_TDATA
    );
 
+   parameter BondingEnable = 0;  // Set to 1 to enable
+
    wire [63:0]       TXDATA;
 
-   wire              TX_SEND_CC;
    wire [3:0]        RX_STAT_TX; // RX_STAT in TX clock domain
    wire [63:0]       TXDATA_INIT;
 
-   kyokko_tx_init init
+   kyokko_tx_init # (.BondingEnable(BondingEnable)) init
      ( .CLK(CLK), .RST(TXRST), .RXRST(RXRST),
-       .RX_STAT(RX_STAT),       .RX_STAT_TX(RX_STAT_TX),
-       .TX_SEND_CC(TX_SEND_CC), .TXDATA (TXDATA_INIT) );
+       .RX_STAT     (RX_STAT),      .RX_STAT_TX  (RX_STAT_TX),
+       .TX_WFR_CB_I (TX_WFR_CB_I),  .TX_WFR_CB_O (TX_WFR_CB_O),
+       .TX_SEND_CC_I(TX_SEND_CC_I), .TX_SEND_CC_O(TX_SEND_CC_O),
+       .TXDATA      (TXDATA_INIT) );
 
    wire              LINK_UP = RX_STAT_TX[3];
 
+   wire              TX_SEND_CC = ( (BondingEnable==1) ? TX_SEND_CC_I :
+                                    TX_SEND_CC_O );
+   
    // ------------------------------------------------------------
    // AXIS stuff
    

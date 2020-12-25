@@ -1,10 +1,10 @@
 // ----------------------------------------------------------------------
 // "THE BEER-WARE LICENSE" (Revision 42):
-//    <yasu@prosou.nu> wrote this file. As long as you retain this
-//    notice you can do whatever you want with this stuff. If we meet
-//    some day, and you think this stuff is worth it, you can buy me a
-//    beer in return Yasunori Osana at University of the Ryukyus,
-//    Japan.
+//    <yasu@prosou.nu> and <tmr@lut.eee.u-ryukyu.ac.jp> wrote this
+//    file. As long as you retain this notice you can do whatever you
+//    want with this stuff. If we meet some day, and you think this
+//    stuff is worth it, you can buy me a beer in return Yasunori
+//    Osana and Akinobu Tomori at University of the Ryukyus, Japan.
 // ----------------------------------------------------------------------
 // OpenFC project: an open FPGA accelerated cluster toolkit
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
@@ -20,16 +20,19 @@ module kyokko_tx_init
     input wire [3:0]   RX_STAT,
     output reg [3:0]   RX_STAT_TX,
 
-    output reg         TX_SEND_CC,
+    input wire         TX_WFR_CB_I, TX_SEND_CC_I,
+    output wire        TX_WFR_CB_O, TX_SEND_CC_O,
     output wire [63:0] TXDATA );
-
+   
+   parameter BondingEnable = 0;  // Set to 1 to enable
    parameter SendCC_Rate = 4840;
+   parameter GenInit = 1;
 
    // ------------------------------------------------------------
    // RX stat synchronizer
 
-   reg [3:0] RX_STAT_TXi;
-   reg       RXRST_TXi, RXRST_TX;
+   reg [3:0]           RX_STAT_TXi;
+   reg                 RXRST_TXi, RXRST_TX;
 
    always @ (posedge CLK) begin 
       // needs RST because RX_STAT may be 'bxxx before RX_RST
@@ -45,7 +48,16 @@ module kyokko_tx_init
    // ------------------------------------------------------------
    // Wait for remote FSM to transmit CB block
    reg [3:0] TX_WFR_CNT;
-   wire TX_WFR_CB = (TX_WFR_CNT==9);
+   wire      TX_WFR_CB;
+
+   generate
+      if (GenInit==1 || BondingEnable==0) begin : CB_gen
+         assign TX_WFR_CB = (TX_WFR_CNT==9);
+         assign TX_WFR_CB_O = TX_WFR_CB;
+      end else begin : CB_nogen
+         assign TX_WFR_CB = TX_WFR_CB_I;
+      end
+   endgenerate
 
    always @ (posedge CLK) begin
       if (RST) TX_WFR_CNT <= 0;
@@ -56,21 +68,29 @@ module kyokko_tx_init
    // Ready state FSM to transmit CC block (4840 data blk + 7 CC blk)
    
    reg [12:0] TX_CC_CNT; // up to 8192 clk
+   wire       TX_SEND_CC;
+   
+   generate
+      if (GenInit==1 || BondingEnable==0) begin : CC_gen
+         assign TX_SEND_CC = ( (TX_SEND_CC) & (TX_CC_CNT==6) ) ? 0 :
+                             (TX_CC_CNT==SendCC_Rate-1) ? 1 : 0;
+         assign TX_SEND_CC_O = TX_SEND_CC;
+      end else begin : CC_nogen
+         assign TX_SEND_CC = TX_SEND_CC_I;
+      end
+   endgenerate
 
    always @ (posedge CLK) begin
       if (~RX_STAT_TX[3]) begin // not in Ready state
-         TX_SEND_CC <= 1;
          TX_CC_CNT  <= 0;
       end else begin
          if (TX_SEND_CC) begin
             if (TX_CC_CNT==6) begin
                TX_CC_CNT  <= 0;
-               TX_SEND_CC <= 0;
             end else TX_CC_CNT <= TX_CC_CNT+1;
          end else begin
             if (TX_CC_CNT == SendCC_Rate-1) begin
                TX_CC_CNT  <= 0;
-               TX_SEND_CC <= 1;
             end else TX_CC_CNT <= TX_CC_CNT + 1;
          end
       end

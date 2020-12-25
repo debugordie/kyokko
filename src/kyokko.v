@@ -30,6 +30,10 @@ module kyokko
     output wire [1:0]  TXHDR,
     output wire [63:0] TXS,
 
+    // CB/CC sync
+    input wire         TX_WFR_CB_I, TX_SEND_CC_I,
+    output wire        TX_WFR_CB_O, TX_SEND_CC_O,
+    
     // AXIS data
     input wire         S_AXIS_TVALID, S_AXIS_TLAST,
     input wire [63:0]  S_AXIS_TDATA,
@@ -54,6 +58,8 @@ module kyokko
     output wire        S_AXIS_NFC_TREADY,
     input wire [15:0]  S_AXIS_NFC_TDATA
    );
+
+   parameter BondingEnable = 0;  // Set to 1 to enable
 
    wire [3:0]          RX_STAT;
    wire                RXSLIP_LIMIT;
@@ -80,7 +86,7 @@ module kyokko
      ( .CLK(CLK100), .RST(RXRST), 
        .RXSLIP_LIMIT(RXSLIP_LIMIT), .RXPATH_RST(RXPATH_RST) );
    
-   kyokko_tx_ctrl tx
+   kyokko_tx_ctrl # (.BondingEnable(BondingEnable)) tx
      ( .CLK(TXCLK), 
        .TXRST(TXRST), 
        .RXRST(RXRST),
@@ -89,6 +95,11 @@ module kyokko
        .TXS  (TXS),
        .TX_READY(CH_UP),
 
+       .TX_WFR_CB_I (TX_WFR_CB_I),
+       .TX_WFR_CB_O (TX_WFR_CB_O),
+       .TX_SEND_CC_I(TX_SEND_CC_I),
+       .TX_SEND_CC_O(TX_SEND_CC_O),
+       
        // UFC Rx
        .NFC_PAUSE(NFC_PAUSE),
 

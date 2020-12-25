@@ -1,10 +1,10 @@
 // ----------------------------------------------------------------------
 // "THE BEER-WARE LICENSE" (Revision 42):
-//    <yasu@prosou.nu> wrote this file. As long as you retain this
-//    notice you can do whatever you want with this stuff. If we meet
-//    some day, and you think this stuff is worth it, you can buy me a
-//    beer in return Yasunori Osana at University of the Ryukyus,
-//    Japan.
+//    <yasu@prosou.nu> and <tmr@lut.eee.u-ryukyu.ac.jp> wrote this
+//    file. As long as you retain this notice you can do whatever you
+//    want with this stuff. If we meet some day, and you think this
+//    stuff is worth it, you can buy me a beer in return Yasunori
+//    Osana and Akinobu Tomori at University of the Ryukyus, Japan.
 // ----------------------------------------------------------------------
 // OpenFC project: an open FPGA accelerated cluster toolkit
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
@@ -15,7 +15,9 @@
 
 `default_nettype none
 
-module kcu1500_kyokko # ( parameter NumCh=8 )
+module kcu1500_kyokko # 
+  (  parameter NumCh=8, 
+     BondingEnable=0 ) // Set to 1 to enable
   ( input wire CLK100, RST,
     
     input wire                 QSFP0_REFCLKP, QSFP0_REFCLKN,
@@ -89,7 +91,8 @@ module kcu1500_kyokko # ( parameter NumCh=8 )
    wire [NumCh-1:0]   RXRST = ~RX_RDY;
    wire [NumCh-1:0]   TXRST = ~TX_RDY;
    
-   wire [NumCh-1:0]            RXPATH_RST, RXSLIP;
+   wire [NumCh-1:0]            RXPATH_RST, RXSLIP,
+                               TX_WFR_CB, TX_SEND_CC;
 
    assign USER_CLK = TXUSERCLK2;
 
@@ -98,6 +101,9 @@ module kcu1500_kyokko # ( parameter NumCh=8 )
       for (ch=0; ch<NumCh; ch=ch+1)
         begin : kyokko_gen
            wire [5:0] RXHDRc = RXHDRi[ch];
+
+           defparam ky.tx.init.GenInit = (ch!=0 && BondingEnable==1) ? 0 : 1;
+           
            kyokko ky
              ( .CLK(),  // still not used
                .CLK100(CLK100),
@@ -109,6 +115,11 @@ module kcu1500_kyokko # ( parameter NumCh=8 )
                .TXHDR(TXHDRi[ch]),        .TXS(TXS[ch]),
                .RXSLIP(RXSLIP[ch]),
                .RXPATH_RST(RXPATH_RST[ch]),
+
+               .TX_WFR_CB_I  (TX_WFR_CB[(BondingEnable==1) ? 0 : ch]),
+               .TX_WFR_CB_O  (TX_WFR_CB[ch]),
+               .TX_SEND_CC_I (TX_SEND_CC[(BondingEnable==1) ? 0 : ch]),
+               .TX_SEND_CC_O (TX_SEND_CC[ch]),
 
                // Data channels
                .M_AXIS_TVALID(M_AXI_RX_TVALID[ch]),
