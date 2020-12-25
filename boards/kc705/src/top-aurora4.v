@@ -10,18 +10,18 @@
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 //
 // Modules in this file:
-//    kc705_aurora: Top-level module for Xilinx KC705 board, Aurora on 1x SFP
+//    kc705_aurora4: Top-level module for Xilinx KC705 board, Aurora on 4x SFP
 // ----------------------------------------------------------------------
 
 `default_nettype none
 
-module kc705_aurora
+module kc705_aurora4
   ( input wire RST, // CPU Reset button, active high
     input wire        CLK200P, CLK200N,
     input wire        CLK156P, CLK156N,
   
-    output wire       SFP_TXP, SFP_TXN,
-    input wire        SFP_RXP, SFP_RXN,
+    output wire [3:0] SFP_TXP, SFP_TXN,
+    input wire [3:0]  SFP_RXP, SFP_RXN,
 
     output wire [7:0] LED
     );
@@ -69,7 +69,7 @@ module kc705_aurora
    wire [15:0]        NFC_DATA;
    wire               NFC_VALID, NFC_READY;
 
-   aurora_sfp au_sfp
+   aurora_sfp4 au_sfp4
      ( // MGT Ports
        .rxp(SFP_RXP),  .rxn(SFP_RXN),
        .txp(SFP_TXP),  .txn(SFP_TXN),
@@ -157,7 +157,7 @@ module kc705_aurora
    wire               GO;
    
    // Frame generators
-   tx_frame_gen txg
+   tx_frame_gen4 txg
      ( .CLK   (AURORA_CLK), .RST(~CH_UP | ~GO),
        .DATA  (TX_DATA ),
        .LAST  (TX_LAST ),

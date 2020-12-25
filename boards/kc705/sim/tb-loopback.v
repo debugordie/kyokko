@@ -16,11 +16,17 @@
 `timescale 1ns/1ps
 `default_nettype none
 
+`ifdef CHBOND_4CH
+ `define KC705_AURORA kc705_aurora4
+`else
+ `define KC705_AURORA kc705_aurora
+`endif
+
 module tb_kc705_aurora
   (
 `ifdef NO_LOOPBACK
-   output wire SFP_TXP, SFP_TXN,
-   input wire SFP_RXP, SFP_RXN
+   output wire [3:0] SFP_TXP, SFP_TXN,
+   input wire [3:0] SFP_RXP, SFP_RXN
 `endif
    );
    
@@ -34,7 +40,7 @@ module tb_kc705_aurora
    always # (StepREF/2) CLKREF <= ~CLKREF;
 
 `ifndef NO_LOOPBACK
-   wire           SFP_TXP, SFP_TXN, SFP_RXP, SFP_RXN;
+   wire [3:0]     SFP_TXP, SFP_TXN, SFP_RXP, SFP_RXN;
 
    assign SFP_RXP = SFP_TXP;
    assign SFP_RXN = SFP_TXN;
@@ -42,7 +48,7 @@ module tb_kc705_aurora
    
    reg            RST;
 
-   kc705_aurora uut
+   `KC705_AURORA uut
      ( .RST(RST),
        .CLK200P(CLK200), .CLK200N (~CLK200),
        .CLK156P(CLKREF), .CLK156N(~CLKREF),

@@ -24,6 +24,7 @@ set DEV xc7k325tffg900-2
 set BOARD xilinx.com:kc705:part0:1.6 
 set COREs [ list \
                 aurora_sfp \
+                aurora_sfp4 \
                 clk_200_100_50 \
                 ila_0 \
                 vio_0 \
