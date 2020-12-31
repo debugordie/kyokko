@@ -16,11 +16,13 @@
 `timescale 1ns/1ps
 `default_nettype none
 
-module tb_kcu1500 
-  (
+module tb_kcu1500 #
+    ( BondingEnable=0, // Set to 1 to enable
+      BondingCh=4 )
+   (
 `ifdef NO_LOOPBACK
-   output wire [3:0]     QSFP0_TXP, QSFP0_TXN, QSFP1_TXP, QSFP1_TXN,
-   input wire [3:0]     QSFP0_RXP, QSFP0_RXN, QSFP1_RXP, QSFP1_RXN
+    output wire [3:0]     QSFP0_TXP, QSFP0_TXN, QSFP1_TXP, QSFP1_TXN,
+    input wire [3:0]     QSFP0_RXP, QSFP0_RXN, QSFP1_RXP, QSFP1_RXN
 `endif
    );
    parameter real Step300 = 10.0/3.0;
@@ -44,7 +46,7 @@ module tb_kcu1500
    
    reg            RST;
 
-   kcu1500 uut
+   kcu1500 #(.BondingEnable(BondingEnable), .BondingCh(BondingCh)) uut
      ( .RST_N(~RST),
        .CLK300P    (CLK300), .CLK300N    (~CLK300),
        .QSFP0_REFCLKP(CLKREF), .QSFP0_REFCLKN(~CLKREF),

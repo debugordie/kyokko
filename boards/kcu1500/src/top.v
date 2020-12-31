@@ -15,17 +15,19 @@
 
 `default_nettype none
 
-module kcu1500
-  ( input wire RST_N,
-    input wire        CLK300P, CLK300N,
-    input wire        QSFP0_REFCLKP, QSFP0_REFCLKN,
-
-    input wire [3:0]  QSFP0_RXP, QSFP0_RXN, QSFP1_RXP, QSFP1_RXN,
-    output wire [3:0] QSFP0_TXP, QSFP0_TXN, QSFP1_TXP, QSFP1_TXN,
+module kcu1500 #
+  ( BondingEnable=0, // Set to 1 to enable
+    BondingCh=4 )
+   ( input wire RST_N,
+     input wire        CLK300P, CLK300N,
+     input wire        QSFP0_REFCLKP, QSFP0_REFCLKN,
+     
+     input wire [3:0]  QSFP0_RXP, QSFP0_RXN, QSFP1_RXP, QSFP1_RXN,
+     output wire [3:0] QSFP0_TXP, QSFP0_TXN, QSFP1_TXP, QSFP1_TXN,
     
-    output wire [7:0] LED
-   );
-
+     output wire [7:0] LED
+     );
+   
    parameter NumCh = 8;
 
    wire               CLK100, DCM_LOCKED, RST;
@@ -81,7 +83,7 @@ module kcu1500
    // ------------------------------------------------------------
    // Kyokko instance
 
-   kcu1500_kyokko ky
+   kcu1500_kyokko #(.BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
      ( .CLK100(CLK100), .RST(~DCM_LOCKED),
        .QSFP0_REFCLKP(QSFP0_REFCLKP), .QSFP0_REFCLKN(QSFP0_REFCLKN),
 
@@ -173,6 +175,6 @@ module kcu1500
    assign GO = {NumCh{1'b1}};
 `endif
    
-endmodule // ku040
+endmodule // kcu1500
 
 `default_nettype wire
