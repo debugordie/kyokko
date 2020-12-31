@@ -106,6 +106,7 @@ module kcu1500_kyokko #
 
            defparam ky.tx.init.GenInit = ((ch%BondingCh)!=0 && 
                                           BondingEnable==1) ? 0 : 1;
+           parameter SyncSource = (BondingEnable==1) ? (ch/BondingCh) : ch;
            
            kyokko # (.BondingEnable(BondingEnable)) ky
              ( .CLK(),  // still not used
@@ -119,11 +120,9 @@ module kcu1500_kyokko #
                .RXSLIP(RXSLIP[ch]),
                .RXPATH_RST(RXPATH_RST[ch]),
 
-               .TX_WFR_CB_I  (TX_WFR_CB [(BondingEnable==1) ? (ch/BondingCh) :
-                                         ch]),
+               .TX_WFR_CB_I  (TX_WFR_CB [SyncSource),
                .TX_WFR_CB_O  (TX_WFR_CB [ch]),
-               .TX_SEND_CC_I (TX_SEND_CC[(BondingEnable==1) ? (ch/BondingCh) :
-                                         ch]),
+               .TX_SEND_CC_I (TX_SEND_CC[SyncSource),
                .TX_SEND_CC_O (TX_SEND_CC[ch]),
 
                // Data channels
