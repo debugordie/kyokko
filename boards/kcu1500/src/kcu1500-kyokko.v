@@ -18,8 +18,8 @@
 module kcu1500_kyokko # 
   (  parameter NumCh=8, 
      BondingEnable=0, // Set to 1 to enable
-     BondingCh=4 
-     ) 
+     BondingCh=4,
+     NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh) ) 
   ( input wire CLK100, RST,
     
     input wire                 QSFP0_REFCLKP, QSFP0_REFCLKN,
@@ -29,31 +29,31 @@ module kcu1500_kyokko #
     // ------------------------------
     // Aurora compatible interface signals
     
-    output wire [NumCh-1:0]    CH_UP, USER_CLK,
+    output wire [NumChB-1:0]   CH_UP, USER_CLK,
     
     // Data channel
     input wire [64*NumCh-1:0]  S_AXI_TX_TDATA,
-    input wire [ NumCh-1:0]    S_AXI_TX_TLAST, S_AXI_TX_TVALID,
-    output wire [NumCh-1:0]    S_AXI_TX_TREADY,
+    input wire [ NumChB-1:0]   S_AXI_TX_TLAST, S_AXI_TX_TVALID,
+    output wire [NumChB-1:0]   S_AXI_TX_TREADY,
     
     output wire [64*NumCh-1:0] M_AXI_RX_TDATA,
-    output wire [ NumCh-1:0]   M_AXI_RX_TLAST, M_AXI_RX_TVALID,
+    output wire [ NumChB-1:0]  M_AXI_RX_TLAST, M_AXI_RX_TVALID,
 
     // UFC channel
-    input wire [NumCh-1:0]     UFC_TX_REQ,
-    output wire [8*NumCh-1:0]  UFC_TX_MS,
+    input wire [NumChB-1:0]    UFC_TX_REQ,
+    output wire [8*NumChB-1:0] UFC_TX_MS,
     
     input wire [64*NumCh-1:0]  S_AXI_UFC_TX_TDATA,
-    input wire [NumCh-1:0]     S_AXI_UFC_TX_TVALID,
-    output wire [NumCh-1:0]    S_AXI_UFC_TX_TREADY,
+    input wire [NumChB-1:0]    S_AXI_UFC_TX_TVALID,
+    output wire [NumChB-1:0]   S_AXI_UFC_TX_TREADY,
 
     output wire [64*NumCh-1:0] M_AXI_UFC_RX_TDATA,
-    output wire [ NumCh-1:0]   M_AXI_UFC_RX_TLAST, M_AXI_UFC_RX_TVALID,
+    output wire [ NumChB-1:0]  M_AXI_UFC_RX_TLAST, M_AXI_UFC_RX_TVALID,
     
     // NFC channel
-    input wire [16*NumCh-1:0]  S_AXI_NFC_TDATA,
-    input wire [NumCh-1:0]     S_AXI_NFC_TVALID,
-    output wire [NumCh-1:0]    S_AXI_NFC_TREADY
+    input wire [16*NumChB-1:0] S_AXI_NFC_TDATA,
+    input wire [NumChB-1:0]    S_AXI_NFC_TVALID,
+    output wire [NumChB-1:0]   S_AXI_NFC_TREADY
    );
 
    // ------------------------------
@@ -84,75 +84,120 @@ module kcu1500_kyokko #
    
    wire [NumCh-1:0]            TXUSERCLK2, TX_RDY;
    wire [NumCh-1:0]            RXUSERCLK2, RX_RDY;
-   wire [63:0]        TXS [NumCh-1:0],
-                      RXS [NumCh-1:0];
+   wire [NumCh-1:0][63:0]      TXS, RXS;   // packed array: the SV way
 
-   wire [1:0]         TXHDRi [NumCh-1:0];
-   wire [5:0]         RXHDRi [NumCh-1:0];
+   wire [NumCh-1:0][1:0]       TXHDRi, RXHDRi;
+   wire [NumCh-1:0][5:2]       RXHDRx; // unused part in 64B66B
 
    wire [NumCh-1:0]   RXRST = ~RX_RDY;
    wire [NumCh-1:0]   TXRST = ~TX_RDY;
    
    wire [NumCh-1:0]            RXPATH_RST, RXSLIP,
                                TX_WFR_CB, TX_SEND_CC;
-
-   assign USER_CLK = TXUSERCLK2;
-
-   genvar             ch;
+   genvar                      ch;
    generate
-      for (ch=0; ch<NumCh; ch=ch+1)
-        begin : kyokko_gen
-           wire [5:0] RXHDRc = RXHDRi[ch];
+      if (BondingEnable==0) begin : nobond_gen
+         assign USER_CLK = TXUSERCLK2;
 
-           defparam ky.tx.init.GenInit = ((ch%BondingCh)!=0 && 
-                                          BondingEnable==1) ? 0 : 1;
-           parameter SyncSource = (BondingEnable==1) ? (ch/BondingCh) : ch;
-           
-           kyokko # (.BondingEnable(BondingEnable)) ky
-             ( .CLK(),  // still not used
-               .CLK100(CLK100),
-               .RXCLK(RXUSERCLK2[ch]),  .TXCLK(TXUSERCLK2[ch]),
-               .RXRST(RXRST[ch]),       .TXRST(TXRST[ch]),
-               .CH_UP(CH_UP[ch]),
+         for (ch=0; ch<NumCh; ch=ch+1) begin : kyokko_gen
+            defparam ky.tx.init.GenInit = 1;
+            
+            kyokko # (.BondingEnable(0)) ky
+              ( .CLK(),  // still not used
+                .CLK100(CLK100),
+                .RXCLK(RXUSERCLK2[ch]),  .TXCLK(TXUSERCLK2[ch]),
+                .RXRST(RXRST[ch]),       .TXRST(TXRST[ch]),
+                .CH_UP(CH_UP[ch]),
 
-               .RXHDR(RXHDRc[1:0]),   .RXS(RXS[ch]),
-               .TXHDR(TXHDRi[ch]),        .TXS(TXS[ch]),
-               .RXSLIP(RXSLIP[ch]),
-               .RXPATH_RST(RXPATH_RST[ch]),
+                .RXHDR(RXHDRi[ch]),      .RXS(RXS[ch]),
+                .TXHDR(TXHDRi[ch]),      .TXS(TXS[ch]),
+                .RXSLIP(RXSLIP[ch]),
+                .RXPATH_RST(RXPATH_RST[ch]),
 
-               .TX_WFR_CB_I  (TX_WFR_CB [SyncSource]),
-               .TX_WFR_CB_O  (TX_WFR_CB [ch]),
-               .TX_SEND_CC_I (TX_SEND_CC[SyncSource]),
-               .TX_SEND_CC_O (TX_SEND_CC[ch]),
+                .TX_WFR_CB_I  (1'b0),
+                .TX_WFR_CB_O  (),
+                .TX_SEND_CC_I (1'b0),
+                .TX_SEND_CC_O (),
 
-               // Data channels
-               .M_AXIS_TVALID(M_AXI_RX_TVALID[ch]),
-               .M_AXIS_TLAST (M_AXI_RX_TLAST [ch]),
-               .M_AXIS_TDATA (M_AXI_RX_TDATA [ch*64+63 : ch*64]),
+                // Data channels
+                .M_AXIS_TVALID(M_AXI_RX_TVALID[ch]),
+                .M_AXIS_TLAST (M_AXI_RX_TLAST [ch]),
+                .M_AXIS_TDATA (M_AXI_RX_TDATA [ch*64+63 : ch*64]),
 
-               .S_AXIS_TVALID (S_AXI_TX_TVALID[ch]),
-               .S_AXIS_TREADY (S_AXI_TX_TREADY[ch]),
-               .S_AXIS_TLAST  (S_AXI_TX_TLAST [ch]),
-               .S_AXIS_TDATA  (S_AXI_TX_TDATA [ch*64+63 : ch*64]),
+                .S_AXIS_TVALID (S_AXI_TX_TVALID[ch]),
+                .S_AXIS_TREADY (S_AXI_TX_TREADY[ch]),
+                .S_AXIS_TLAST  (S_AXI_TX_TLAST [ch]),
+                .S_AXIS_TDATA  (S_AXI_TX_TDATA [ch*64+63 : ch*64]),
 
-               // UFC channels
-               .UFC_REQ           (UFC_TX_REQ [ch]),
-               .UFC_MS            (UFC_TX_MS  [ch*8+7 : ch*8]),
+                // UFC channels
+                .UFC_REQ           (UFC_TX_REQ [ch]),
+                .UFC_MS            (UFC_TX_MS  [ch*8+7 : ch*8]),
 
-               .S_AXIS_UFC_TVALID (S_AXI_UFC_TX_TVALID[ch]),
-               .S_AXIS_UFC_TREADY (S_AXI_UFC_TX_TREADY[ch]),
-               .S_AXIS_UFC_TDATA  (S_AXI_UFC_TX_TDATA [ch*64+63 : ch*64]),
+                .S_AXIS_UFC_TVALID (S_AXI_UFC_TX_TVALID[ch]),
+                .S_AXIS_UFC_TREADY (S_AXI_UFC_TX_TREADY[ch]),
+                .S_AXIS_UFC_TDATA  (S_AXI_UFC_TX_TDATA [ch*64+63 : ch*64]),
 
-               .M_AXIS_UFC_TVALID (M_AXI_UFC_RX_TVALID[ch]),
-               .M_AXIS_UFC_TLAST  (M_AXI_UFC_RX_TLAST [ch]),
-               .M_AXIS_UFC_TDATA  (M_AXI_UFC_RX_TDATA [ch*64+63 : ch*64]),
+                .M_AXIS_UFC_TVALID (M_AXI_UFC_RX_TVALID[ch]),
+                .M_AXIS_UFC_TLAST  (M_AXI_UFC_RX_TLAST [ch]),
+                .M_AXIS_UFC_TDATA  (M_AXI_UFC_RX_TDATA [ch*64+63 : ch*64]),
 
-               // NFC channels
-               .S_AXIS_NFC_TVALID (S_AXI_NFC_TVALID[ch]),
-               .S_AXIS_NFC_TREADY (S_AXI_NFC_TREADY[ch]),
-               .S_AXIS_NFC_TDATA  (S_AXI_NFC_TDATA [ch*16+15 : ch*16])
-               );
-        end // block: kyokko-gen
+                // NFC channels
+                .S_AXIS_NFC_TVALID (S_AXI_NFC_TVALID[ch]),
+                .S_AXIS_NFC_TREADY (S_AXI_NFC_TREADY[ch]),
+                .S_AXIS_NFC_TDATA  (S_AXI_NFC_TDATA [ch*16+15 : ch*16])
+                );
+         end // block: kyokko-gen
+      end else begin : chbond_gen // block: nobond_gen
+         for (ch=0; ch<NumCh; ch=ch+BondingCh) begin : kyokko_cb_gen
+            localparam chB = ch/BondingCh;
+            assign USER_CLK[chB] = TXUSERCLK2[ch];
+
+            kyokko_cb # (.BondingCh(BondingCh) ) kycb
+              ( .CLK(),  // still not used
+                .CLK100(CLK100),
+                .RXCLK(RXUSERCLK2[ch+BondingCh-1:ch]), 
+                .TXCLK(TXUSERCLK2[ch+BondingCh-1:ch]),
+                .RXRST(RXRST     [ch+BondingCh-1:ch]),
+                .TXRST(TXRST     [ch+BondingCh-1:ch]),
+                .CH_UP(CH_UP[chB]),
+
+                // FIXME 
+                .RXHDR(RXHDRi[ch+BondingCh-1:ch]),   
+                .RXS  (RXS   [ch+BondingCh-1:ch]),
+                .TXHDR(TXHDRi[ch+BondingCh-1:ch]), 
+                .TXS  (TXS   [ch+BondingCh-1:ch]),
+                .RXSLIP    (RXSLIP    [ch+BondingCh-1:ch]),
+                .RXPATH_RST(RXPATH_RST[ch+BondingCh-1:ch]),
+                
+                // Data channels
+                .M_AXIS_TVALID(M_AXI_RX_TVALID[chB]),
+                .M_AXIS_TLAST (M_AXI_RX_TLAST [chB]),
+                .M_AXIS_TDATA (M_AXI_RX_TDATA [(ch+BondingCh)*64-1 : ch*64]),
+                
+                .S_AXIS_TVALID (S_AXI_TX_TVALID[chB]),
+                .S_AXIS_TREADY (S_AXI_TX_TREADY[chB]),
+                .S_AXIS_TLAST  (S_AXI_TX_TLAST [chB]),
+                .S_AXIS_TDATA  (S_AXI_TX_TDATA [(ch+BondingCh)*64-1 : ch*64]),
+                
+                // UFC channels
+                .UFC_REQ           (UFC_TX_REQ [chB]),
+                .UFC_MS            (UFC_TX_MS  [chB*8+7 : chB*8]),
+                
+                .S_AXIS_UFC_TVALID (S_AXI_UFC_TX_TVALID[chB]),
+                .S_AXIS_UFC_TREADY (S_AXI_UFC_TX_TREADY[chB]),
+                .S_AXIS_UFC_TDATA  (S_AXI_UFC_TX_TDATA [(ch+BondingCh)*64-1 : ch*64]),
+                
+                .M_AXIS_UFC_TVALID (M_AXI_UFC_RX_TVALID[chB]),
+                .M_AXIS_UFC_TLAST  (M_AXI_UFC_RX_TLAST [chB]),
+                .M_AXIS_UFC_TDATA  (M_AXI_UFC_RX_TDATA [(ch+BondingCh)*64-1 : ch*64]),
+                
+                // NFC channels
+                .S_AXIS_NFC_TVALID (S_AXI_NFC_TVALID[chB]),
+                .S_AXIS_NFC_TREADY (S_AXI_NFC_TREADY[chB]),
+                .S_AXIS_NFC_TDATA  (S_AXI_NFC_TDATA [chB*16+15 : chB*16])
+                );
+          end
+      end
    endgenerate
    
    // ------------------------------
@@ -200,7 +245,8 @@ module kcu1500_kyokko #
              .gthtxn_out                        (QSFP_TXN    [ch]),  // O
              .gthtxp_out                        (QSFP_TXP    [ch]),  // O
              .rxdatavalid_out                   (),                  // O [1:0]
-             .rxheader_out                      (RXHDRi[ch]),        // O [5:0]
+             .rxheader_out                      ({RXHDRx[ch],
+                                                  RXHDRi[ch]}),      // O [5:0]
              .rxheadervalid_out                 (),                  // O [1:0]
              .rxpmaresetdone_out                (),                  // O
              .rxprgdivresetdone_out             (),                  // O
@@ -247,7 +293,8 @@ module kcu1500_kyokko #
              .gthtxn_out                        (QSFP_TXN    [ch]),  // O
              .gthtxp_out                        (QSFP_TXP    [ch]),  // O
              .rxdatavalid_out                   (),                  // O [1:0]
-             .rxheader_out                      (RXHDRi      [ch]),  // O [5:0]
+             .rxheader_out                      ({RXHDRx[ch],
+                                                  RXHDRi[ch]}),      // O [5:0]
              .rxheadervalid_out                 (),                  // O [1:0]
              .rxpmaresetdone_out                (),                  // O
              .rxstartofseq_out                  (),                  // O [1:0]

@@ -13,7 +13,7 @@
 //    tx_ufc_gen4: UFC test frame generator (256bit version)
 // ----------------------------------------------------------------------
 
-module tx_ufc_gen
+module tx_ufc_gen4
   ( input wire CLK, RST,
     input wire 	       READY,
     output wire [255:0] DATA,

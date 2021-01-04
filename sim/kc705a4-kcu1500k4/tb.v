@@ -5,8 +5,6 @@ module tb();
    wire [3:0] KC705_TXP, KC705_TXN, KCU1500_TXP0, KCU1500_TXN0;
    reg  LINK_UP;
 
-   
-
    tb_kcu1500 # (.BondingEnable(1), .BondingCh(4)) kcu1500
      ( .QSFP0_TXP(KCU1500_TXP0),
        .QSFP0_TXN(KCU1500_TXN0),
@@ -28,9 +26,9 @@ module tb();
       `include "wave-record.vh"
       LINK_UP <= 1;
 
-      #(300*1000)  LINK_UP <= 0;
-      #(    2000)  LINK_UP <= 1;
-      #(300*1000)  $finish;
+      #(200*1000)  LINK_UP <= 0;
+      #(    1000)  LINK_UP <= 1;
+      #(200*1000)  $finish;
    end
 
 endmodule

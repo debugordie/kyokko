@@ -18,7 +18,8 @@
 
 module tb_kcu1500 #
     ( BondingEnable=0, // Set to 1 to enable
-      BondingCh=4 )
+      BondingCh=4
+      )
    (
 `ifdef NO_LOOPBACK
     output wire [3:0]     QSFP0_TXP, QSFP0_TXN, QSFP1_TXP, QSFP1_TXN,
@@ -28,6 +29,9 @@ module tb_kcu1500 #
    parameter real Step300 = 10.0/3.0;
    parameter real StepREF = 6.4;
    parameter NumCh = 8;
+
+   parameter NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh);
+
 
    reg            CLK300 = 1;
    reg            CLKREF = 1;
@@ -67,9 +71,10 @@ module tb_kcu1500 #
       RST <= 1;
       #(100.1) RST <= 0;
    end
-   
+
+     
    genvar ch;
-   for (ch=0; ch<NumCh; ch=ch+1) begin : ch_up_gen
+   for (ch=0; ch<NumChB; ch=ch+1) begin : ch_up_gen
       reg CH_UP_R;
       always @ (posedge uut.AURORA_CLK[ch]) begin
          CH_UP_R <= uut.CH_UP[ch];

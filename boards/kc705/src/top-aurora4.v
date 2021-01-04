@@ -55,7 +55,8 @@ module kc705_aurora4
    // ------------------------------------------------------------
    // Aurora signals and core
 
-   wire               CH_UP, LANE_UP;
+   wire               CH_UP;
+   wire [3:0]         LANE_UP;
    wire               AURORA_CLK, AURORA_RST;
 
    wire [255:0]       TX_DATA, RX_DATA;
@@ -164,7 +165,7 @@ module kc705_aurora4
        .VALID (TX_VALID),
        .READY (TX_READY) );
    
-   tx_ufc_gen ufcg
+   tx_ufc_gen4 ufcg
      ( .CLK  (AURORA_CLK), .RST(~CH_UP | ~GO),
        .REQ  (UFC_REQ ),
        .MS   (UFC_MS  ),
