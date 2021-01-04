@@ -120,9 +120,9 @@ module kcu1500_kyokko #
                .RXSLIP(RXSLIP[ch]),
                .RXPATH_RST(RXPATH_RST[ch]),
 
-               .TX_WFR_CB_I  (TX_WFR_CB [SyncSource),
+               .TX_WFR_CB_I  (TX_WFR_CB [SyncSource]),
                .TX_WFR_CB_O  (TX_WFR_CB [ch]),
-               .TX_SEND_CC_I (TX_SEND_CC[SyncSource),
+               .TX_SEND_CC_I (TX_SEND_CC[SyncSource]),
                .TX_SEND_CC_O (TX_SEND_CC[ch]),
 
                // Data channels

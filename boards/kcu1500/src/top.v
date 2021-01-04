@@ -134,28 +134,41 @@ module kcu1500 #
    wire [NumCh-1:0] GO;
 
    // Frame generators
-   for (ch=0; ch<NumCh; ch=ch+1) begin : txgen_gen
-      tx_frame_gen txg
-           ( .CLK   (AURORA_CLK[ch]), .RST(~CH_UP[ch] | ~GO[ch]),
-             .DATA  (S_AXI_TX_TDATA [ch]),
-             .LAST  (S_AXI_TX_TLAST [ch]), 
-             .VALID (S_AXI_TX_TVALID[ch]),
-             .READY (S_AXI_TX_TREADY[ch]) );
-      
-      tx_ufc_gen ufcg
-        ( .CLK  (AURORA_CLK[ch]), .RST(~CH_UP[ch] | ~GO[ch]),
-          .REQ  (UFC_TX_REQ [ch]),
-          .MS   (UFC_TX_MS  [ch]),
-          .DATA (S_AXI_UFC_TX_TDATA [ch]),
-          .VALID(S_AXI_UFC_TX_TVALID[ch]),
-          .READY(S_AXI_UFC_TX_TREADY[ch]) );
-      
-      tx_nfc_gen nfcgen
-        ( .CLK  (AURORA_CLK[ch]), .RST(~CH_UP[ch] | ~GO[ch]),
-          .DATA (S_AXI_NFC_TDATA [ch]), 
-          .READY(S_AXI_NFC_TREADY[ch]), 
-          .VALID(S_AXI_NFC_TVALID[ch]) );
-   end // txgen_gen
+   generate
+      if (BondingEnable==0) begin : nobond_tp_gen
+         for (ch=0; ch<NumCh; ch=ch+1) begin : txgen_gen
+            tx_frame_gen txg
+                 ( .CLK   (AURORA_CLK[ch]), .RST(~CH_UP[ch] | ~GO[ch]),
+                   .DATA  (S_AXI_TX_TDATA [ch]),
+                   .LAST  (S_AXI_TX_TLAST [ch]), 
+                   .VALID (S_AXI_TX_TVALID[ch]),
+                   .READY (S_AXI_TX_TREADY[ch]) );
+            
+            tx_ufc_gen ufcg
+              ( .CLK  (AURORA_CLK[ch]), .RST(~CH_UP[ch] | ~GO[ch]),
+                .REQ  (UFC_TX_REQ [ch]),
+                .MS   (UFC_TX_MS  [ch]),
+                .DATA (S_AXI_UFC_TX_TDATA [ch]),
+                .VALID(S_AXI_UFC_TX_TVALID[ch]),
+                .READY(S_AXI_UFC_TX_TREADY[ch]) );
+            
+            tx_nfc_gen nfcgen
+              ( .CLK  (AURORA_CLK[ch]), .RST(~CH_UP[ch] | ~GO[ch]),
+                .DATA (S_AXI_NFC_TDATA [ch]), 
+                .READY(S_AXI_NFC_TREADY[ch]), 
+                .VALID(S_AXI_NFC_TVALID[ch]) );
+         end // txgen_gen
+      end // block: framegen_gen
+      else begin : bond_tp_gen
+         for (ch=0; ch<NumCh; ch=ch+1) begin : txgen_gen
+            assign UFC_TX_REQ[ch] = 0;
+            assign S_AXI_TX_TVALID[ch] = 0;
+            assign S_AXI_TX_TLAST[ch] = 0;
+            assign S_AXI_UFC_TX_TVALID[ch] = 0;
+            assign S_AXI_NFC_TVALID[ch] = 0;
+         end
+      end
+   endgenerate
    
 `ifndef NO_JTAG
    vio_0 vio

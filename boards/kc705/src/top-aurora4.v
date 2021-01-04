@@ -58,10 +58,10 @@ module kc705_aurora4
    wire               CH_UP, LANE_UP;
    wire               AURORA_CLK, AURORA_RST;
 
-   wire [63:0]        TX_DATA, RX_DATA;
+   wire [255:0]       TX_DATA, RX_DATA;
    wire               TX_READY, TX_VALID, TX_LAST,  RX_LAST, RX_VALID;   
 
-   wire [63:0]        UFC_TX_DATA, UFC_RX_DATA;
+   wire [255:0]        UFC_TX_DATA, UFC_RX_DATA;
    wire               UFC_REQ, UFC_TX_VALID, UFC_TX_READY;
    wire               UFC_RX_VALID, UFC_RX_LAST;
    wire [7:0]         UFC_MS;
@@ -88,7 +88,7 @@ module kc705_aurora4
 
        // TX/RX AXIS ports
        .s_axi_tx_tdata      (TX_DATA),             // I [0:63]
-       .s_axi_tx_tkeep      (8'hff),               // I [0: 7]
+       .s_axi_tx_tkeep      (32'hffff_ffff),       // I [0: 7]
        .s_axi_tx_tlast      (TX_LAST),             // I
        .s_axi_tx_tvalid     (TX_VALID),            // I
        .s_axi_tx_tready     (TX_READY),            // O

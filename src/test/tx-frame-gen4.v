@@ -19,7 +19,7 @@ module tx_frame_gen4
     output reg          LAST, VALID,
     input wire          READY );
 
-   reg [55:0]           CNT;
+   reg [47:0]           CNT;
 
    assign DATA = VALID ? {16'h1111, CNT, 16'h2222, CNT, 
                           16'h3333, CNT, 16'h4444, CNT} : 0;

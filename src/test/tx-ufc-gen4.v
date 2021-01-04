@@ -10,24 +10,24 @@
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 //
 // Modules in this file:
-//    tx_ufc_gen: UFC test frame generator
+//    tx_ufc_gen4: UFC test frame generator (256bit version)
 // ----------------------------------------------------------------------
 
 module tx_ufc_gen
   ( input wire CLK, RST,
     input wire 	       READY,
-    output wire [63:0] DATA,
+    output wire [255:0] DATA,
     output reg 	       REQ, VALID,
     output reg [7:0]   MS );
 
    reg [63:0] 	       CNT_REQ, CNT_DATA;
    reg [3:0] 	       CNT_SEND;
 
-   assign DATA = (VALID & READY) ? CNT_DATA : 0;
+   assign DATA = (VALID & READY) ? {4{CNT_DATA}} : 0;
    
    always @ (posedge CLK) begin
       if (RST) begin
-	 CNT_REQ <= 0;
+	 CNT_REQ <= 64'h0;
 	 CNT_DATA <= 64'h0102_0304_0506_0000;
 	 REQ <= 0;
 	 VALID <= 0;
