@@ -15,7 +15,7 @@
 
 `default_nettype none
 
-module kyokko
+module kyokko # ( parameter BondingEnable = 0, BondingCh = 1 )
   ( input wire         CLK,   CLK100,
     input wire         RXCLK, TXCLK,
     input wire         RXRST, TXRST,
@@ -36,9 +36,11 @@ module kyokko
     
     // CB signal
     output wire        RXCB,
-    input wire 	       FIFO_RE,
+    input wire         FIFO_RE,
     output wire        RX_STAT_TX_CB,
-    input wire 	       CB_FINISH,
+    input wire         CB_FINISH,
+    output wire        UFC_MODE_O,
+    input wire         UFC_MODE_I,
     
     // AXIS data
     input wire         S_AXIS_TVALID, S_AXIS_TLAST,
@@ -65,13 +67,11 @@ module kyokko
     input wire [15:0]  S_AXIS_NFC_TDATA
    );
 
-   parameter BondingEnable = 0;  // Set to 1 to enable
-
    wire [3:0]          RX_STAT;
    wire                RXSLIP_LIMIT;
    wire                NFC_PAUSE;
    
-   kyokko_rx_ctrl # (.BondingEnable(BondingEnable)) rx
+   kyokko_rx_ctrl # (.BondingEnable(BondingEnable), .BondingCh(BondingCh)) rx
      ( .CLK(RXCLK),   .RST(RXRST),
        .TXCLK(TXCLK), .TXRST(TXRST),
        .RXS(RXS), .RXHDRi(RXHDR),
@@ -81,6 +81,8 @@ module kyokko
        .RXSLIP_LIMIT (RXSLIP_LIMIT),
        .RXCB(RXCB), .CB_FINISH(CB_FINISH),
        .NFC_PAUSE    (NFC_PAUSE),
+       .UFC_MODE_O   (UFC_MODE_O),
+       .UFC_MODE_I   (UFC_MODE_I),
        
        .M_AXIS_TVALID(M_AXIS_TVALID),
        .M_AXIS_TLAST (M_AXIS_TLAST ),

@@ -15,17 +15,19 @@
 
 `default_nettype none
 
-module kyokko_rx_ctrl # ( parameter BondingEnable = 0 )
+module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
   (  input wire CLK, RST, TXCLK, TXRST,
      input wire [63:0]  RXS,
      input wire [1:0]   RXHDRi,
-     input wire 	FIFO_RE,
-     input wire 	CB_FINISH,
+     input wire         FIFO_RE,
+     input wire         CB_FINISH,
      output wire [3:0]  RX_STAT,
      output wire        RXSLIP,
      output wire        RXSLIP_LIMIT,
-     output wire 	RXCB,
+     output wire        RXCB,
      output wire        NFC_PAUSE,
+     output wire        UFC_MODE_O,
+     input wire         UFC_MODE_I,
      output wire        M_AXIS_TVALID, M_AXIS_TLAST,
      output wire        M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
      output wire [63:0] M_AXIS_TDATA, M_AXIS_UFC_TDATA );
@@ -79,13 +81,16 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0 )
    wire [63:0]        IDLE_SA = {8'h78, 8'b0001_0000, 48'h0 };
    wire [1:0]         HDR_HDR = 2'b10;
    
-   kyokko_rx_axis rxaxis
+   kyokko_rx_axis # (.BondingEnable(BondingEnable), .BondingCh(BondingCh)) 
+   rxaxis
      ( .CLK (TXCLK),
        .RST (TXRST),
        .RX_READYi (RX_STAT[3]),
        .RXHDR  (RXVALIDt ? RXHDRt  : HDR_HDR),
        .RXDATA (RXVALIDt ? RXDATAt : IDLE_SA),
        .NFC_PAUSE         (NFC_PAUSE),
+       .UFC_MODE_O        (UFC_MODE_O),
+       .UFC_MODE_I        (UFC_MODE_I),
        .M_AXIS_TVALID     (M_AXIS_TVALID), 
        .M_AXIS_TLAST      (M_AXIS_TLAST ),
        .M_AXIS_TDATA      (M_AXIS_TDATA ), 

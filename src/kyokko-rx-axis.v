@@ -15,12 +15,14 @@
 
 `default_nettype none
 
-module kyokko_rx_axis
+module kyokko_rx_axis # ( parameter BondingEnable = 0, BondingCh = 1 )
   ( input wire CLK, RST, // works in TXCLK domain
     input wire         RX_READYi, // in RXCLK domain
     input wire [1:0]   RXHDR,
     input wire [63:0]  RXDATA,
     output reg         NFC_PAUSE,
+    output wire        UFC_MODE_O,
+    input wire         UFC_MODE_I,
     
     output wire        RXSLIP_LIMIT,
     output wire        M_AXIS_TVALID, M_AXIS_TLAST,
@@ -93,7 +95,7 @@ module kyokko_rx_axis
 
            'b10: begin //receive UFC data
 	      if (UFC_MS == 0) UFC_STAT <= 'b01;
-	      else  UFC_MS <= (~RX_IS_IDLE) ? UFC_MS -8 :
+	      else  UFC_MS <= (~RX_IS_IDLE) ? UFC_MS - (8*BondingCh) :
 			      UFC_MS;
            end
          endcase // case (UFC_STAT)
@@ -107,8 +109,12 @@ module kyokko_rx_axis
                  RXDATA[39:32], RXDATA[47:40], RXDATA[55:48], RXDATA[63:56]};
 
    // RX output control: TLAST generator
-   wire        UFC_MODE  = ~RX_IS_IDLE & UFC_STAT[1];
+   assign      UFC_MODE_O  = ~RX_IS_IDLE & UFC_STAT[1];
+   wire        UFC_MODE = ( (BondingEnable==0) ? UFC_MODE_O : 
+                            UFC_MODE_O | UFC_MODE_I );
+
    wire        RX_IS_DATA = ~UFC_MODE  & ~RX_IS_CTRL;
+
 
    reg [63:0]  RXDATA2_R;
    reg         RXDATA2_R_VALID;
@@ -130,7 +136,7 @@ module kyokko_rx_axis
    
    assign M_AXIS_UFC_TDATA =   UFC_MODE ? RXDATA2 : 0;
    assign M_AXIS_UFC_TVALID =  UFC_MODE;
-   assign M_AXIS_UFC_TLAST = ( UFC_MODE & (UFC_MS == 8) );
+   assign M_AXIS_UFC_TLAST = ( UFC_MODE & (UFC_MS == (8*BondingCh)) );
 
 endmodule // kyokko_rx_axis
 

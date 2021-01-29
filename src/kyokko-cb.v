@@ -61,6 +61,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
    wire [BondingCh-1:0] 	    RXCB, FIFO_RE;
    wire [3:0] 			    CB_STAT;
    wire [BondingCh-1:0] 	    RX_STAT_TX_CB;
+   wire [BondingCh-1:0]             UFC_MODE;
 
 
    // Data channel
@@ -93,7 +94,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
         begin : kyokko_gen
            defparam ky.tx.init.GenInit = ch!=0 ? 0 : 1;
            
-           kyokko # (.BondingEnable(1)) ky
+           kyokko # (.BondingEnable(1), .BondingCh(BondingCh)) ky
              ( .CLK(),  // still not used
                .CLK100(CLK100),
                .RXCLK(RXCLK[ch]),  .TXCLK(TXCLK[ch]),
@@ -114,6 +115,9 @@ module kyokko_cb # ( parameter BondingCh=4 )
 	       .FIFO_RE(FIFO_RE[ch]),
 	       .RX_STAT_TX_CB(RX_STAT_TX_CB[ch]),
 	       .CB_FINISH(CB_STAT[3]),
+
+               .UFC_MODE_O(UFC_MODE[ch]),
+               .UFC_MODE_I(|UFC_MODE),
 
                // Data channel
                .M_AXIS_TVALID (M_AXIS_TVALIDi[ch]),
