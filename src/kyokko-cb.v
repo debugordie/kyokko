@@ -57,6 +57,11 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
    wire [BondingCh-1:0]             LANE_UP, TX_WFR_CB, TX_SEND_CC;
 
+   // Channel Bonding signals
+   wire [BondingCh-1:0] 	    RXCB, FIFO_RE;
+   wire [3:0] 			    CB_STAT;
+   wire [BondingCh-1:0] 	    RX_STAT_TX_CB;
+
 
    // Data channel
    wire [BondingCh-1:0]             M_AXIS_TVALIDi,  M_AXIS_TLASTi,
@@ -105,6 +110,11 @@ module kyokko_cb # ( parameter BondingCh=4 )
                .TX_SEND_CC_I (TX_SEND_CC[0]),
                .TX_SEND_CC_O (TX_SEND_CC[ch]),
 
+	       .RXCB(RXCB[ch]),
+	       .FIFO_RE(FIFO_RE[ch]),
+	       .RX_STAT_TX_CB(RX_STAT_TX_CB[ch]),
+	       .CB_FINISH(CB_STAT[3]),
+
                // Data channel
                .M_AXIS_TVALID (M_AXIS_TVALIDi[ch]),
                .M_AXIS_TLAST  (M_AXIS_TLASTi [ch]),
@@ -137,6 +147,17 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
    assign CH_UP = &LANE_UP;
    
+   wire  CB_RDY = (&RX_STAT_TX_CB[3:0] == 1);
+   wire  CB_RST = ~CB_RDY;
+
+   kyokko_rx_cb cb_init
+     ( .CLK(TXCLK[0]),
+       .RST(CB_RST),
+       .GO(CB_RDY),
+       .RXCB(RXCB[3:0]),
+       .CB_STAT(CB_STAT),
+       .FIFO_RE(FIFO_RE[3:0])
+       );
 
 endmodule
 

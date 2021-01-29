@@ -25,6 +25,7 @@ module kyokko_tx_ctrl
 
     input wire         TX_WFR_CB_I, TX_SEND_CC_I,
     output wire        TX_WFR_CB_O, TX_SEND_CC_O,
+    output wire        RX_STAT_TX_CB,
     
     input wire         UFC_REQ,
     input wire [7:0]   UFC_MS,
@@ -49,6 +50,7 @@ module kyokko_tx_ctrl
    wire [63:0]       TXDATA;
 
    wire [3:0]        RX_STAT_TX; // RX_STAT in TX clock domain
+   assign            RX_STAT_TX_CB = |RX_STAT_TX[3:1];
    wire [63:0]       TXDATA_INIT;
 
    kyokko_tx_init # (.BondingEnable(BondingEnable)) init

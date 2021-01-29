@@ -19,6 +19,7 @@ module kyokko_rx_init
   ( input wire CLK, RST,
     input wire [1:0]  RXHDR,
     input wire [63:0] RXDATA,
+    input wire 	      CB_FINISH,
     output reg [3:0]  RX_STAT,
     output wire       RXSLIP,
     output reg        RXSLIP_LIMIT );
@@ -87,7 +88,7 @@ module kyokko_rx_init
            end
 
            'b0010: begin // LOCKED, Channel bonding? (send CB/NR+SA)
-              if (~(RX_IS_CC | RX_IS_CB | RX_IS_NR) | W4R_CNT ==400 ) begin
+              if ((~(RX_IS_CC | RX_IS_CB | RX_IS_NR) | W4R_CNT ==400) & CB_FINISH) begin
                  RX_STAT <= 'b0100;
                  W4R_CNT <= 0;
                  W4R_RXCNT <= 0;
@@ -95,6 +96,7 @@ module kyokko_rx_init
                 RX_STAT <= RX_STAT;
                  if (RX_IS_CB | RX_IS_CC) W4R_CNT <= W4R_CNT + 1;
               end end 
+	   
            'b0100: begin // Wait for remote: transmit & receive at least 64 idles (send CB/SA)
               if (~RX_IS_IDLE) RX_STAT <= 'b1000;
               else begin

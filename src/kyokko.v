@@ -34,6 +34,12 @@ module kyokko
     input wire         TX_WFR_CB_I, TX_SEND_CC_I,
     output wire        TX_WFR_CB_O, TX_SEND_CC_O,
     
+    // CB signal
+    output wire        RXCB,
+    input wire 	       FIFO_RE,
+    output wire        RX_STAT_TX_CB,
+    input wire 	       CB_FINISH,
+    
     // AXIS data
     input wire         S_AXIS_TVALID, S_AXIS_TLAST,
     input wire [63:0]  S_AXIS_TDATA,
@@ -65,13 +71,15 @@ module kyokko
    wire                RXSLIP_LIMIT;
    wire                NFC_PAUSE;
    
-   kyokko_rx_ctrl rx
+   kyokko_rx_ctrl # (.BondingEnable(BondingEnable)) rx
      ( .CLK(RXCLK),   .RST(RXRST),
        .TXCLK(TXCLK), .TXRST(TXRST),
        .RXS(RXS), .RXHDRi(RXHDR),
+       .FIFO_RE(FIFO_RE),
        .RX_STAT(RX_STAT),
        .RXSLIP (RXSLIP),
        .RXSLIP_LIMIT (RXSLIP_LIMIT),
+       .RXCB(RXCB), .CB_FINISH(CB_FINISH),
        .NFC_PAUSE    (NFC_PAUSE),
        
        .M_AXIS_TVALID(M_AXIS_TVALID),
@@ -99,6 +107,7 @@ module kyokko
        .TX_WFR_CB_O (TX_WFR_CB_O),
        .TX_SEND_CC_I(TX_SEND_CC_I),
        .TX_SEND_CC_O(TX_SEND_CC_O),
+       .RX_STAT_TX_CB(RX_STAT_TX_CB),
        
        // UFC Rx
        .NFC_PAUSE(NFC_PAUSE),

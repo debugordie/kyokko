@@ -161,9 +161,16 @@ module kcu1500 #
       end // block: framegen_gen
       else begin : bond_tp_gen
          for (ch=0; ch<NumChB; ch=ch+1) begin : txgen_gen
+	    tx_frame_gen4 txg4
+                 ( .CLK   (AURORA_CLK[ch]), .RST(~CH_UP[ch] | ~GO[ch]),
+                   .DATA  (S_AXI_TX_TDATA [ch]),
+                   .LAST  (S_AXI_TX_TLAST [ch]), 
+                   .VALID (S_AXI_TX_TVALID[ch]),
+                   .READY (S_AXI_TX_TREADY[ch]) );
+	    
             assign UFC_TX_REQ[ch] = 0;
-            assign S_AXI_TX_TVALID[ch] = 0;
-            assign S_AXI_TX_TLAST[ch] = 0;
+//            assign S_AXI_TX_TVALID[ch] = 0;
+//            assign S_AXI_TX_TLAST[ch] = 0;
             assign S_AXI_UFC_TX_TVALID[ch] = 0;
             assign S_AXI_NFC_TVALID[ch] = 0;
          end

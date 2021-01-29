@@ -15,13 +15,16 @@
 
 `default_nettype none
 
-module kyokko_rx_ctrl
+module kyokko_rx_ctrl # ( parameter BondingEnable = 0 )
   (  input wire CLK, RST, TXCLK, TXRST,
      input wire [63:0]  RXS,
      input wire [1:0]   RXHDRi,
+     input wire 	FIFO_RE,
+     input wire 	CB_FINISH,
      output wire [3:0]  RX_STAT,
      output wire        RXSLIP,
      output wire        RXSLIP_LIMIT,
+     output wire 	RXCB,
      output wire        NFC_PAUSE,
      output wire        M_AXIS_TVALID, M_AXIS_TLAST,
      output wire        M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
@@ -41,34 +44,45 @@ module kyokko_rx_ctrl
        .RXHDR   (RXHDR),
        .RXDATA  (RXDATA),
        .RX_STAT (RX_STAT),
-       .RXSLIP  (RXSLIP), .RXSLIP_LIMIT(RXSLIP_LIMIT) );
+       .RXSLIP  (RXSLIP),
+       .RXSLIP_LIMIT(RXSLIP_LIMIT),
+       .CB_FINISH(CB_FINISH) );
    
-   wire               RX_READY       = RX_STAT[3];
-
    wire [1:0]         RXHDRt;
    wire [63:0]        RXDATAt;
    wire               RXVALIDt;
+
+   wire FIFO_WE = (~RX_STAT[0] &
+		   ((RXHDR == 2'b10) &
+		    (RXDATA[63:56] == 8'h78 &
+		     RXDATA[51:0] == 0) &
+		    RXDATA[55]) );
 
    fifo_66x512_async rxfifo
      ( .rst(RST),                 // I
        .wr_clk(CLK),              // I
        .rd_clk(TXCLK),            // I
        .din  ({RXHDR, RXDATA}),   // I [65:0]
-       .wr_en(RX_READY),          // I
-       .rd_en(1'b1),              // I
+       .wr_en(~RX_STAT[0]),       // I
+       .rd_en(FIFO_RE),           // I
        .dout({RXHDRt, RXDATAt}),  // O [65:0]
        .full(),                   // O
        .empty(),                  // O
        .valid(RXVALIDt)           // O
       );
 
+   assign RXCB = ((RXHDRt == 2'b10) &
+		  (RXDATAt[63:56] == 8'h78 &
+		   RXDATAt[51:0] == 0) &
+		  RXDATAt[54] );
+  
    wire [63:0]        IDLE_SA = {8'h78, 8'b0001_0000, 48'h0 };
    wire [1:0]         HDR_HDR = 2'b10;
    
    kyokko_rx_axis rxaxis
      ( .CLK (TXCLK),
        .RST (TXRST),
-       .RX_READYi (RX_READY),
+       .RX_READYi (RX_STAT[3]),
        .RXHDR  (RXVALIDt ? RXHDRt  : HDR_HDR),
        .RXDATA (RXVALIDt ? RXDATAt : IDLE_SA),
        .NFC_PAUSE         (NFC_PAUSE),

@@ -26,7 +26,7 @@ module tx_frame_gen4
 
    always @ (posedge CLK) begin
       if (RST) begin
-         CNT <= 56'h1234_5678_0000;
+         CNT <= 48'h1234_5678_0000;
          VALID <= 0;
          LAST <= 0;
       end else begin
