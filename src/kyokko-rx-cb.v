@@ -1,3 +1,20 @@
+// ----------------------------------------------------------------------
+// "THE BEER-WARE LICENSE" (Revision 42):
+//    <tmr@lut.eee.u-ryukyu.ac.jp> wrote this
+//    file. As long as you retain this notice you can do whatever you
+//    want with this stuff. If we meet some day, and you think this
+//    stuff is worth it, you can buy me a beer in return Akinobu Tomori at 
+//     University of the Ryukyus, Japan.
+// ----------------------------------------------------------------------
+// OpenFC project: an open FPGA accelerated cluster toolkit
+// Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
+//
+// Modules in this file:
+//    kyokko_rx_cb: Kyokko Rx channel-bonding synchronizer
+// ----------------------------------------------------------------------
+
+`default_nettype none
+
 module kyokko_rx_cb
   (input wire CLK, RST, GO,
    input wire [3:0] RXCB,
@@ -67,3 +84,6 @@ module kyokko_rx_cb
    end
    
 endmodule
+
+`default_nettype wire
+  

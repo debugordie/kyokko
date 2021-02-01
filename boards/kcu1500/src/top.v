@@ -167,11 +167,16 @@ module kcu1500 #
                    .LAST  (S_AXI_TX_TLAST [ch]), 
                    .VALID (S_AXI_TX_TVALID[ch]),
                    .READY (S_AXI_TX_TREADY[ch]) );
-	    
-            assign UFC_TX_REQ[ch] = 0;
-//            assign S_AXI_TX_TVALID[ch] = 0;
-//            assign S_AXI_TX_TLAST[ch] = 0;
-            assign S_AXI_UFC_TX_TVALID[ch] = 0;
+
+            tx_ufc_gen4 ufcg4
+              ( .CLK  (AURORA_CLK[ch]), .RST(~CH_UP[ch] | ~GO[ch]),
+                .REQ  (UFC_TX_REQ [ch]),
+                .MS   (UFC_TX_MS  [ch]),
+                .DATA (S_AXI_UFC_TX_TDATA [ch]),
+                .VALID(S_AXI_UFC_TX_TVALID[ch]),
+                .READY(S_AXI_UFC_TX_TREADY[ch]) );
+
+	    // still no NFC
             assign S_AXI_NFC_TVALID[ch] = 0;
          end
       end

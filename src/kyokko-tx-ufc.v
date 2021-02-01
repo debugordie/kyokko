@@ -15,7 +15,7 @@
 
 `default_nettype none
 
-module kyokko_tx_ufc
+module kyokko_tx_ufc # (parameter BondingEnable = 0, BondingCh = 1, ChNo = 0)
   ( input wire CLK,
 
     input wire         UFC_REQ,
@@ -30,6 +30,8 @@ module kyokko_tx_ufc
     output wire [63:0] DATA
     );
 
+   localparam NoUFCHeader = (BondingEnable==1) & (ChNo != BondingCh-1);
+   
    reg [7:0]           MS_R;
    reg [2:0]           STAT;
    
@@ -75,7 +77,10 @@ module kyokko_tx_ufc
    wire [63:0]     S_AXIS_UFC_TDATA_REV;
    byte_reverse8 rev_ufc ( .IN(S_AXIS_UFC_TDATA), .OUT(S_AXIS_UFC_TDATA_REV) );
 
-   assign DATA = ( STAT[1] ? {8'h2D, UFC_MS, 48'h0} : // UFC header
+   wire [63:0] UFC_HEADER =( NoUFCHeader ? {16'h7810, 48'h0} : // Idle
+                             {8'h2D, UFC_MS, 48'h0} ); // UFC header
+   
+   assign DATA = ( STAT[1] ? UFC_HEADER :             // UFC header or Idle
                    MSG_VALID ? S_AXIS_UFC_TDATA_REV : // UFC message
 		   {16'h7810, 48'h0} ); // Idle
 

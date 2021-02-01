@@ -94,7 +94,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
         begin : kyokko_gen
            defparam ky.tx.init.GenInit = ch!=0 ? 0 : 1;
            
-           kyokko # (.BondingEnable(1), .BondingCh(BondingCh)) ky
+           kyokko # (.BondingEnable(1), .BondingCh(BondingCh), .ChNo(ch)) ky
              ( .CLK(),  // still not used
                .CLK100(CLK100),
                .RXCLK(RXCLK[ch]),  .TXCLK(TXCLK[ch]),

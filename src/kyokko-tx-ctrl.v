@@ -15,38 +15,36 @@
 
 `default_nettype none
 
-module kyokko_tx_ctrl
-  ( input wire CLK,
-    input wire         TXRST, RXRST,
-    input wire [3:0]   RX_STAT,
-    output wire [63:0] TXS,
-    output reg [1:0]   TXHDRi,
-    output wire        TX_READY,
+module kyokko_tx_ctrl # (parameter BondingEnable = 0, BondingCh = 1, ChNo = 0)
+   ( input wire CLK,
+     input wire         TXRST, RXRST,
+     input wire [3:0]   RX_STAT,
+     output wire [63:0] TXS,
+     output reg [1:0]   TXHDRi,
+     output wire        TX_READY,
 
-    input wire         TX_WFR_CB_I, TX_SEND_CC_I,
-    output wire        TX_WFR_CB_O, TX_SEND_CC_O,
-    output wire        RX_STAT_TX_CB,
+     input wire         TX_WFR_CB_I, TX_SEND_CC_I,
+     output wire        TX_WFR_CB_O, TX_SEND_CC_O,
+     output wire        RX_STAT_TX_CB,
     
-    input wire         UFC_REQ,
-    input wire [7:0]   UFC_MS,
+     input wire         UFC_REQ,
+     input wire [7:0]   UFC_MS,
 
-    input wire         NFC_PAUSE, 
+     input wire         NFC_PAUSE, 
     
-    input wire         S_AXIS_TVALID, S_AXIS_TLAST,
-    output wire        S_AXIS_TREADY,
-    input wire [63:0]  S_AXIS_TDATA,
+     input wire         S_AXIS_TVALID, S_AXIS_TLAST,
+     output wire        S_AXIS_TREADY,
+     input wire [63:0]  S_AXIS_TDATA,
 
-    input wire         S_AXIS_UFC_TVALID,
-    output wire        S_AXIS_UFC_TREADY,
-    input wire [63:0]  S_AXIS_UFC_TDATA,
+     input wire         S_AXIS_UFC_TVALID,
+     output wire        S_AXIS_UFC_TREADY,
+     input wire [63:0]  S_AXIS_UFC_TDATA,
 
-    input wire         S_AXIS_NFC_TVALID,
-    output wire        S_AXIS_NFC_TREADY,
-    input wire [15:0]  S_AXIS_NFC_TDATA
+     input wire         S_AXIS_NFC_TVALID,
+     output wire        S_AXIS_NFC_TREADY,
+     input wire [15:0]  S_AXIS_NFC_TDATA
    );
-
-   parameter BondingEnable = 0;  // Set to 1 to enable
-
+   
    wire [63:0]       TXDATA;
 
    wire [3:0]        RX_STAT_TX; // RX_STAT in TX clock domain
@@ -105,7 +103,8 @@ module kyokko_tx_ctrl
        .DATA   (TXDATA_NFC) );
    
    wire        TX_SEND_UFCMSG;
-   kyokko_tx_ufc tx_ufc
+   kyokko_tx_ufc # (.BondingEnable(BondingEnable), .BondingCh(BondingCh), 
+                    .ChNo(ChNo) ) tx_ufc
      ( .CLK(CLK),
        .UFC_REQ (UFC_REQ),
        .UFC_MS  (UFC_MS),

@@ -26,9 +26,9 @@ module tb();
       `include "wave-record.vh"
       LINK_UP <= 1;
 
-      #(200*1000)  LINK_UP <= 0;
-      #(    1000)  LINK_UP <= 1;
-      #(200*1000)  $finish;
+      #(80*1000)  LINK_UP <= 0;
+      #(   1000)  LINK_UP <= 1;
+      #(80*1000)  $finish;
    end
 
 endmodule
