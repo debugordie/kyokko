@@ -23,11 +23,13 @@ set PROJDIR ${COREDIR}/iploc
 set DEV xcku115-flvb2104-2-e
 
 set COREs [ list \
+                aurora_qsfp \
                 clk_300_100 \
                 fifo_66x512_async \
                 gth_wo_qpll \
                 gth_w_qpll \
                 ila_0 \
+                ila4_0 \
                 vio_0 \
                ]
 
