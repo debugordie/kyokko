@@ -27,6 +27,7 @@ set COREs [ list \
                 aurora_sfp4 \
                 clk_200_100_50 \
                 ila_0 \
+                ila4_0 \
                 vio_0 \
   ]
 

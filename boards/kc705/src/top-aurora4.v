@@ -10,7 +10,7 @@
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 //
 // Modules in this file:
-//    kc705_aurora4: Top-level module for Xilinx KC705 board, Aurora on 4x SFP
+//    kc705_aurora4: Top-level module for Xilinx KC705 board, Aurora on 4x FMC
 // ----------------------------------------------------------------------
 
 `default_nettype none
@@ -20,8 +20,8 @@ module kc705_aurora4
     input wire        CLK200P, CLK200N,
     input wire        CLK156P, CLK156N,
   
-    output wire [3:0] SFP_TXP, SFP_TXN,
-    input wire [3:0]  SFP_RXP, SFP_RXN,
+    output wire [3:0] FMC_TXP, FMC_TXN,
+    input wire [3:0]  FMC_RXP, FMC_RXN,
 
     output wire [7:0] LED
     );
@@ -72,8 +72,8 @@ module kc705_aurora4
 
    aurora_sfp4 au_sfp4
      ( // MGT Ports
-       .rxp(SFP_RXP),  .rxn(SFP_RXN),
-       .txp(SFP_TXP),  .txn(SFP_TXN),
+       .rxp(FMC_RXP),  .rxn(FMC_RXN),
+       .txp(FMC_TXP),  .txn(FMC_TXN),
 
        .reset_pb           (RESET_PB),             // I
        .pma_init           (PMA_INIT),             // I
@@ -185,12 +185,17 @@ module kc705_aurora4
       .probe_in0 (CH_UP),
       .probe_out0(GO) );
 
-   ila_0 ila
+   ila4_0 ila
      ( .clk(AURORA_CLK),
-       .probe0({ TX_DATA , TX_VALID,
-                 TX_READY, TX_LAST ,
-                 RX_DATA ,
-                 RX_VALID, RX_LAST }) );
+       .probe0({ TX_DATA, TX_VALID, TX_READY, TX_LAST ,
+                 RX_DATA, RX_VALID, RX_LAST }) );
+
+   ila4_0 ila_ufc
+     ( .clk(AURORA_CLK),
+       .probe0({ UFC_REQ, UFC_MS, 
+                 UFC_TX_DATA, UFC_TX_VALID, UFC_TX_READY,
+                 UFC_RX_DATA, UFC_RX_VALID, UFC_RX_LAST }) );
+
 `else
    assign GO = 1;
 `endif

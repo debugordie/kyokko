@@ -30,6 +30,26 @@ set_property PACKAGE_PIN G4 [get_ports SFP_RXP]
 set_property PACKAGE_PIN Y20 [get_ports SFP_TX_DISABLE]
 set_property IOSTANDARD LVCMOS25 [get_ports SFP_TX_DISABLE]
 
+# FMC transceivers 
+
+set_property PACKAGE_PIN D2 [get_ports FMC_TXP[0]]
+set_property PACKAGE_PIN E4 [get_ports FMC_RXP[0]]
+set_property PACKAGE_PIN D1 [get_ports FMC_TXN[0]]
+set_property PACKAGE_PIN E3 [get_ports FMC_RXN[0]]
+set_property PACKAGE_PIN C4 [get_ports FMC_TXP[1]]
+set_property PACKAGE_PIN D6 [get_ports FMC_RXP[1]]
+set_property PACKAGE_PIN C3 [get_ports FMC_TXN[1]]
+set_property PACKAGE_PIN D5 [get_ports FMC_RXN[1]]
+
+set_property PACKAGE_PIN B2 [get_ports FMC_TXP[2]]
+set_property PACKAGE_PIN B6 [get_ports FMC_RXP[2]]
+set_property PACKAGE_PIN B1 [get_ports FMC_TXN[2]]
+set_property PACKAGE_PIN B5 [get_ports FMC_RXN[2]]
+set_property PACKAGE_PIN A4 [get_ports FMC_TXP[3]]
+set_property PACKAGE_PIN A8 [get_ports FMC_RXP[3]]
+set_property PACKAGE_PIN A3 [get_ports FMC_TXN[3]]
+set_property PACKAGE_PIN A7 [get_ports FMC_RXN[3]]
+
 # 125MHz LVDS
 set_property PACKAGE_PIN G8 [get_ports REFCLKP]
 set_property PACKAGE_PIN G7 [get_ports REFCLKN]
