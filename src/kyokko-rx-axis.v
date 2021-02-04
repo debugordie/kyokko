@@ -24,7 +24,6 @@ module kyokko_rx_axis # ( parameter BondingEnable = 0, BondingCh = 1 )
     output wire        UFC_MODE_O,
     input wire         UFC_MODE_I,
     
-    output wire        RXSLIP_LIMIT,
     output wire        M_AXIS_TVALID, M_AXIS_TLAST,
     output wire        M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
     output wire [63:0] M_AXIS_TDATA, M_AXIS_UFC_TDATA );

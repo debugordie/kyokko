@@ -151,13 +151,11 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
    assign CH_UP = &LANE_UP;
    
-   wire  CB_RDY = (&RX_STAT_TX_CB[3:0] == 1);
-   wire  CB_RST = ~CB_RDY;
+   wire  CB_RST = ~(&RX_STAT_TX_CB[3:0]);
 
    kyokko_rx_cb cb_init
      ( .CLK(TXCLK[0]),
        .RST(CB_RST),
-       .GO(CB_RDY),
        .RXCB(RXCB[3:0]),
        .CB_STAT(CB_STAT),
        .FIFO_RE(FIFO_RE[3:0])
