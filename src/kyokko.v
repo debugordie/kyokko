@@ -25,6 +25,7 @@ module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
     input wire [1:0]   RXHDR,
     input wire [63:0]  RXS,
     output wire        RXSLIP, RXPATH_RST,
+    output wire        RX_ERR,
 
     // Tx signals
     output wire [1:0]  TXHDR,
@@ -77,6 +78,7 @@ module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
        .RXS(RXS), .RXHDRi(RXHDR),
        .FIFO_RE(FIFO_RE),
        .RX_STAT(RX_STAT),
+       .RX_ERR (RX_ERR),
        .RXSLIP (RXSLIP),
        .RXSLIP_LIMIT (RXSLIP_LIMIT),
        .RXCB(RXCB), .CB_FINISH(CB_FINISH),

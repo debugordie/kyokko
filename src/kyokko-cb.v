@@ -55,8 +55,9 @@ module kyokko_cb # ( parameter BondingCh=4 )
      input wire [15:0]              S_AXIS_NFC_TDATA
      );
 
-   wire [BondingCh-1:0]             LANE_UP, TX_WFR_CB, TX_SEND_CC;
+   wire [BondingCh-1:0]             LANE_UP, TX_WFR_CB, TX_SEND_CC, RX_ERR;
 
+   
    // Channel Bonding signals
    wire [BondingCh-1:0] 	    RXCB, FIFO_RE;
    wire [3:0] 			    CB_STAT;
@@ -87,24 +88,29 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
    assign S_AXIS_UFC_TVALIDi = { BondingCh{S_AXIS_UFC_TVALID} };
    assign S_AXIS_UFC_TREADY  = &S_AXIS_UFC_TREADYi;
-   
+
+   // Rx reset on Rx error while link is UP
+   wire RX_ERR_ANY = |RX_ERR;
+
+   // Kyokko lane instances
    genvar                           ch;
    generate
       for (ch=0; ch<BondingCh; ch=ch+1)
         begin : kyokko_gen
-           defparam ky.tx.init.GenInit = ch!=0 ? 0 : 1;
+           defparam ky.tx.init.GenInit = (ch==0) ? 1 : 0;
            
            kyokko # (.BondingEnable(1), .BondingCh(BondingCh), .ChNo(ch)) ky
              ( .CLK(),  // still not used
                .CLK100(CLK100),
-               .RXCLK(RXCLK[ch]),  .TXCLK(TXCLK[ch]),
-               .RXRST(RXRST[ch]),  .TXRST(TXRST[ch]),
+               .RXCLK(RXCLK[ch]),               .TXCLK(TXCLK[ch]),
+               .RXRST(RXRST[ch] | RX_ERR_ANY),  .TXRST(TXRST[ch]),
                .CH_UP(LANE_UP   [ch]),
 
                .RXHDR(RXHDR[ch*2+1 : ch*2]),   .RXS(RXS[ch*64+63 : ch*64]),
                .TXHDR(TXHDR[ch*2+1 : ch*2]),   .TXS(TXS[ch*64+63 : ch*64]),
                .RXSLIP    (RXSLIP    [ch]),
                .RXPATH_RST(RXPATH_RST[ch]),
+               .RX_ERR    (RX_ERR    [ch]),
 
                .TX_WFR_CB_I  (TX_WFR_CB [0]),
                .TX_WFR_CB_O  (TX_WFR_CB [ch]),
@@ -150,7 +156,9 @@ module kyokko_cb # ( parameter BondingCh=4 )
    endgenerate
 
    assign CH_UP = &LANE_UP;
+
    
+   // Channel bonding controller
    wire  CB_RST = ~(&RX_STAT_TX_CB[3:0]);
 
    kyokko_rx_cb cb_init

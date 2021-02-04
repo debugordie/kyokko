@@ -19,10 +19,11 @@ module kyokko_rx_init
   ( input wire CLK, RST,
     input wire [1:0]  RXHDR,
     input wire [63:0] RXDATA,
-    input wire 	      CB_FINISH,
+    input wire        CB_FINISH,
     output reg [3:0]  RX_STAT,
     output wire       RXSLIP,
-    output reg        RXSLIP_LIMIT );
+    output reg        RXSLIP_LIMIT,
+    output wire       LINK_ERR_O);
 
    wire               RX_STAT_NOLOCK = RX_STAT[0];
    wire               RX_LOCKED      = RX_STAT[1];
@@ -60,7 +61,8 @@ module kyokko_rx_init
    wire               RX_IS_NR = RX_IS_IDLE & RXDATA[53]; // Not ready
    wire               RX_IS_SA = RX_IS_IDLE & RXDATA[52]; // Strict align
    wire               RX_IS_SEPARATOR = RX_IS_CTRL & (RXDATA[63:56] == 8'h1e);
-   
+
+   // Main Rx FSM
    always @ (posedge CLK) begin
       if (RST) begin // RST driven Transceiver Rx ready
          RX_STAT <= 1;
@@ -88,14 +90,22 @@ module kyokko_rx_init
            end
 
            'b0010: begin // LOCKED, Channel bonding? (send CB/NR+SA)
-              if ((~(RX_IS_CC | RX_IS_CB | RX_IS_NR) | W4R_CNT ==400) & CB_FINISH) begin
-                 RX_STAT <= 'b0100;
-                 W4R_CNT <= 0;
-                 W4R_RXCNT <= 0;
+              if (RXHDR_ERR) begin
+                 RX_STAT <= 'b0001;
+                 RXSLIP_CNT <= 0;
+                 RXSLIP_TIMER <= 0;
+                 RXSLIP_LIMIT <= 0;
               end else begin
-                RX_STAT <= RX_STAT;
-                 if (RX_IS_CB | RX_IS_CC) W4R_CNT <= W4R_CNT + 1;
-              end end 
+                 if ((~(RX_IS_CC | RX_IS_CB | RX_IS_NR) | W4R_CNT ==400) & CB_FINISH) begin
+                    RX_STAT <= 'b0100;
+                    W4R_CNT <= 0;
+                    W4R_RXCNT <= 0;
+                 end else begin
+                    RX_STAT <= RX_STAT;
+                    if (RX_IS_CB | RX_IS_CC) W4R_CNT <= W4R_CNT + 1;
+                 end
+              end
+           end 
 	   
            'b0100: begin // Wait for remote: transmit & receive at least 64 idles (send CB/SA)
               if (~RX_IS_IDLE) RX_STAT <= 'b1000;
@@ -122,7 +132,23 @@ module kyokko_rx_init
               RX_STAT <= 'b0001;  end
          endcase
       end
+   end // always @ (posedge CLK)
+
+   // Link error notifier: asserts for 15clk
+   
+   wire LINK_ERR = RX_STAT[3] & (RXHDR_ERR | RX_IS_NR);
+   reg [3:0] LINK_ERR_TIMER;
+
+   always @ (posedge CLK) begin
+      if (RST) begin
+         LINK_ERR_TIMER <= 0;
+      end else begin
+         if (LINK_ERR) LINK_ERR_TIMER <= 1;
+         else LINK_ERR_TIMER <= (LINK_ERR_TIMER==0) ? 0 : LINK_ERR_TIMER+1;
+      end
    end
+
+   assign LINK_ERR_O = (LINK_ERR_TIMER != 0);
 
 endmodule // kyokko_rx_init
 

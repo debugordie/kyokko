@@ -22,6 +22,7 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
      input wire         FIFO_RE,
      input wire         CB_FINISH,
      output wire [3:0]  RX_STAT,
+     output wire        RX_ERR, 
      output wire        RXSLIP,
      output wire        RXSLIP_LIMIT,
      output wire        RXCB,
@@ -45,10 +46,12 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
      ( .CLK(CLK),  .RST(RST),
        .RXHDR   (RXHDR),
        .RXDATA  (RXDATA),
+       .CB_FINISH(CB_FINISH),
        .RX_STAT (RX_STAT),
        .RXSLIP  (RXSLIP),
        .RXSLIP_LIMIT(RXSLIP_LIMIT),
-       .CB_FINISH(CB_FINISH) );
+       .LINK_ERR_O  (RX_ERR)
+        );
    
    wire [1:0]         RXHDRt;
    wire [63:0]        RXDATAt;
