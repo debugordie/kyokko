@@ -52,8 +52,14 @@ module tb_kc705_aurora
      ( .RST(RST),
        .CLK200P(CLK200), .CLK200N (~CLK200),
        .CLK156P(CLKREF), .CLK156N(~CLKREF),
+`ifdef CHBOND_4CH
+       .FMC_RXP(SFP_RXP), .FMC_RXN(SFP_RXN),
+       .FMC_TXP(SFP_TXP), .FMC_TXN(SFP_TXN)
+`else 
        .SFP_RXP(SFP_RXP), .SFP_RXN(SFP_RXN),
-       .SFP_TXP(SFP_TXP), .SFP_TXN(SFP_TXN) );
+       .SFP_TXP(SFP_TXP), .SFP_TXN(SFP_TXN)
+`endif
+       );
 
 `ifndef NO_LOOPBACK
    initial begin

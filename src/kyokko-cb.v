@@ -159,7 +159,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
    
    // Channel bonding controller
-   wire  CB_RST = ~(&RX_STAT_TX_CB[3:0]);
+   wire  CB_RST = ~(|RX_STAT_TX_CB[3:0]);
 
    kyokko_rx_cb cb_init
      ( .CLK(TXCLK[0]),

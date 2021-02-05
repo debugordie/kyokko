@@ -188,17 +188,78 @@ module kcu1500 #
         .probe_in0 (CH_UP),
         .probe_out0(GO) );
 
-   for (ch=0; ch<NumCh; ch=ch+1) begin : ila_gen
-      ila_0 ila
-           ( .clk(AURORA_CLK[ch]),
-             .probe0({S_AXI_TX_TDATA [ch], S_AXI_TX_TVALID[ch],
-                      S_AXI_TX_TREADY[ch], S_AXI_TX_TLAST [ch],
-                      M_AXI_RX_TDATA [ch], 
-                      M_AXI_RX_TVALID[ch], M_AXI_RX_TLAST [ch]}) );
-   end // ila_gen
+   generate
+      for (ch=0; ch<NumChB; ch=ch+1) begin : ila_gen
+         if (BondingEnable==0) begin : nobond_ila_gen
+            ila_0 ila
+              ( .clk(AURORA_CLK[ch]),
+                .probe0({S_AXI_TX_TDATA [ch], S_AXI_TX_TVALID[ch],
+                         S_AXI_TX_TREADY[ch], S_AXI_TX_TLAST [ch],
+                         M_AXI_RX_TDATA [ch], 
+                         M_AXI_RX_TVALID[ch], M_AXI_RX_TLAST [ch]}) );
+         end else begin : bond_ila_gen
+            ila4_0 ila
+              ( .clk(AURORA_CLK[ch]),
+                .probe0({S_AXI_TX_TDATA [ch], S_AXI_TX_TVALID[ch],
+                         S_AXI_TX_TREADY[ch], S_AXI_TX_TLAST [ch],
+                         M_AXI_RX_TDATA [ch], 
+                         M_AXI_RX_TVALID[ch], M_AXI_RX_TLAST [ch]}) );
+
+            ila4_0 ila_ufc
+              ( .clk(AURORA_CLK[ch]),
+                .probe0({S_AXI_UFC_TX_TDATA [ch], S_AXI_UFC_TX_TVALID[ch],
+                         S_AXI_UFC_TX_TREADY[ch], 
+                         M_AXI_UFC_RX_TDATA [ch], 
+                         M_AXI_UFC_RX_TVALID[ch], M_AXI_UFC_RX_TLAST [ch]}) );
+         end // block: bond_ila_gen
+      end // ila_gen
+
+   endgenerate
+
+   ila4_0 ila
+     ( .clk(AURORA_CLK[0]),
+       .probe0
+       ({ ky.chbond_gen.kyokko_cb_gen[0].kycb.cb_init.RXCB,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.cb_init.CB_STAT,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.cb_init.FIFO_RE,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.CB_RST,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.RX_ERR_ANY,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.tx.RX_STAT_TX,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.tx.RX_STAT_TX,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.tx.RX_STAT_TX,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.tx.RX_STAT_TX,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXDATAt, //263
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXDATAt, //199
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXDATAt, //135
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXDATAt, // 71
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXHDRt, // 7:6
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXHDRt, // 5:4
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXHDRt, // 3:2
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXHDRt, // 1:0
+/* -----\/----- EXCLUDED -----\/-----
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[0].ky.rx.RXDATAt[63:48],
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[1].ky.rx.RXDATAt[63:48],
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.rx.RXDATAt[63:48],
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[3].ky.rx.RXDATAt[63:48],
+ -----/\----- EXCLUDED -----/\----- */
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[0].ky.tx.TXDATA[63:48],
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[1].ky.tx.TXDATA[63:48],
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.tx.TXDATA[63:48],
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[3].ky.tx.TXDATA[63:48],
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[0].ky.tx.RX_STAT_TX,
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[1].ky.tx.RX_STAT_TX,
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.tx.RX_STAT_TX,
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[3].ky.tx.RX_STAT_TX,
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[0].ky.tx.TXHDR, // 7:6
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[1].ky.tx.TXHDR, // 5:4
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.tx.TXHDR, // 3:2
+          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[3].ky.tx.TXHDR // 1:0
+          }) );
+
 `else
    assign GO = {NumCh{1'b1}};
 `endif
+
    
 endmodule // kcu1500
 
