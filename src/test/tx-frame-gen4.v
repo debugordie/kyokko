@@ -26,11 +26,11 @@ module tx_frame_gen4
 
    always @ (posedge CLK) begin
       if (RST) begin
-         CNT <= 48'h1234_5678_0000;
+         CNT <= 48'hdead_beef_0000;
          VALID <= 0;
          LAST <= 0;
       end else begin
-         if (READY & ~&CNT) CNT <= CNT+1;
+         if (READY & ~&CNT[15:0]) CNT <= CNT+1;
 
          case (CNT[15:0])
            'h0ff: begin VALID <= 1; LAST <= 1; end // 100

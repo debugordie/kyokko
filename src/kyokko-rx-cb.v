@@ -1,10 +1,10 @@
 // ----------------------------------------------------------------------
 // "THE BEER-WARE LICENSE" (Revision 42):
-//    <tmr@lut.eee.u-ryukyu.ac.jp> wrote this
+//    <yasu@prosou.nu> and <tmr@lut.eee.u-ryukyu.ac.jp> wrote this
 //    file. As long as you retain this notice you can do whatever you
 //    want with this stuff. If we meet some day, and you think this
-//    stuff is worth it, you can buy me a beer in return Akinobu Tomori at 
-//     University of the Ryukyus, Japan.
+//    stuff is worth it, you can buy me a beer in return Yasunori
+//    Osana and Akinobu Tomori at University of the Ryukyus, Japan.
 // ----------------------------------------------------------------------
 // OpenFC project: an open FPGA accelerated cluster toolkit
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
@@ -15,16 +15,18 @@
 
 `default_nettype none
 
-module kyokko_rx_cb
-  (input wire CLK, RST,
-   input wire [3:0] RXCB,
-   output reg [3:0] CB_STAT,
-   output reg [3:0] FIFO_RE );
+module kyokko_rx_cb # ( parameter BondingCh = 4 )
+   ( input wire CLK, RST,
+     input wire [BondingCh-1:0] RX_IS_CB,
+     output reg [BondingCh-1:0] CB_STAT,
+     output reg [BondingCh-1:0] FIFO_RE,
+     output wire                TIMEOUT);
 
    parameter CB_Keep = 3;
    parameter CB_Clear_cnt = 4;
+   parameter CB_Limit = 400;
 
-   reg [3:0] 	    CB;
+   reg [BondingCh-1:0] 	    CB;
    reg [4:0] 	    CNT;
    reg [2:0] 	    CB_Clear;
 
@@ -38,7 +40,7 @@ module kyokko_rx_cb
 	   'b0001: begin
 	      CNT <= 0;
 	      CB_STAT <= (CB_Clear == CB_Clear_cnt) ? 'b0100:
-			 ( RXCB ? 'b0010: 'b0001 );
+			 ( RX_IS_CB ? 'b0010: 'b0001 );
 	   end
            
 	   'b0010: begin
@@ -57,42 +59,93 @@ module kyokko_rx_cb
            
 	   'b1000: begin // Ready
               // non-synchronous CB detection
-	      if ((RXCB != 0) && (&RXCB == 0)) begin 
+	      if ((RX_IS_CB != 0) && (&RX_IS_CB == 0)) begin 
                  CB_STAT <= 'b001;
                  CNT <= 0;
                  CB_Clear <= 0;
               end
 	   end
+
+           default:
+             CB_STAT <= 1;
 	 endcase // case (CB_STAT)
       end
    end // always @ (posedge CLK)
 
+   /* 
+   // 4-lane 
    always @ (posedge CLK) begin
       if (RST) begin
 	 CB <= 0;
-	 FIFO_RE <= 'b1111;
+	 FIFO_RE <= {BondingCh{'b1}};
       end else begin
 	 if (|CB_STAT[1:0]) begin
 	    if (CB_STAT[1] & CNT == CB_Keep) CB <= 0;
 	    else begin
-	       if (RXCB[0]) CB[0] <= 1;
-	       if (RXCB[1]) CB[1] <= 1;
-	       if (RXCB[2]) CB[2] <= 1;
-	       if (RXCB[3]) CB[3] <= 1;
+	       if (RX_IS_CB[0]) CB[0] <= 1;
+	       if (RX_IS_CB[1]) CB[1] <= 1;
+	       if (RX_IS_CB[2]) CB[2] <= 1;
+	       if (RX_IS_CB[3]) CB[3] <= 1;
 	    end
 	 end
 
 	 if (CB_STAT[2]) begin
 	    if (&(~FIFO_RE)) FIFO_RE <= 'b1111;
 	    else begin
-	       if (RXCB[0]) FIFO_RE[0] <= 0;
-	       if (RXCB[1]) FIFO_RE[1] <= 0;
-	       if (RXCB[2]) FIFO_RE[2] <= 0;
-	       if (RXCB[3]) FIFO_RE[3] <= 0;
+	       if (RX_IS_CB[0]) FIFO_RE[0] <= 0;
+	       if (RX_IS_CB[1]) FIFO_RE[1] <= 0;
+	       if (RX_IS_CB[2]) FIFO_RE[2] <= 0;
+	       if (RX_IS_CB[3]) FIFO_RE[3] <= 0;
 	    end
 	 end
       end // else: !if(RST)
    end // always @ (posedge CLK)
+    */
+
+   // n-lane version
+   wire [BondingCh-1:0]      CB_CNT_FULL;
+   wire [BondingCh-1:0]       CB_WAIT_CNT_FULL;
+   
+   genvar lane;
+   generate
+      for (lane=0; lane<BondingCh; lane=lane+1) begin : cb_reg_gen
+         reg  [26:0] CB_WAIT_CNT;
+         reg [9:0]   CB_CNT;
+
+         always @ (posedge CLK) begin
+            if (RST) begin
+	       CB     [lane] <= 0;
+	       FIFO_RE[lane] <= 1;
+               CB_CNT  <= 0;
+               CB_WAIT_CNT   <= 0;
+            end else begin
+	       if (|CB_STAT[1:0]) begin
+	          if (CB_STAT[1] & CNT == CB_Keep) CB[lane] <= 0;
+	          else if (RX_IS_CB[lane]) CB[lane] <= 1;
+	       end
+
+	       if (CB_STAT[2]) begin
+	          if (&(~FIFO_RE)) FIFO_RE[lane] <= 'b1;
+	          else if (RX_IS_CB[lane]) FIFO_RE[lane] <= 0;
+	       end
+
+               if (RX_IS_CB[lane] & ~CB_STAT[3] & ~CB_CNT_FULL[lane]) begin
+                  CB_CNT <= CB_CNT + 1;
+               end
+
+               if (~CB_WAIT_CNT_FULL[lane] & ~CB_STAT[3]) 
+                 CB_WAIT_CNT <= RX_IS_CB[lane] ? 0 : CB_WAIT_CNT+1;
+               
+            end // else: !if(RST)
+         end // always @ (posedge CLK)
+
+         assign CB_CNT_FULL[lane] = (CB_CNT == CB_Limit);
+         assign CB_WAIT_CNT_FULL[lane] = &CB_WAIT_CNT;
+      end // block: cb_reg_gen
+   endgenerate
+   
+
+   assign TIMEOUT = |{CB_CNT_FULL, CB_WAIT_CNT_FULL};
    
 endmodule
 

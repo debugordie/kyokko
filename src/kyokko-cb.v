@@ -64,6 +64,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
    wire [BondingCh-1:0] 	    RX_STAT_TX_CB;
    wire [BondingCh-1:0]             UFC_MODE;
 
+   wire                             CB_TIMEOUT;
 
    // Data channel
    wire [BondingCh-1:0]             M_AXIS_TVALIDi,  M_AXIS_TLASTi,
@@ -98,19 +99,23 @@ module kyokko_cb # ( parameter BondingCh=4 )
       for (ch=0; ch<BondingCh; ch=ch+1)
         begin : kyokko_gen
            defparam ky.tx.init.GenInit = (ch==0) ? 1 : 0;
+
+           wire RXPATH_RSTi;
+           assign RXPATH_RST[ch] = RXPATH_RSTi | CB_TIMEOUT;
            
            kyokko # (.BondingEnable(1), .BondingCh(BondingCh), .ChNo(ch)) ky
              ( .CLK(),  // still not used
                .CLK100(CLK100),
                .RXCLK(RXCLK[ch]),               .TXCLK(TXCLK[ch]),
-               .RXRST(RXRST[ch] | RX_ERR_ANY),  .TXRST(TXRST[ch]),
+               .RXRST(RXRST[ch] | RX_ERR_ANY),
+               .TXRST(TXRST[ch]),
                .CH_UP(LANE_UP   [ch]),
 
                .RXHDR(RXHDR[ch*2+1 : ch*2]),   .RXS(RXS[ch*64+63 : ch*64]),
                .TXHDR(TXHDR[ch*2+1 : ch*2]),   .TXS(TXS[ch*64+63 : ch*64]),
-               .RXSLIP    (RXSLIP    [ch]),
-               .RXPATH_RST(RXPATH_RST[ch]),
-               .RX_ERR    (RX_ERR    [ch]),
+               .RXSLIP    (RXSLIP     [ch]),
+               .RXPATH_RST(RXPATH_RSTi),
+               .RX_ERR    (RX_ERR     [ch]),
 
                .TX_WFR_CB_I  (TX_WFR_CB [0]),
                .TX_WFR_CB_O  (TX_WFR_CB [ch]),
@@ -161,12 +166,13 @@ module kyokko_cb # ( parameter BondingCh=4 )
    // Channel bonding controller
    wire  CB_RST = ~(|RX_STAT_TX_CB[3:0]);
 
-   kyokko_rx_cb cb_init
+   kyokko_rx_cb # (.BondingCh(BondingCh)) cb_init
      ( .CLK(TXCLK[0]),
        .RST(CB_RST),
-       .RXCB(RXCB[3:0]),
+       .RX_IS_CB(RXCB[3:0]),
        .CB_STAT(CB_STAT),
-       .FIFO_RE(FIFO_RE[3:0])
+       .FIFO_RE(FIFO_RE[3:0]),
+       .TIMEOUT(CB_TIMEOUT)
        );
 
 endmodule

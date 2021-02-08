@@ -37,7 +37,8 @@ module tx_ufc_gen4
 	 VALID <= 0;
 	 CNT_SEND <= 0;
       end else begin
-	 CNT_REQ <= CNT_REQ + 1;
+	 if (~&CNT_REQ[15:0]) CNT_REQ <= CNT_REQ + 1;
+
 	 if (VALID & READY) begin
 	    CNT_DATA <= CNT_DATA + 1;
 	    CNT_SEND <= CNT_SEND + 1;
