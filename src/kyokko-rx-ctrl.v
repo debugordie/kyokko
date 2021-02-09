@@ -25,10 +25,11 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
      output wire        RX_ERR, 
      output wire        RXSLIP,
      output wire        RXSLIP_LIMIT,
-     output wire        RXCB,
+     output wire        RX_IS_CB,
      output wire        NFC_PAUSE,
      output wire        UFC_MODE_O,
      input wire         UFC_MODE_I,
+     output wire        FIFO_EMPTY,
      output wire        M_AXIS_TVALID, M_AXIS_TLAST,
      output wire        M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
      output wire [63:0] M_AXIS_TDATA, M_AXIS_UFC_TDATA );
@@ -57,29 +58,29 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
    wire [63:0]        RXDATAt;
    wire               RXVALIDt;
 
-   wire FIFO_WE = (~RX_STAT[0] &
-		   ((RXHDR == 2'b10) &
-		    (RXDATA[63:56] == 8'h78 &
-		     RXDATA[51:0] == 0) &
-		    RXDATA[55]) );
-
+   wire               FIFO_WE = ( ~RX_STAT[0] &
+	                          ~((RXHDR == 2'b10) &
+	                            (RXDATA[63:56] == 8'h78) & 
+		                    RXDATA[55]) );
+   
    fifo_66x512_async rxfifo
      ( .rst(RST),                 // I
        .wr_clk(CLK),              // I
        .rd_clk(TXCLK),            // I
        .din  ({RXHDR, RXDATA}),   // I [65:0]
-       .wr_en(~RX_STAT[0]),       // I
+       .wr_en(FIFO_WE),           // I
        .rd_en(FIFO_RE),           // I
        .dout({RXHDRt, RXDATAt}),  // O [65:0]
        .full(),                   // O
-       .empty(),                  // O
+       .empty(),        // O
+       .almost_empty(FIFO_EMPTY), // O
        .valid(RXVALIDt)           // O
       );
 
-   assign RXCB = ((RXHDRt == 2'b10) &
-		  (RXDATAt[63:56] == 8'h78 &
-		   RXDATAt[51:0] == 0) &
-		  RXDATAt[54] );
+   assign RX_IS_CB = ((RXHDRt == 2'b10) &
+		      (RXDATAt[63:56] == 8'h78 &
+		       RXDATAt[51:0] == 0) &
+		      RXDATAt[54] );
   
    wire [63:0]        IDLE_SA = {8'h78, 8'b0001_0000, 48'h0 };
    wire [1:0]         HDR_HDR = 2'b10;

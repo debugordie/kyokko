@@ -22,13 +22,13 @@ module kyokko_rx_cb # ( parameter BondingCh = 4 )
      output reg [BondingCh-1:0] FIFO_RE,
      output wire                TIMEOUT);
 
-   parameter CB_Keep = 3;
-   parameter CB_Clear_cnt = 4;
+   parameter CB_Timeout = 3;
+   parameter CB_Clear_cnt = 10;
    parameter CB_Limit = 400;
 
    reg [BondingCh-1:0] 	    CB;
    reg [4:0] 	    CNT;
-   reg [2:0] 	    CB_Clear;
+   reg [7:0] 	    CB_Clear;
 
    always @ (posedge CLK) begin
       if (RST) begin
@@ -44,8 +44,9 @@ module kyokko_rx_cb # ( parameter BondingCh = 4 )
 	   end
            
 	   'b0010: begin
-	      if (CNT == CB_Keep) begin
+	      if (CNT == CB_Timeout) begin
 		 if (&CB) CB_Clear <= CB_Clear +1;
+                 else     CB_Clear <= 0;  // Reset on fail
 		 CB_STAT <= 'b0001;
 	      end else  CNT <= CNT +1;
 	   end // case: 'b001
@@ -80,7 +81,7 @@ module kyokko_rx_cb # ( parameter BondingCh = 4 )
 	 FIFO_RE <= {BondingCh{'b1}};
       end else begin
 	 if (|CB_STAT[1:0]) begin
-	    if (CB_STAT[1] & CNT == CB_Keep) CB <= 0;
+	    if (CB_STAT[1] & CNT == CB_Timeout) CB <= 0;
 	    else begin
 	       if (RX_IS_CB[0]) CB[0] <= 1;
 	       if (RX_IS_CB[1]) CB[1] <= 1;
@@ -120,7 +121,7 @@ module kyokko_rx_cb # ( parameter BondingCh = 4 )
                CB_WAIT_CNT   <= 0;
             end else begin
 	       if (|CB_STAT[1:0]) begin
-	          if (CB_STAT[1] & CNT == CB_Keep) CB[lane] <= 0;
+	          if (CB_STAT[1] & CNT == CB_Timeout) CB[lane] <= 0;
 	          else if (RX_IS_CB[lane]) CB[lane] <= 1;
 	       end
 

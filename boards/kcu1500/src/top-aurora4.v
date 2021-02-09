@@ -254,6 +254,7 @@ module kcu1500
         .probe_in0 (CH_UP),
         .probe_out0(GO) );
 
+/* -----\/----- EXCLUDED -----\/-----
    for (ch=0; ch<2; ch=ch+1) begin : ila_gen
       ila4_0 ila
            ( .clk(AURORA_CLK[ch]),
@@ -266,9 +267,21 @@ module kcu1500
                       UFC_TX_DATA[ch], UFC_TX_READY[ch], UFC_TX_VALID[ch],
                       UFC_RX_DATA[ch], UFC_RX_VALID[ch], UFC_RX_LAST [ch]}) );
    end // ila_gen
+ -----/\----- EXCLUDED -----/\----- */
+
+
+   ila4_0 ila_perf
+     ( .clk(AURORA_CLK[0]),
+       .probe0({TX_DATA [0], TX_VALID[0],
+                TX_READY[0], TX_LAST [0],
+                RX_DATA [1], RX_VALID[1], RX_LAST [1]}) );
+
 `else
    assign GO = 2'b11;
 `endif
+   
+   
+
    
 endmodule // kcu1500
 

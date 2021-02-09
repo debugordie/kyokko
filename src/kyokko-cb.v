@@ -29,7 +29,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
     // Tx signals
      output wire [BondingCh* 2-1:0] TXHDR,
      output wire [BondingCh*64-1:0] TXS,
-    
+
     // AXIS data
      input wire                     S_AXIS_TVALID, S_AXIS_TLAST,
      input wire [BondingCh*64-1:0]  S_AXIS_TDATA,
@@ -45,7 +45,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
      input wire                     S_AXIS_UFC_TVALID,
      input wire [BondingCh*64-1:0]  S_AXIS_UFC_TDATA,
      output wire                    S_AXIS_UFC_TREADY,
-    
+
      output wire                    M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
      output wire [BondingCh*64-1:0] M_AXIS_UFC_TDATA,
 
@@ -57,9 +57,9 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
    wire [BondingCh-1:0]             LANE_UP, TX_WFR_CB, TX_SEND_CC, RX_ERR;
 
-   
+
    // Channel Bonding signals
-   wire [BondingCh-1:0] 	    RXCB, FIFO_RE;
+   wire [BondingCh-1:0] 	    RX_IS_CB, FIFO_RE;
    wire [3:0] 			    CB_STAT;
    wire [BondingCh-1:0] 	    RX_STAT_TX_CB;
    wire [BondingCh-1:0]             UFC_MODE;
@@ -79,10 +79,8 @@ module kyokko_cb # ( parameter BondingCh=4 )
    assign S_AXIS_TLASTi  = { 1'b1,  BondingCh-1'b0 };
 
    // UFC channel
-   wire [BondingCh-1:0]             S_AXIS_UFC_TVALIDi, 
-                                    S_AXIS_UFC_TREADYi,
-                                    M_AXIS_UFC_TVALIDi, 
-                                    M_AXIS_UFC_TLASTi;
+   wire [BondingCh-1:0]             S_AXIS_UFC_TVALIDi, S_AXIS_UFC_TREADYi,
+                                    M_AXIS_UFC_TVALIDi, M_AXIS_UFC_TLASTi;
 
    assign M_AXIS_UFC_TVALID = M_AXIS_UFC_TVALIDi[BondingCh-1];
    assign M_AXIS_UFC_TLAST  = M_AXIS_UFC_TLASTi [BondingCh-1];
@@ -90,11 +88,35 @@ module kyokko_cb # ( parameter BondingCh=4 )
    assign S_AXIS_UFC_TVALIDi = { BondingCh{S_AXIS_UFC_TVALID} };
    assign S_AXIS_UFC_TREADY  = &S_AXIS_UFC_TREADYi;
 
+   // Channel bonding & FIFO Synchronous readout control
+   wire  CB_RST = ~(|RX_STAT_TX_CB[3:0]);
+   kyokko_rx_cb # (.BondingCh(BondingCh)) cb_init
+     ( .CLK(TXCLK[0]),
+       .RST(CB_RST),
+       .RX_IS_CB(RX_IS_CB),
+       .CB_STAT(CB_STAT),
+       .FIFO_RE(FIFO_RE),
+       .TIMEOUT(CB_TIMEOUT)
+       );
+
+   wire [BondingCh-1:0]             FIFO_EMPTY;
+   reg                              FIFO_RE_SYNC;
+
+   always @ (posedge TXCLK[0]) begin
+      if (CB_RST | RXRST) begin
+         FIFO_RE_SYNC <= 1;
+      end else begin
+         if (   &FIFO_EMPTY) FIFO_RE_SYNC <= 0; // stop reading on all empty
+         if (&(~FIFO_EMPTY)) FIFO_RE_SYNC <= 1; // start reading on all valid
+      end
+   end
+
    // Rx reset on Rx error while link is UP
    wire RX_ERR_ANY = |RX_ERR;
 
    // Kyokko lane instances
-   genvar                           ch;
+   genvar ch;
+   
    generate
       for (ch=0; ch<BondingCh; ch=ch+1)
         begin : kyokko_gen
@@ -102,7 +124,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
            wire RXPATH_RSTi;
            assign RXPATH_RST[ch] = RXPATH_RSTi | CB_TIMEOUT;
-           
+
            kyokko # (.BondingEnable(1), .BondingCh(BondingCh), .ChNo(ch)) ky
              ( .CLK(),  // still not used
                .CLK100(CLK100),
@@ -122,13 +144,15 @@ module kyokko_cb # ( parameter BondingCh=4 )
                .TX_SEND_CC_I (TX_SEND_CC[0]),
                .TX_SEND_CC_O (TX_SEND_CC[ch]),
 
-	       .RXCB(RXCB[ch]),
-	       .FIFO_RE(FIFO_RE[ch]),
+	       .RX_IS_CB(RX_IS_CB[ch]),
+	       .FIFO_RE(FIFO_RE[ch] & FIFO_RE_SYNC),
 	       .RX_STAT_TX_CB(RX_STAT_TX_CB[ch]),
-	       .CB_FINISH(CB_STAT[3]),
+	       .CB_READY(CB_STAT[3]),
 
                .UFC_MODE_O(UFC_MODE[ch]),
                .UFC_MODE_I(|UFC_MODE),
+
+               .FIFO_EMPTY (FIFO_EMPTY[ch]),
 
                // Data channel
                .M_AXIS_TVALID (M_AXIS_TVALIDi[ch]),
@@ -162,18 +186,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
    assign CH_UP = &LANE_UP;
 
-   
-   // Channel bonding controller
-   wire  CB_RST = ~(|RX_STAT_TX_CB[3:0]);
 
-   kyokko_rx_cb # (.BondingCh(BondingCh)) cb_init
-     ( .CLK(TXCLK[0]),
-       .RST(CB_RST),
-       .RX_IS_CB(RXCB[3:0]),
-       .CB_STAT(CB_STAT),
-       .FIFO_RE(FIFO_RE[3:0]),
-       .TIMEOUT(CB_TIMEOUT)
-       );
 
 endmodule
 

@@ -53,7 +53,10 @@ module kcu1500_kyokko #
     // NFC channel
     input wire [16*NumChB-1:0] S_AXI_NFC_TDATA,
     input wire [NumChB-1:0]    S_AXI_NFC_TVALID,
-    output wire [NumChB-1:0]   S_AXI_NFC_TREADY
+    output wire [NumChB-1:0]   S_AXI_NFC_TREADY,
+
+    // test signals
+    output wire [NumCh-1:0]    CDR_GOOD
    );
 
    // ------------------------------
@@ -145,7 +148,7 @@ module kcu1500_kyokko #
                 .S_AXIS_NFC_TVALID (S_AXI_NFC_TVALID[ch]),
                 .S_AXIS_NFC_TREADY (S_AXI_NFC_TREADY[ch]),
                 .S_AXIS_NFC_TDATA  (S_AXI_NFC_TDATA [ch*16+15 : ch*16])
-                );
+                 );
          end // block: kyokko-gen
       end else begin : chbond_gen // block: nobond_gen
          for (ch=0; ch<NumCh; ch=ch+BondingCh) begin : kyokko_cb_gen
@@ -227,7 +230,7 @@ module kcu1500_kyokko #
              .gtwiz_reset_tx_datapath_in        (1'b0),              // I
              .gtwiz_reset_rx_pll_and_datapath_in(1'b0),              // I
              .gtwiz_reset_rx_datapath_in        (RXPATH_RST  [ch]),  // I
-             .gtwiz_reset_rx_cdr_stable_out     (),                  // O
+             .gtwiz_reset_rx_cdr_stable_out     (CDR_GOOD    [ch]),  // O
              .gtwiz_reset_tx_done_out           (TX_RDY      [ch]),  // O
              .gtwiz_reset_rx_done_out           (RX_RDY      [ch]),  // O
              .gtwiz_userdata_tx_in              (TXS         [ch]),  // I [63:0]
@@ -274,7 +277,7 @@ module kcu1500_kyokko #
              .gtwiz_reset_rx_pll_and_datapath_in(1'b0),              // I
              .gtwiz_reset_rx_datapath_in        (RXPATH_RST  [ch]),  // I
              .gtwiz_reset_qpll0lock_in          (QPLL_LOCKED [qd]),  // I
-             .gtwiz_reset_rx_cdr_stable_out     (),                  // O
+             .gtwiz_reset_rx_cdr_stable_out     (CDR_GOOD    [ch]),  // O
              .gtwiz_reset_tx_done_out           (TX_RDY      [ch]),  // O
              .gtwiz_reset_rx_done_out           (RX_RDY      [ch]),  // O
              .gtwiz_reset_qpll0reset_out        (),                  // O

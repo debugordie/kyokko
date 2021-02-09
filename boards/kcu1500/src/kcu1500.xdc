@@ -14,6 +14,8 @@ set_property PACKAGE_PIN AV38     [get_ports QSFP0_REFCLKP]
 set_property PACKAGE_PIN AV39     [get_ports QSFP0_REFCLKN]
 set_property PACKAGE_PIN AR36     [get_ports QSFP1_REFCLKP]
 set_property PACKAGE_PIN AR37     [get_ports QSFP1_REFCLKN]
+create_clock -period 6.400 -name qsfp_clk0 [get_ports QSFP0_REFCLKP]
+create_clock -period 6.400 -name qsfp_clk1 [get_ports QSFP1_REFCLKP]
 
 # QSFP signals
 
@@ -68,3 +70,8 @@ set_property PACKAGE_PIN BB27     [get_ports LED[5]]
 set_property PACKAGE_PIN BA25     [get_ports LED[6]]
 set_property PACKAGE_PIN BB25     [get_ports LED[7]]
 set_property IOSTANDARD  LVCMOS18 [get_ports LED[*]]
+
+connect_debug_port dbg_hub/clk [get_nets CLK100]
+
+
+set_false_path -from [get_pins {ky/chbond_gen.kyokko_cb_gen[*].kycb/kyokko_gen[*].ky/rx/rxinit/LINK_ERR_TIMER_reg[*]/C}]
