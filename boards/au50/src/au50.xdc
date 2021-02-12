@@ -19,6 +19,8 @@ create_clock -period 10.000 -name cmc_clk [get_ports CMC_CLKP]
 set_property PACKAGE_PIN M39 [get_ports CLK322N]
 set_property PACKAGE_PIN M38 [get_ports CLK322P]
 
+create_clock -period 3.10303 -name clk322 [get_ports CLK322N]
+
 # QSFP signals
 
 set_property PACKAGE_PIN J46  [get_ports QSFP_RXN[0]]
@@ -37,3 +39,16 @@ set_property PACKAGE_PIN D42  [get_ports QSFP_TXP[0]]
 set_property PACKAGE_PIN C40  [get_ports QSFP_TXP[1]]
 set_property PACKAGE_PIN B42  [get_ports QSFP_TXP[2]]
 set_property PACKAGE_PIN A40  [get_ports QSFP_TXP[3]]
+
+# Clocing stuff
+
+connect_debug_port dbg_hub/clk [get_nets CLK100]
+
+set_false_path -from \
+    [get_pins -match_style ucf */rxinit/LINK_ERR_TIMER_reg[*]/C]
+
+set_false_path \
+    -from [get_pins -match_style ucf */rxinit/RXSLIP_LIMIT_reg/C] \
+    -to [get_pins -match_style ucf */rxrst/RXSLIP_LIMITi_reg/D]
+
+set_false_path -to [get_pins -match_style ucf */RXRST100i_reg/S]

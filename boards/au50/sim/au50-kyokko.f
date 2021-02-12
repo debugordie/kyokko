@@ -1,12 +1,13 @@
       -f ${KYOKKO}/sim/sim-common.f
 
-      ${KYOKKO}/boards/au50/src/au50-kyokko.v
+      ${KYOKKO}/boards/au50/src/au50-kyokko.sv
       ${KYOKKO}/src/*.v
       +libext+.v
 
       ${KYOKKO}/boards/au50/ip/iploc/fifo_66x512_async/fifo_66x512_async_sim_netlist.v
       ${KYOKKO}/boards/au50/ip/iploc/gty_w_qpll/gty_w_qpll_sim_netlist.v
       ${KYOKKO}/boards/au50/ip/iploc/gty_wo_qpll/gty_wo_qpll_sim_netlist.v
+      ${KYOKKO}/boards/au50/ip/iploc/gty4/gty4_sim_netlist.v
 
       -y ${XILINX_VIVADO}/data/verilog/src/unisims
       ${XILINX_VIVADO}/data/verilog/src/glbl.v

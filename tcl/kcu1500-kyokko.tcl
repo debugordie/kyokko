@@ -30,6 +30,7 @@ set COREs [ list \
                 fifo_66x512_async \
                 gth_w_qpll \
                 gth_wo_qpll \
+                gth4 \
                 ila_0 \
                 vio_0 \
            ]

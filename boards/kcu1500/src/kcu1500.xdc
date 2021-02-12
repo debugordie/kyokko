@@ -71,8 +71,9 @@ set_property PACKAGE_PIN BA25     [get_ports LED[6]]
 set_property PACKAGE_PIN BB25     [get_ports LED[7]]
 set_property IOSTANDARD  LVCMOS18 [get_ports LED[*]]
 
-connect_debug_port dbg_hub/clk [get_nets CLK100]
+# Clocking stuff
 
+connect_debug_port dbg_hub/clk [get_nets CLK100]
 
 set_false_path -from \
     [get_pins -match_style ucf */rxinit/LINK_ERR_TIMER_reg[*]/C]

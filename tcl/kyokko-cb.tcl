@@ -10,26 +10,13 @@
 # Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 #
 # This file is to:
-#    Setup base project for Xilinx KCU1500, Kyokko on Dual-SFP (x4 bonding)
+#    Setup RTL source list for Kyokko Channel Bonding
 # ----------------------------------------------------------------------
 
-source [file join [file dirname [info script]] "config.tcl"]
-source ${TOP}/tcl/kcu1500-kyokko.tcl
+set CBRTLs [ list \
+                 ${TOP}/src/kyokko-cb.v \
+                 ${TOP}/src/kyokko-rx-cb.v \
+                 ${TOP}/src/test/tx-ufc-gen4.v \
+                 ${TOP}/src/test/tx-frame-gen4.v \
+            ]
 
-
-source ${TOP}/tcl/kyokko-cb.tcl
-
-set CBCOREs [ list \
-                  ila4_0 ]
-
-#
-
-set CBCOREFILEs [list ]
-foreach c $CBCOREs {
-    lappend CBCOREFILEs ${TOP}/boards/kcu1500/ip/${c}.xci
-}
-
-import_files -flat $CBCOREFILEs
-add_files $CBRTLs
-
-set_property generic BondingEnable=1 [current_fileset]

@@ -16,7 +16,10 @@
 `timescale 1ns/1ps
 `default_nettype none
 
-module tb_au50
+module tb_au50 #
+  ( BondingEnable=0, // Set to 1 to enable
+    BondingCh=4
+    )
   (
 `ifdef NO_LOOPBACK
    output wire [3:0]     QSFP_TXP, QSFP_TXN,
@@ -26,6 +29,8 @@ module tb_au50
    parameter real Step100 = 10.0;
    parameter real StepREF = 1000.0/322.265625;
    parameter NumCh = 4;
+
+   parameter NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh);
 
    reg            CLK100 = 1;
    reg            CLKREF = 1;
@@ -42,7 +47,7 @@ module tb_au50
    
    reg            RST;
 
-   au50 uut
+   au50 #(.BondingEnable(BondingEnable), .BondingCh(BondingCh)) uut
      ( .PCIE_RESET_N(~RST),
        .CMC_CLKP(CLK100), .CMC_CLKN(~CLK100),
        .CLK322P (CLKREF), .CLK322N (~CLKREF),
@@ -63,7 +68,7 @@ module tb_au50
    end
    
    genvar ch;
-   for (ch=0; ch<NumCh; ch=ch+1) begin : ch_up_gen
+   for (ch=0; ch<NumChB; ch=ch+1) begin : ch_up_gen
       reg CH_UP_R;
       always @ (posedge uut.AURORA_CLK[ch]) begin
          CH_UP_R <= uut.CH_UP[ch];

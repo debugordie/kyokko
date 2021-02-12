@@ -10,12 +10,12 @@
 # Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 #
 # This file is to:
-#    Setup base project for Xilinx KCU1500, Kyokko on Dual-SFP (x4 bonding)
+#    Setup base project for Xilinx Alveo U50, Kyokko on QSFP (x4 bonding)
 # ----------------------------------------------------------------------
 
-source [file join [file dirname [info script]] "config.tcl"]
-source ${TOP}/tcl/kcu1500-kyokko.tcl
 
+source [file join [file dirname [info script]] "config.tcl"]
+source ${TOP}/tcl/au50-kyokko.tcl
 
 source ${TOP}/tcl/kyokko-cb.tcl
 
@@ -26,7 +26,7 @@ set CBCOREs [ list \
 
 set CBCOREFILEs [list ]
 foreach c $CBCOREs {
-    lappend CBCOREFILEs ${TOP}/boards/kcu1500/ip/${c}.xci
+    lappend CBCOREFILEs ${TOP}/boards/au50/ip/${c}.xci
 }
 
 import_files -flat $CBCOREFILEs

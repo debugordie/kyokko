@@ -37,7 +37,7 @@ module c10gx_kyokko # ( parameter NumCh=2 )
 
     // UFC channel
     input wire [NumCh-1:0]     UFC_TX_REQ,
-    output wire [8*NumCh-1:0]  UFC_TX_MS,
+    input wire [8*NumCh-1:0]   UFC_TX_MS,
     
     input wire [64*NumCh-1:0]  S_AXI_UFC_TX_TDATA,
     input wire [NumCh-1:0]     S_AXI_UFC_TX_TVALID,

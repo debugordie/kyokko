@@ -23,13 +23,14 @@ set_property source_mgmt_mode All [current_project]
 
 set RTLs [ list \
                ${TOP}/boards/au50/src/top.v \
-               ${TOP}/boards/au50/src/au50-kyokko.v \
+               ${TOP}/boards/au50/src/au50-kyokko.sv \
               ]
 
 set COREs [ list \
                 fifo_66x512_async \
                 gty_w_qpll \
                 gty_wo_qpll \
+                gty4 \
                 ila_0 \
                 vio_0 \
            ]
