@@ -72,8 +72,7 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
        .rd_en(FIFO_RE),           // I
        .dout({RXHDRt, RXDATAt}),  // O [65:0]
        .full(),                   // O
-       .empty(),        // O
-       .almost_empty(FIFO_EMPTY), // O
+       .empty(FIFO_EMPTY),        // O
        .valid(RXVALIDt)           // O
       );
 

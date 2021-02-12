@@ -63,10 +63,10 @@ module kyokko_tx_ufc # (parameter BondingEnable = 0, BondingCh = 1, ChNo = 0)
 
 	   'b100: begin
               if (~CC) begin
-                 if (MS_R == 8) 
+                 if (MS_R == BondingCh*8) 
 		   STAT <= 'b001;
                  else
-                   MS_R <= (MSG_VALID) ? MS_R - 8 : MS_R;
+                   MS_R <= (MSG_VALID) ? MS_R - (BondingCh*8) : MS_R;
               end
 	   end
 	 endcase // case (STAT)

@@ -76,7 +76,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
    assign S_AXIS_TVALIDi = { BondingCh{S_AXIS_TVALID} };
    assign S_AXIS_TREADY  = &S_AXIS_TREADYi;
-   assign S_AXIS_TLASTi  = { 1'b1,  BondingCh-1'b0 };
+   assign S_AXIS_TLASTi  = { S_AXIS_TLAST,  {BondingCh-1{1'b0}} };
 
    // UFC channel
    wire [BondingCh-1:0]             S_AXIS_UFC_TVALIDi, S_AXIS_UFC_TREADYi,
@@ -88,6 +88,11 @@ module kyokko_cb # ( parameter BondingCh=4 )
    assign S_AXIS_UFC_TVALIDi = { BondingCh{S_AXIS_UFC_TVALID} };
    assign S_AXIS_UFC_TREADY  = &S_AXIS_UFC_TREADYi;
 
+
+   // NFC channel
+   wire [BondingCh-1:0]             S_AXIS_NFC_TREADYi;            
+   assign S_AXIS_NFC_TREADY  = &S_AXIS_NFC_TREADYi;
+   
    // Channel bonding & FIFO Synchronous readout control
    wire  CB_RST = ~(|RX_STAT_TX_CB[3:0]);
    kyokko_rx_cb # (.BondingCh(BondingCh)) cb_init
@@ -178,7 +183,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
                // NFC channels
                .S_AXIS_NFC_TVALID (S_AXIS_NFC_TVALID),
-               .S_AXIS_NFC_TREADY (S_AXIS_NFC_TREADY),
+               .S_AXIS_NFC_TREADY (S_AXIS_NFC_TREADYi[ch]),
                .S_AXIS_NFC_TDATA  (S_AXIS_NFC_TDATA )
                );
         end // block: kyokko-gen

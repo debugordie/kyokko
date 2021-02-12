@@ -101,8 +101,12 @@ module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
        .M_AXIS_UFC_TLAST (M_AXIS_UFC_TLAST),
        .M_AXIS_UFC_TDATA (M_AXIS_UFC_TDATA) );
 
+   reg                 RXRST100i, RXRST100;
+   always @ (posedge CLK100) begin
+      RXRST100i <= RXRST; RXRST100 <= RXRST100i;  end
+   
    rxpath_rst rxrst
-     ( .CLK(CLK100), .RST(RXRST), 
+     ( .CLK(CLK100), .RST(RXRST100), 
        .RXSLIP_LIMIT(RXSLIP_LIMIT), .RXPATH_RST(RXPATH_RST) );
    
    kyokko_tx_ctrl # (.BondingEnable(BondingEnable), .BondingCh(BondingCh), 
