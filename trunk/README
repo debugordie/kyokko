@@ -1,0 +1,155 @@
+----------------------------------------
+About Kyokko
+----------------------------------------
+
+Kyokko is an open-source implementation of Xilinx Aurora 64B/66B
+protocol. It works on both Xilinx and Intel FPGAs, covering the most
+common use cases of Aurora protocol options:
+
+- 10Gbps+ of link speeds (depends on PHY settings)
+- Duplex communication (no simplex mode)
+- Fully supports NFC and UFC flow controls
+- Restricted to framing mode (with TLAST) of 8n octet message size
+  (no TKEEP signal)
+
+We're working on channel bonding, but no plan for User-K and CRC
+checksum currently.
+
+License and warranty:
+ - Kyokko comes with absolutely no warranty.
+ - The license is beerware. You can buy beer for the authors if you wish.
+   No restriction of commercial use while you retain the license notice.
+ - Kyokko is developed without any reverse-engineering on Xilinx
+   Aurora IP cores.
+
+Developers in the University of the Ryukyus, Japan:
+ - Yasunori Osana
+ - Akinobu Tomori
+
+Kyokko means "Polar light," the aurora in Japanese.
+
+----------------------------------------
+Revision History
+----------------------------------------
+
+You can find the releases in https://lut.eee.u-ryukyu.ac.jp/svn/kyokko/tags/.
+ - 0.99   (Sep.07, 2020): the initial release
+ - 0.99.1 (Feb.12, 2021): Initial support for channel bonding on KCU1500 board
+
+----------------------------------------
+Supported FPGAs and boards
+----------------------------------------
+
+Kyokko is confirmed to work on:
+ - Avnet Kintex Ultrascale Development Board    (XCKU040, 2x SFP + 2x SMA)
+ - Xilinx KCU1500 Acceleration Development Kit  (XCKU115, 2x QSFP)
+ - Xilinx Alveo U50 Datacenter Accelerator Card (XCVU35P, 1x QSFP)
+ - Intel Cyclone 10 GX Development Kit          (10CX220, 2x SFP)
+ - Gidel HawkEye-40G-48 (Arria 10 GX)           (10AX480, 4x SFP)
+at a line-rate of 10.3125 Gbps and below. We're working on faster
+line-rates: up to 25 Gbps on Alveo U50.
+
+Porting to similar FPGAs with Xilinx GTH/GTY or Intel GX transceivers
+is easy. We'll need some hack for other transceivers. Requests and
+contributions are welcome.
+
+----------------------------------------
+Getting started
+----------------------------------------
+
+You'll need Xilinx Vivado HLx 2019.2, Intel Quartus Prime Pro 20.1, or
+later version of them. For simulation, the development team uses
+Cadence Xcelium 19.03.
+
+First, run
+ % source path/to/kyokko/settings.sh (with bash, zsh)
+ % source path/to/kyokko/settings.csh (with tcsh)
+This sets "KYOKKO" environment variable. You can set this variable in
+your .bashrc, .zshrc, or .cshrc.
+
+Then run one of, of both of:
+ % sh ${KYOKKO}/ip-setup-xilinx.sh  (for Vivado)
+ % sh ${KYOKKO}/ip-setup-intel.sh (for Quartus)
+
+These scripts will setup IP core projects in the source tree. Running
+ip-setup-* scripts is needed only for the first time, before any
+simulations or implementations.
+
+The pre-defined line rate is 10.3125 Gbps for all devices. To change
+the line rate, adjust GT wizard settings for Xilinx devices or ATX PLL
+configurations for Intel devices in ${KYOKKO}/boards/*/ip/.
+
+----------------------------------------
+Running simulations
+----------------------------------------
+
+The testbenches and simulation scripts (*.f) are prepared for Cadence
+Xcelium, and also Xilinx/Intel library path is of the authors'
+environment. Please adjust some parts of the testbenches or simulator
+scripts for other simulators (when you met any errors :p )
+
+Included simulation scripts and testbenches for loopback tests are for:
+ - Xilinx KC705 (Kintex-7 325T): 1x Aurora core on SFP port
+ - Avnet Kintex Ultrascale Development Board (KU040):
+    - 1x Aurora core on SFP port
+    - 1x Kyokko on SFP port
+    - 4x Kyokko on 2x SFP and 2x SMA ports
+ - Xilinx KCU1500: 8x Kyokko on 2x QSFP ports
+ - Xilinx Alveo U50: 4x Kyokko on QSFP port
+ - Intel Cyclone 10 GX Development Kit: 2x Kyokko on SFP ports
+ - Gidel HawkEye: 4x Kyokko on SFP ports
+
+For example, KCU1500's loopback test runs by:
+ % xmverilog -f ${KYOKKO}/boards/kcu1500/sim/sim-loopback.f
+and other similar simlation scripts will found in boards/*/sim/*.f .
+
+There also board-to-board simulation scripts included:
+ - KC705 Aurora to KU040 Kyokko (1 channel)
+ - KC705 Aurora + KU040 Kyokko to Cyclone 10 GX (1+1=2 channels)
+ - KCU1500 Kyokko to Alveo U50 + HawkEye (4+4=8 channels)
+ - KC705 with 4x SFP FMC card to KCU1500 Kyokko (4-lane ch bonding)
+
+All these scripts have link-down (or hotplug) events scheduled in the
+middle of the simulation runtime. An example is:
+ % xmverilog -f ${KYOKKO}/sim/kc705a-ku040k/run.f
+
+- - - - - - - - - - - - - - - - - - - -
+Note for other simulators
+
+
+Most of Cadence simulator (or environment) specific stuff is in:
+ - sim/sim-common.f (simulator script)
+ - sim/wave-record.vh (Verilog system tasks for waveform recording)
+ - sim/xilinx-lib.f (options to use Vivado pre-compiled library)
+Also, board/*/sim/*.f need simulator spefic modifications for Quartus library.
+
+----------------------------------------
+Testing with FPGA boards
+----------------------------------------
+
+Kyokko has pre-defined Vivado/Quartus project setup scripts for:
+ - Avnet KU040 with 4x Kyokko (2x SFP + 2x SMA)
+ - Xilinx KCU1500 with 8x Kyokko (2x QSFP)
+ - Xilinx Alveo U50 with 4x Kyokko (1x QSFP)
+ - Intel Cyclone 10 GX Development Kit with 2x Kyokko (2x SFP)
+ - Gidel HawkEye with 4x Kyokko (4x
+in ${KYOKKO}/tcl directory. To use these scripts,
+ 1. Create an empty Vivado/Quartus project (random choice of device or
+    board is OK, the script will fix it)
+ 2. Source the Tcl console in Vivado or Quartus. For example:
+      source path/to/kyokko/tcl/ku040-kyokko.tcl
+    (replace path/to/kyokko by your own)
+This will set up a complete project for synthesis and bitstream generation.
+
+----------------------------------------
+Acknowledgments
+----------------------------------------
+
+This work was supported by JSPS KAKENHI Grant Number 19K11879. 
+
+This work was also supported through the activities of VDEC, The
+University of Tokyo, in collaboration with Cadence Design Systems,
+Inc.
+
+FPGA design tools for development of Kyoko are provided through Xilinx
+University Program and Intel FPGA Academic Program.
