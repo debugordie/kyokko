@@ -74,4 +74,11 @@ set_property IOSTANDARD  LVCMOS18 [get_ports LED[*]]
 connect_debug_port dbg_hub/clk [get_nets CLK100]
 
 
-set_false_path -from [get_pins {ky/chbond_gen.kyokko_cb_gen[*].kycb/kyokko_gen[*].ky/rx/rxinit/LINK_ERR_TIMER_reg[*]/C}]
+set_false_path -from \
+    [get_pins -match_style ucf */rxinit/LINK_ERR_TIMER_reg[*]/C]
+
+set_false_path \
+    -from [get_pins -match_style ucf */rxinit/RXSLIP_LIMIT_reg/C] \
+    -to [get_pins -match_style ucf */rxrst/RXSLIP_LIMITi_reg/D]
+
+set_false_path -to [get_pins -match_style ucf */RXRST100i_reg/S]

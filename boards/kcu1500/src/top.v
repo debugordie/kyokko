@@ -61,7 +61,7 @@ module kcu1500 #
                                 M_AXI_UFC_RX_TLAST,  M_AXI_UFC_RX_TVALID;
     
    // NFC channel
-   wire [NumChB-1:0] [15:0]                  S_AXI_NFC_TDATA;
+   wire [NumChB-1:0] [15:0]     S_AXI_NFC_TDATA;
    wire [NumChB-1:0]            S_AXI_NFC_TVALID, S_AXI_NFC_TREADY;
 
    // ------------------------------------------------------------
@@ -82,8 +82,6 @@ module kcu1500 #
    // ------------------------------------------------------------
    // Kyokko instance
 
-   wire [7:0]           CDR_GOOD; 
-   
    kcu1500_kyokko #(.BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
      ( .CLK100(CLK100), .RST(~DCM_LOCKED),
        .QSFP0_REFCLKP(QSFP0_REFCLKP), .QSFP0_REFCLKN(QSFP0_REFCLKN),
@@ -121,9 +119,7 @@ module kcu1500 #
        // NFC channel
        .S_AXI_NFC_TDATA    (NFC_TX_DATA),         // I [16*NumCh-1:0]  
        .S_AXI_NFC_TVALID   (S_AXI_NFC_TVALID),    // I [NumCh-1:0]     
-       .S_AXI_NFC_TREADY   (S_AXI_NFC_TREADY),    // O [NumCh-1:0]
-
-       .CDR_GOOD           (CDR_GOOD)
+       .S_AXI_NFC_TREADY   (S_AXI_NFC_TREADY)     // O [NumCh-1:0]
        );
 
    // ------------------------------------------------------------
@@ -176,7 +172,11 @@ module kcu1500 #
                 .READY(S_AXI_UFC_TX_TREADY[ch]) );
 
 	    // still no NFC
-            assign S_AXI_NFC_TVALID[ch] = 0;
+            tx_nfc_gen nfcgen
+              ( .CLK  (AURORA_CLK[ch]), .RST(~CH_UP[ch] | ~GO[ch]),
+                .DATA (S_AXI_NFC_TDATA [ch]), 
+                .READY(S_AXI_NFC_TREADY[ch]), 
+                .VALID(S_AXI_NFC_TVALID[ch]) );
          end
       end
    endgenerate
@@ -224,6 +224,8 @@ module kcu1500 #
                 M_AXI_RX_TVALID[1], M_AXI_RX_TLAST [1]
                 }) );
 
+/* -----\/----- EXCLUDED -----\/-----
+   // Watching Channel bonding
    ila4_0 ila
      ( .clk(AURORA_CLK[0]),
        .probe0
@@ -237,14 +239,14 @@ module kcu1500 #
           ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.tx.RX_STAT_TX,
           ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.tx.RX_STAT_TX,
           ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.tx.RX_STAT_TX,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXDATAt, //263
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXDATAt, //199
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXDATAt, //135
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXDATAt, // 71
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXHDRt, // 7:6
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXHDRt, // 5:4
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXHDRt, // 3:2
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXHDRt, // 1:0
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXDATAt,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXDATAt,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXDATAt,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXDATAt,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXHDRt,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXHDRt,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXHDRt,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXHDRt,
           ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXVALIDt,
           ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXVALIDt,
           ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXVALIDt,
@@ -252,26 +254,6 @@ module kcu1500 #
           ky.chbond_gen.kyokko_cb_gen[0].kycb.FIFO_EMPTY,
           ky.chbond_gen.kyokko_cb_gen[0].kycb.FIFO_RE_SYNC,
 
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.rxaxis.UFC_MODE,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.rxaxis.UFC_MODE,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.rxaxis.UFC_MODE,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.rxaxis.UFC_MODE,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.rxaxis.UFC_MODE_O,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.rxaxis.UFC_MODE_O,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.rxaxis.UFC_MODE_O,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.rxaxis.UFC_MODE_O,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.rxaxis.UFC_MODE_I,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.rxaxis.UFC_MODE_I,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.rxaxis.UFC_MODE_I,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.rxaxis.UFC_MODE_I,
-
-          
-/* -----\/----- EXCLUDED -----\/-----
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[0].ky.rx.RXDATAt[63:48],
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[1].ky.rx.RXDATAt[63:48],
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.rx.RXDATAt[63:48],
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[3].ky.rx.RXDATAt[63:48],
- -----/\----- EXCLUDED -----/\----- */
           ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[0].ky.tx.TXDATA[63:48],
           ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[1].ky.tx.TXDATA[63:48],
           ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.tx.TXDATA[63:48],
@@ -285,25 +267,56 @@ module kcu1500 #
           ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.tx.TXHDR, // 3:2
           ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[3].ky.tx.TXHDR // 1:0
           }) );
+ -----/\----- EXCLUDED -----/\----- */
 
+/* -----\/----- EXCLUDED -----\/-----
+   // Watching UFC transmission
+   ila4_0 ila
+     ( .clk(AURORA_CLK[0]),
+       .probe0
+       ({ ky.chbond_gen.kyokko_cb_gen[0].kycb.UFC_REQ,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.UFC_MS,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_UFC_TVALID,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_UFC_TREADY,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_UFC_TDATA[63:0],
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.tx.TXDATA,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.tx.TXDATA,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.tx.TXDATA,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.tx.TXDATA
+          }) );
+   -----/\----- EXCLUDED -----/\----- */
+
+   // Watching NFC Rx/Tx
+/* -----\/----- EXCLUDED -----\/-----
+   ila4_0 ila
+     ( .clk(AURORA_CLK[0]),
+       .probe0
+       ({ ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXDATAt[63:48],
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXDATAt[63:48],
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXDATAt[63:48],
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXDATAt[63:48],
+
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.NFC_PAUSE,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.NFC_PAUSE,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.NFC_PAUSE,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.NFC_PAUSE,
+
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_NFC_TVALID,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_NFC_TREADY,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_NFC_TDATA,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.tx.TXDATA,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.tx.TXDATA,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.tx.TXDATA,
+          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.tx.TXDATA
+         }) );
+ -----/\----- EXCLUDED -----/\----- */
+   
 `else
-   assign GO = {NumCh{1'b1}};
+   assign GO[NumCh-1:0] = {NumCh{1'b1}};
 `endif
 
 
-   // ------------------------------------------------------------
-   // Status
-
-/* -----\/----- EXCLUDED -----\/-----
-   wire [3:0] CDR_STABLE
-     = { ky.gtwiz_gen[3].wo_qpll_gen.gth_inst.gtwiz_reset_rx_cdr_stable_out,
-         ky.gtwiz_gen[2].wo_qpll_gen.gth_inst.gtwiz_reset_rx_cdr_stable_out,
-         ky.gtwiz_gen[1].wo_qpll_gen.gth_inst.gtwiz_reset_rx_cdr_stable_out,
-         ky.gtwiz_gen[0].w_qpll_gen.gth_inst.gtwiz_reset_rx_cdr_stable_out };
- -----/\----- EXCLUDED -----/\----- */
-
-   
-   assign LED = { CDR_GOOD[3:0],  CH_UP};
+   assign LED = { CH_UP};
    
 endmodule // kcu1500
 
