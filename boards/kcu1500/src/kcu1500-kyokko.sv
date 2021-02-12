@@ -281,7 +281,7 @@ module kcu1500_kyokko #
                 .gtwiz_reset_rx_pll_and_datapath_in(1'b0),           // I
                 .gtwiz_reset_rx_datapath_in     (RXPATH_RST  [ch]),  // I
                 .gtwiz_reset_qpll0lock_in       (QPLL_LOCKED [qd]),  // I
-                .gtwiz_reset_rx_cdr_stable_out  (CDR_GOOD    [ch]),  // O
+                .gtwiz_reset_rx_cdr_stable_out  (),                  // O
                 .gtwiz_reset_tx_done_out        (TX_RDY      [ch]),  // O
                 .gtwiz_reset_rx_done_out        (RX_RDY      [ch]),  // O
                 .gtwiz_reset_qpll0reset_out     (),                  // O
@@ -323,48 +323,47 @@ module kcu1500_kyokko #
          assign RX_RDY[chE:ch] = {BondingCh{RX_RDYi}};
          
          gth4 gth_inst
-              (
-               .gtwiz_userclk_tx_reset_in  (1'b0),                    // I
-               .gtwiz_userclk_tx_srcclk_out(),                // O
-               .gtwiz_userclk_tx_usrclk_out(),                // O
-               .gtwiz_userclk_tx_usrclk2_out(TXUSERCLK2[ch]),  // O
-               .gtwiz_userclk_tx_active_out (),                // O
-               .gtwiz_userclk_rx_reset_in  (1'b0),                    // I
-               .gtwiz_userclk_rx_srcclk_out(),                // O
-               .gtwiz_userclk_rx_usrclk_out(),                // O
-               .gtwiz_userclk_rx_usrclk2_out(RXUSERCLK2[ch]),    // O
-               .gtwiz_userclk_rx_active_out(),                // O
-               .gtwiz_reset_clk_freerun_in (CLK100),                  // I
-               .gtwiz_reset_all_in         (GT_RST),            // I
-               .gtwiz_reset_tx_pll_and_datapath_in(1'b0),  // I
-               .gtwiz_reset_tx_datapath_in        (1'b0),                  // I
-               .gtwiz_reset_rx_pll_and_datapath_in(1'b0),  // I
-               .gtwiz_reset_rx_datapath_in    (RXPATH_RSTi),    // I
-               .gtwiz_reset_rx_cdr_stable_out (),            // O
-               .gtwiz_reset_tx_done_out(TX_RDYi),                 // O
-               .gtwiz_reset_rx_done_out(RX_RDYi) ,                // O
-               .gtwiz_userdata_tx_in   (TXS    [chE:ch]),         // I [255:0]
-               .gtwiz_userdata_rx_out  (RXS    [chE:ch]),         // O [255:0]
-               .gtrefclk00_in          (GTREFCLK),                // I
-               .qpll0outclk_out        (),                        // O
-               .qpll0outrefclk_out     (),                        // O
-               .gthrxn_in              (QSFP_RXN[chE:ch]),        // I[3 : 0]
-               .gthrxp_in              (QSFP_RXP[chE:ch]),        // I[3 : 0]
-               .rxgearboxslip_in       (RXSLIP  [chE:ch]),        // I[3 : 0]
-               .txheader_in            (TXHDR   [chE:ch]),        // I[23 : 0]
-               .txsequence_in          (),                        // I[27 : 0]
-               .gthtxn_out             (QSFP_TXN[chE:ch]),        // O[3 : 0]
-               .gthtxp_out             (QSFP_TXP[chE:ch]),        // O[3 : 0]
-               .gtpowergood_out(),                                // O[3 : 0]
-               .rxdatavalid_out(),                                // O[7 : 0]
-               .rxheader_out           (RXHDR   [chE:ch]),        // O[23 : 0]
-               .rxheadervalid_out(),                              // O[7 : 0]
-               .rxpmaresetdone_out(),                             // O[3 : 0]
-               .rxprgdivresetdone_out(),                       // O[3 : 0]
-               .rxstartofseq_out(),                            // O[7 : 0]
-               .txpmaresetdone_out(),                          // O[3 : 0]
-               .txprgdivresetdone_out()                        // O[3 : 0]
-               );
+           ( .gtwiz_userclk_tx_reset_in     (1'b0),                // I
+             .gtwiz_userclk_tx_srcclk_out   (),                    // O
+             .gtwiz_userclk_tx_usrclk_out   (),                    // O
+             .gtwiz_userclk_tx_usrclk2_out  (TXUSERCLK2[ch]),      // O
+             .gtwiz_userclk_tx_active_out   (),                    // O
+             .gtwiz_userclk_rx_reset_in     (1'b0),                // I
+             .gtwiz_userclk_rx_srcclk_out   (),                    // O
+             .gtwiz_userclk_rx_usrclk_out   (),                    // O
+             .gtwiz_userclk_rx_usrclk2_out  (RXUSERCLK2[ch]),      // O
+             .gtwiz_userclk_rx_active_out   (),                    // O
+             .gtwiz_reset_clk_freerun_in    (CLK100),              // I
+             .gtwiz_reset_all_in            (GT_RST),              // I
+             .gtwiz_reset_tx_pll_and_datapath_in(1'b0),            // I
+             .gtwiz_reset_tx_datapath_in        (1'b0),            // I
+             .gtwiz_reset_rx_pll_and_datapath_in(1'b0),            // I
+             .gtwiz_reset_rx_datapath_in    (RXPATH_RSTi),         // I
+             .gtwiz_reset_rx_cdr_stable_out (),                    // O
+             .gtwiz_reset_tx_done_out       (TX_RDYi),             // O
+             .gtwiz_reset_rx_done_out       (RX_RDYi) ,            // O
+             .gtwiz_userdata_tx_in          (TXS    [chE:ch]),     // I[255:0]
+             .gtwiz_userdata_rx_out         (RXS    [chE:ch]),     // O[255:0]
+             .gtrefclk00_in                 (GTREFCLK),            // I
+             .qpll0outclk_out               (),                    // O
+             .qpll0outrefclk_out            (),                    // O
+             .gthrxn_in                     (QSFP_RXN[chE:ch]),    // I[3:0]
+             .gthrxp_in                     (QSFP_RXP[chE:ch]),    // I[3:0]
+             .rxgearboxslip_in              (RXSLIP  [chE:ch]),    // I[3:0]
+             .txheader_in                   (TXHDR   [chE:ch]),    // I[23:0]
+             .txsequence_in                 (),                    // I[27:0]
+             .gthtxn_out                    (QSFP_TXN[chE:ch]),    // O[3:0]
+             .gthtxp_out                    (QSFP_TXP[chE:ch]),    // O[3:0]
+             .gtpowergood_out               (),                    // O[3:0]
+             .rxdatavalid_out               (),                    // O[7:0]
+             .rxheader_out                  (RXHDR   [chE:ch]),    // O[23:0]
+             .rxheadervalid_out             (),                    // O[7:0]
+             .rxpmaresetdone_out            (),                    // O[3:0]
+             .rxprgdivresetdone_out         (),                    // O[3:0]
+             .rxstartofseq_out              (),                    // O[7:0]
+             .txpmaresetdone_out            (),                    // O[3:0]
+             .txprgdivresetdone_out         ()                     // O[3:0]
+             );
       end // block: gth_gen
    end // block: bond_gt_gen
 

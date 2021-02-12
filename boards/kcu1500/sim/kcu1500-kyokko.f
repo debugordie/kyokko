@@ -1,6 +1,6 @@
       -f ${KYOKKO}/sim/sim-common.f
 
-      ${KYOKKO}/boards/kcu1500/src/kcu1500-kyokko.v
+      ${KYOKKO}/boards/kcu1500/src/kcu1500-kyokko.sv
       ${KYOKKO}/src/*.v
       +libext+.v
 

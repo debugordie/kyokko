@@ -33,7 +33,8 @@ Revision History
 ----------------------------------------
 
 You can find the releases in https://lut.eee.u-ryukyu.ac.jp/svn/kyokko/tags/.
- - 0.99 (Sep.07, 2020): the initial release
+ - 0.99   (Sep.07, 2020): the initial release
+ - 0.99.1 (Feb.12, 2021): Initial support for channel bonding on KCU1500 board
 
 ----------------------------------------
 Supported FPGAs and boards
@@ -106,6 +107,7 @@ There also board-to-board simulation scripts included:
  - KC705 Aurora to KU040 Kyokko (1 channel)
  - KC705 Aurora + KU040 Kyokko to Cyclone 10 GX (1+1=2 channels)
  - KCU1500 Kyokko to Alveo U50 + HawkEye (4+4=8 channels)
+ - KC705 with 4x SFP FMC card to KCU1500 Kyokko (4-lane ch bonding)
 
 All these scripts have link-down (or hotplug) events scheduled in the
 middle of the simulation runtime. An example is:
