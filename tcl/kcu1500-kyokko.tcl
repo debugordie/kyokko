@@ -22,7 +22,7 @@ set_property source_mgmt_mode All [current_project]
 
 set RTLs [ list \
                ${TOP}/boards/kcu1500/src/top.v \
-               ${TOP}/boards/kcu1500/src/kcu1500-kyokko.v \
+               ${TOP}/boards/kcu1500/src/kcu1500-kyokko.sv \
               ]
 
 set COREs [ list \
