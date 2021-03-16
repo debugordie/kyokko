@@ -104,18 +104,6 @@ module kyokko_cb # ( parameter BondingCh=4 )
        .TIMEOUT(CB_TIMEOUT)
        );
 
-   wire [BondingCh-1:0]             FIFO_EMPTY;
-   reg                              FIFO_RE_SYNC;
-
-   always @ (posedge TXCLK[0]) begin
-      if (CB_RST | RXRST) begin
-         FIFO_RE_SYNC <= 1;
-      end else begin
-         if (   &FIFO_EMPTY) FIFO_RE_SYNC <= 0; // stop reading on all empty
-         if (&(~FIFO_EMPTY)) FIFO_RE_SYNC <= 1; // start reading on all valid
-      end
-   end
-
    // Rx reset on Rx error while link is UP
    wire RX_ERR_ANY = |RX_ERR;
 
@@ -133,7 +121,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
            kyokko # (.BondingEnable(1), .BondingCh(BondingCh), .ChNo(ch)) ky
              ( .CLK(),  // still not used
                .CLK100(CLK100),
-               .RXCLK(RXCLK[ch]),               .TXCLK(TXCLK[ch]),
+               .RXCLK(RXCLK[ch]),              .TXCLK(TXCLK[ch]),
                .RXRST(RXRST[ch] | RX_ERR_ANY),
                .TXRST(TXRST[ch]),
                .CH_UP(LANE_UP   [ch]),
@@ -150,14 +138,14 @@ module kyokko_cb # ( parameter BondingCh=4 )
                .TX_SEND_CC_O (TX_SEND_CC[ch]),
 
 	       .RX_IS_CB(RX_IS_CB[ch]),
-	       .FIFO_RE(FIFO_RE[ch] & FIFO_RE_SYNC),
+	       .FIFO_RE(FIFO_RE[ch]),
 	       .RX_STAT_TX_CB(RX_STAT_TX_CB[ch]),
 	       .CB_READY(CB_STAT[3]),
 
                .UFC_MODE_O(UFC_MODE[ch]),
                .UFC_MODE_I(|UFC_MODE),
 
-               .FIFO_EMPTY (FIFO_EMPTY[ch]),
+               .FIFO_EMPTY (),
 
                // Data channel
                .M_AXIS_TVALID (M_AXIS_TVALIDi[ch]),

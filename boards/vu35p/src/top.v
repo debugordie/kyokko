@@ -10,36 +10,54 @@
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 //
 // Modules in this file:
-//    kcu1500: Top-level module for Xilinx KCU1500 board
+//    vu35p: Top-level module for Xilinx XCVU35P board, with 2x QSFP
 // ----------------------------------------------------------------------
 
 `default_nettype none
 
-module kcu1500 #
+module vu35p #
   ( BondingEnable=0, // Set to 1 to enable
     BondingCh=4 )
-   ( input wire RST_N,
-     input wire        CLK300P, CLK300N,
-     input wire        QSFP0_REFCLKP, QSFP0_REFCLKN,
-     
-     input wire [3:0]  QSFP0_RXP, QSFP0_RXN, QSFP1_RXP, QSFP1_RXN,
-     output wire [3:0] QSFP0_TXP, QSFP0_TXN, QSFP1_TXP, QSFP1_TXN,
+  ( input wire        PCIE_RESET_N,
+    output wire       SI_RSTBB,
     
-     output wire [7:0] LED
-     );
-   
+    input wire        SLR0_CLK100N, SLR0_CLK100P, SLR1_CLK100N, SLR1_CLK100P,
+    input wire        CLK161P, CLK161N,
+
+    input wire [3:0]  QSFP0_RXP, QSFP0_RXN, QSFP1_RXP, QSFP1_RXN,
+    output wire [3:0] QSFP0_TXP, QSFP0_TXN, QSFP1_TXP, QSFP1_TXN,
+
+    output wire       QSFP1_ACT, QSFP0_ACT,
+    output wire       QSFP1_LEDG, QSFP1_LEDY, QSFP0_LEDG, QSFP0_LEDY
+   );
+
    parameter NumCh = 8;
    parameter NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh);
 
    parameter BusW = (BondingEnable==0) ? 64 : 64*BondingCh;
-   
-   wire               CLK100, DCM_LOCKED, RST;
-   assign RST = ~RST_N;
 
-   clk_300_100 dcm
-     ( .clk_in1_p(CLK300P), .clk_in1_n(CLK300N),
-       .clk100(CLK100),
-       .reset(RST),         .locked(DCM_LOCKED) );
+   wire               CLK100; // no DCM_LOCKED
+   IBUFGDS clk100_buf ( .O(CLK100), .I(SLR1_CLK100P), .IB(SLR1_CLK100N) );
+
+   // ------------------------------------------------------------
+   // Configuration-to-reset or PCIe reset
+
+   reg [9:0]          RST_CNT = 0;
+   wire               RST_FULL = &RST_CNT;
+   reg                RST;
+   assign SI_RSTBB = 1;
+
+   always @ (posedge CLK100) begin
+      if (~PCIE_RESET_N) begin
+         RST_CNT <= 0;
+      end else begin
+         if (~RST_FULL) RST_CNT <= RST_CNT + 1;
+         else RST_CNT <= RST_CNT;
+      end
+
+      RST <= ~&RST_FULL;
+   end
+
 
    // ------------------------------------------------------------
    // Kyokko signals
@@ -59,7 +77,7 @@ module kcu1500 #
    wire [NumChB-1:0] [BusW-1:0] S_AXI_UFC_TX_TDATA, M_AXI_UFC_RX_TDATA;
    wire [NumChB-1:0]            S_AXI_UFC_TX_TVALID, S_AXI_UFC_TX_TREADY,
                                 M_AXI_UFC_RX_TLAST,  M_AXI_UFC_RX_TVALID;
-    
+   
    // NFC channel
    wire [NumChB-1:0] [15:0]     S_AXI_NFC_TDATA;
    wire [NumChB-1:0]            S_AXI_NFC_TVALID, S_AXI_NFC_TREADY;
@@ -76,20 +94,21 @@ module kcu1500 #
    assign NFC_TX_DATA = S_AXI_NFC_TDATA    [NumChB-1:0];
    assign UFC_MS      = UFC_TX_MS          [NumChB-1:0];
    
-   assign M_AXI_RX_TDATA    [NumChB-1:0] = RX_DATA;
-   assign M_AXI_UFC_RX_TDATA[NumChB-1:0] = UFC_RX_DATA;
- 
+   assign M_AXI_RX_TDATA     [NumChB-1:0] = RX_DATA;
+   assign M_AXI_UFC_RX_TDATA [NumChB-1:0] = UFC_RX_DATA;
+
    // ------------------------------------------------------------
    // Kyokko instance
 
-   kcu1500_kyokko #(.BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
-     ( .CLK100(CLK100), .RST(~DCM_LOCKED),
-       .QSFP0_REFCLKP(QSFP0_REFCLKP), .QSFP0_REFCLKN(QSFP0_REFCLKN),
+   au50_kyokko  #(.NumCh(NumCh), 
+                  .BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
+     ( .CLK100(CLK100), .RST(RST),
+       .QSFP_REFCLKP(CLK161P), .QSFP_REFCLKN(CLK161N),
 
-       .QSFP0_TXP(QSFP0_TXP), .QSFP0_TXN(QSFP0_TXN),
-       .QSFP0_RXP(QSFP0_RXP), .QSFP0_RXN(QSFP0_RXN),
-       .QSFP1_TXP(QSFP1_TXP), .QSFP1_TXN(QSFP1_TXN),
-       .QSFP1_RXP(QSFP1_RXP), .QSFP1_RXN(QSFP1_RXN),
+       .QSFP_TXP({QSFP1_TXP, QSFP0_TXP}), 
+       .QSFP_TXN({QSFP1_TXN, QSFP0_TXN}),
+       .QSFP_RXP({QSFP1_RXP, QSFP0_RXP}),
+       .QSFP_RXN({QSFP1_RXN, QSFP0_RXN}),
 
        .CH_UP   (CH_UP),
        .USER_CLK(AURORA_CLK),
@@ -114,21 +133,26 @@ module kcu1500 #
      
        .M_AXI_UFC_RX_TDATA (UFC_RX_DATA),         // O [64*NumCh-1:0] 
        .M_AXI_UFC_RX_TLAST (M_AXI_UFC_RX_TLAST ), // O [NumCh-1:0]   
-       .M_AXI_UFC_RX_TVALID(M_AXI_UFC_RX_TVALID), // O [NumCh-1:0]       
+       .M_AXI_UFC_RX_TVALID(M_AXI_UFC_RX_TVALID), // O [NumCh-1:0]    
 
        // NFC channel
        .S_AXI_NFC_TDATA    (NFC_TX_DATA),         // I [16*NumCh-1:0]  
        .S_AXI_NFC_TVALID   (S_AXI_NFC_TVALID),    // I [NumCh-1:0]     
-       .S_AXI_NFC_TREADY   (S_AXI_NFC_TREADY)     // O [NumCh-1:0]
+       .S_AXI_NFC_TREADY   (S_AXI_NFC_TREADY)     // O [NumCh-1:0]    
        );
 
+   assign {QSFP1_LEDY, QSFP0_LEDY} = CH_UP;
+
+   assign {QSFP1_LEDG, QSFP0_LEDG} = 0;
+   assign {QSFP1_ACT,  QSFP0_ACT } = 0;
+   
    // ------------------------------------------------------------
    // Test stuff
 
    wire [NumChB-1:0] GO;
 
    // Frame generators
-   genvar              ch;
+   genvar            ch;
    generate
       if (BondingEnable==0) begin : nobond_tp_gen
          for (ch=0; ch<NumCh; ch=ch+1) begin : txgen_gen
@@ -152,11 +176,10 @@ module kcu1500 #
                 .DATA (S_AXI_NFC_TDATA [ch]), 
                 .READY(S_AXI_NFC_TREADY[ch]), 
                 .VALID(S_AXI_NFC_TVALID[ch]) );
-         end // txgen_gen
-      end // block: framegen_gen
-      else begin : bond_tp_gen
+         end // block: txgen_gen
+      end else begin : bond_tp_gen // block: nobond_tp_gen
          for (ch=0; ch<NumChB; ch=ch+1) begin : txgen_gen
-	    tx_frame_gen4 txg4
+            tx_frame_gen4 txg4
                  ( .CLK   (AURORA_CLK[ch]), .RST(~CH_UP[ch] | ~GO[ch]),
                    .DATA  (S_AXI_TX_TDATA [ch]),
                    .LAST  (S_AXI_TX_TLAST [ch]), 
@@ -177,8 +200,8 @@ module kcu1500 #
                 .DATA (S_AXI_NFC_TDATA [ch]), 
                 .READY(S_AXI_NFC_TREADY[ch]), 
                 .VALID(S_AXI_NFC_TVALID[ch]) );
-         end
-      end
+         end // block: txgen_gen
+      end // block: bond_tp_gen
    endgenerate
    
 `ifndef NO_JTAG
@@ -186,6 +209,7 @@ module kcu1500 #
       ( .clk(AURORA_CLK[0]),
         .probe_in0 (CH_UP),
         .probe_out0(GO) );
+
 
    generate
       for (ch=0; ch<NumChB; ch=ch+1) begin : ila_gen
@@ -215,110 +239,10 @@ module kcu1500 #
 
    endgenerate
 
-/*
-   ila4_0 perf_ila
-     ( .clk(AURORA_CLK[0]),
-       .probe0({S_AXI_TX_TDATA [0], S_AXI_TX_TVALID[0],
-                S_AXI_TX_TREADY[0], 
-                M_AXI_RX_TDATA [1], 
-                M_AXI_RX_TVALID[1], M_AXI_RX_TLAST [1]
-                }) );
-                */
-
-/* -----\/----- EXCLUDED -----\/-----
-   // Watching Channel bonding
-   ila4_0 ila
-     ( .clk(AURORA_CLK[0]),
-       .probe0
-       ({ ky.chbond_gen.kyokko_cb_gen[0].kycb.cb_init.RX_IS_CB,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.cb_init.CB_STAT,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.cb_init.FIFO_RE,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.cb_init.TIMEOUT,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.CB_RST,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.RX_ERR_ANY,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.tx.RX_STAT_TX,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.tx.RX_STAT_TX,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.tx.RX_STAT_TX,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.tx.RX_STAT_TX,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXDATAt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXDATAt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXDATAt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXDATAt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXHDRt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXHDRt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXHDRt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXHDRt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXVALIDt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXVALIDt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXVALIDt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXVALIDt,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.FIFO_EMPTY,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.FIFO_RE_SYNC,
-
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[0].ky.tx.TXDATA[63:48],
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[1].ky.tx.TXDATA[63:48],
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.tx.TXDATA[63:48],
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[3].ky.tx.TXDATA[63:48],
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[0].ky.tx.RX_STAT_TX,
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[1].ky.tx.RX_STAT_TX,
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.tx.RX_STAT_TX,
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[3].ky.tx.RX_STAT_TX,
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[0].ky.tx.TXHDR, // 7:6
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[1].ky.tx.TXHDR, // 5:4
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.tx.TXHDR, // 3:2
-          ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[3].ky.tx.TXHDR // 1:0
-          }) );
- -----/\----- EXCLUDED -----/\----- */
-
-/* -----\/----- EXCLUDED -----\/-----
-   // Watching UFC transmission
-   ila4_0 ila
-     ( .clk(AURORA_CLK[0]),
-       .probe0
-       ({ ky.chbond_gen.kyokko_cb_gen[0].kycb.UFC_REQ,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.UFC_MS,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_UFC_TVALID,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_UFC_TREADY,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_UFC_TDATA[63:0],
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.tx.TXDATA,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.tx.TXDATA,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.tx.TXDATA,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.tx.TXDATA
-          }) );
-   -----/\----- EXCLUDED -----/\----- */
-
-   // Watching NFC Rx/Tx
-/* -----\/----- EXCLUDED -----\/-----
-   ila4_0 ila
-     ( .clk(AURORA_CLK[0]),
-       .probe0
-       ({ ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.RXDATAt[63:48],
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.RXDATAt[63:48],
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.RXDATAt[63:48],
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.RXDATAt[63:48],
-
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.NFC_PAUSE,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.NFC_PAUSE,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.NFC_PAUSE,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.NFC_PAUSE,
-
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_NFC_TVALID,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_NFC_TREADY,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.S_AXIS_NFC_TDATA,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.tx.TXDATA,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.tx.TXDATA,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.tx.TXDATA,
-          ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.tx.TXDATA
-         }) );
- -----/\----- EXCLUDED -----/\----- */
-   
 `else
-   assign GO = {NumChB{1'b1}};
+   assign GO = {NumCh{1'b1}};
 `endif
-
-
-   assign LED = { CH_UP};
    
-endmodule // kcu1500
+endmodule // au50
 
 `default_nettype wire

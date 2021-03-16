@@ -40,7 +40,7 @@ set_property PACKAGE_PIN C40  [get_ports QSFP_TXP[1]]
 set_property PACKAGE_PIN B42  [get_ports QSFP_TXP[2]]
 set_property PACKAGE_PIN A40  [get_ports QSFP_TXP[3]]
 
-# Clocing stuff
+# Clocking stuff
 
 connect_debug_port dbg_hub/clk [get_nets CLK100]
 

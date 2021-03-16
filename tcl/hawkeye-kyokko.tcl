@@ -25,8 +25,8 @@ set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name SDC_FILE ${TOP}/boards/hawkeye/src/hawkeye.sdc
 
 set RTLs [ list \
-               ${TOP}/boards/hawkeye/src/top.v \
-               ${TOP}/boards/hawkeye/src/hawkeye-kyokko.v \
+               ${TOP}/boards/hawkeye/src/top.sv \
+               ${TOP}/boards/hawkeye/src/hawkeye-kyokko.sv \
                ${TOP}/boards/hawkeye/src/a10-xcvr-4ch.v \
                ${TOP}/src/intel-gx/fifo_66x512_async.v \
               ]
@@ -46,8 +46,12 @@ source ${TOP}/tcl/kyokko-core.tcl
 source ${TOP}/tcl/kyokko-test.tcl
 
 
-foreach r $RTLs {
-    set_global_assignment -name VERILOG_FILE $r
+foreach r [concat $RTLs $CBRTLs] {
+    if {[fileext $r] == "sv"} {
+        set_global_assignment -name SYSTEMVERILOG_FILE $r
+    } else {
+        set_global_assignment -name VERILOG_FILE $r
+    }
 }
 
 foreach c $COREs {

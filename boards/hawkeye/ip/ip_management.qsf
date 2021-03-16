@@ -15,3 +15,5 @@ set_global_assignment -name IP_FILE ila.ip
 set_global_assignment -name IP_FILE atx_5g.ip
 set_global_assignment -name IP_FILE phy_rst_ctrl_4ch.ip
 set_global_assignment -name IP_FILE phy_10g.ip
+set_global_assignment -name IP_FILE phy_10g_4cb.ip
+set_global_assignment -name IP_FILE atx_5g_4cb.ip

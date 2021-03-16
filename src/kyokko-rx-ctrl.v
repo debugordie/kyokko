@@ -20,7 +20,7 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
      input wire [63:0]  RXS,
      input wire [1:0]   RXHDRi,
      input wire         FIFO_RE,
-     input wire         CB_FINISH,
+     input wire         CB_READY,
      output wire [3:0]  RX_STAT,
      output wire        RX_ERR, 
      output wire        RXSLIP,
@@ -43,16 +43,20 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
    reg [1:0]          RXHDR;
    always @ (posedge CLK) RXHDR <= RXHDRi[1:0];
 
+   // CB status synchronizer
+   reg                CB_READY_R, CB_READYi;
+   always @ (posedge CLK) begin
+      CB_READYi <= CB_READY_R; CB_READY_R <= CB_READY; end
+
    kyokko_rx_init rxinit
      ( .CLK(CLK),  .RST(RST),
-       .RXHDR   (RXHDR),
-       .RXDATA  (RXDATA),
-       .CB_FINISH(CB_FINISH),
-       .RX_STAT (RX_STAT),
-       .RXSLIP  (RXSLIP),
+       .RXHDR       (RXHDR),
+       .RXDATA      (RXDATA),
+       .CB_READY    (CB_READYi),
+       .RX_STAT     (RX_STAT),
+       .RXSLIP      (RXSLIP),
        .RXSLIP_LIMIT(RXSLIP_LIMIT),
-       .LINK_ERR_O  (RX_ERR)
-        );
+       .LINK_ERR_O  (RX_ERR) );
    
    wire [1:0]         RXHDRt;
    wire [63:0]        RXDATAt;
@@ -62,6 +66,8 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
 	                          ~((RXHDR == 2'b10) &
 	                            (RXDATA[63:56] == 8'h78) & 
 		                    RXDATA[55]) );
+
+   wire               FIFO_REi = (BondingEnable==1) ? FIFO_RE : 1;
    
    fifo_66x512_async rxfifo
      ( .rst(RST),                 // I
@@ -69,7 +75,7 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
        .rd_clk(TXCLK),            // I
        .din  ({RXHDR, RXDATA}),   // I [65:0]
        .wr_en(FIFO_WE),           // I
-       .rd_en(FIFO_RE),           // I
+       .rd_en(FIFO_REi),          // I
        .dout({RXHDRt, RXDATAt}),  // O [65:0]
        .full(),                   // O
        .empty(FIFO_EMPTY),        // O

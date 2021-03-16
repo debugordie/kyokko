@@ -83,3 +83,7 @@ set_false_path \
     -to [get_pins -match_style ucf */rxrst/RXSLIP_LIMITi_reg/D]
 
 set_false_path -to [get_pins -match_style ucf */RXRST100i_reg/S]
+ 
+set_false_path -to [get_pins ky/chbond_gen.kyokko_cb_gen[*].kycb/kyokko_gen[*].ky/RXRST100i_reg/D]
+
+set_false_path -to [get_pins ky/nobond_gen.kyokko_gen[*].ky/RXRST100i_reg/D]

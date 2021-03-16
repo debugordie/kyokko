@@ -16,7 +16,6 @@
 source [file join [file dirname [info script]] "config.tcl"]
 source ${TOP}/tcl/kcu1500-kyokko.tcl
 
-
 source ${TOP}/tcl/kyokko-cb.tcl
 
 set CBCOREs [ list \

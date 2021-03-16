@@ -10,49 +10,42 @@
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 //
 // Modules in this file:
-//    au50: Top-level module for Xilinx Alveo U50, with 4x Kyokko on QSFP
+//    hawkeye: Top-level module for Gidel Hawkeye-40, with 4x Kyokko on SFPs
 // ----------------------------------------------------------------------
 
 `default_nettype none
 
-module au50 #
-  ( parameter BondingEnable=0, // Set to 1 to enable
-    BondingCh=4 )
+module hawkeye # 
+  ( parameter NumCh = 4,
+    BondingEnable = 0,  // Set to 1 to enable
+    BondingCh = 4 )
   ( input wire        PCIE_RESET_N,
-    
-    input wire        CMC_CLKP, CMC_CLKN,
-    input wire        CLK322P, CLK322N,
+    input wire              CLK125, // 125MHz
+    input wire              CLK644P,
+    input wire [NumCh-1:0]  SFP_RXP,
+    output wire [NumCh-1:0] SFP_TXP
+     );
 
-    input wire [3:0]  QSFP_RXP, QSFP_RXN,
-    output wire [3:0] QSFP_TXP, QSFP_TXN
-   );
-
-   parameter NumCh = 4;
    parameter NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh);
-
    parameter BusW = (BondingEnable==0) ? 64 : 64*BondingCh;
-
-   wire               CLK100; // no DCM_LOCKED
-   IBUFGDS clk100_buf ( .O(CLK100), .I(CMC_CLKP), .IB(CMC_CLKN) );
-
+   
    // ------------------------------------------------------------
    // Configuration-to-reset or PCIe reset
+   
+   reg [9:0]                 RST_CNT = 0;
+   wire                      RST_FULL = &RST_CNT;
+   reg                       RST;
 
-   reg [9:0]          RST_CNT = 0;
-   wire               RST_FULL = &RST_CNT;
-   reg                RST;
-
-   always @ (posedge CLK100) begin
+   always @ (posedge CLK125) begin
       if (~PCIE_RESET_N) begin
          RST_CNT <= 0;
       end else begin
          if (~RST_FULL) RST_CNT <= RST_CNT + 1;
          else RST_CNT <= RST_CNT;
       end
-
+      
       RST <= ~&RST_FULL;
    end
-
 
    // ------------------------------------------------------------
    // Kyokko signals
@@ -80,9 +73,9 @@ module au50 #
    // ------------------------------------------------------------
    // Signal bundles
 
-   wire [NumCh*64-1:0] TX_DATA, RX_DATA, UFC_TX_DATA, UFC_RX_DATA;
-   wire [NumChB*16-1:0] NFC_TX_DATA;
-   wire [NumChB* 8-1:0] UFC_MS;
+   wire [NumCh*64-1:0]      TX_DATA, RX_DATA, UFC_TX_DATA, UFC_RX_DATA;
+   wire [NumChB*16-1:0]      NFC_TX_DATA;
+   wire [NumChB* 8-1:0]      UFC_MS;
 
    assign TX_DATA     = S_AXI_TX_TDATA     [NumChB-1:0];
    assign UFC_TX_DATA = S_AXI_UFC_TX_TDATA [NumChB-1:0];
@@ -91,16 +84,16 @@ module au50 #
    
    assign M_AXI_RX_TDATA     [NumChB-1:0] = RX_DATA;
    assign M_AXI_UFC_RX_TDATA [NumChB-1:0] = UFC_RX_DATA;
-
+   
    // ------------------------------------------------------------
    // Kyokko instance
 
-   au50_kyokko #(.BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
-     ( .CLK100(CLK100), .RST(RST),
-       .QSFP_REFCLKP(CLK322P), .QSFP_REFCLKN(CLK322N),
+   hawkeye_kyokko #(.BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
+     ( .CLK125(CLK125), .RST(RST),
+       .CLK644P(CLK644P),
 
-       .QSFP_TXP(QSFP_TXP), .QSFP_TXN(QSFP_TXN),
-       .QSFP_RXP(QSFP_RXP), .QSFP_RXN(QSFP_RXN),
+       .SFP_TXP(SFP_TXP),
+       .SFP_RXP(SFP_RXP),
 
        .CH_UP   (CH_UP),
        .USER_CLK(AURORA_CLK),
@@ -110,22 +103,22 @@ module au50 #
        .S_AXI_TX_TLAST     (S_AXI_TX_TLAST ),     // I [NumCh-1:0]    
        .S_AXI_TX_TVALID    (S_AXI_TX_TVALID),     // I [NumCh-1:0]     
        .S_AXI_TX_TREADY    (S_AXI_TX_TREADY),     // O [NumCh-1:0]    
-     
+      
        .M_AXI_RX_TDATA     (RX_DATA),             // O [64*NumCh-1:0] 
        .M_AXI_RX_TLAST     (M_AXI_RX_TLAST ),     // O [NumCh-1:0]   
        .M_AXI_RX_TVALID    (M_AXI_RX_TVALID),     // O [NumCh-1:0]    
-     
+      
        // UFC channel
        .UFC_TX_REQ         (UFC_TX_REQ),          // I [NumCh-1:0]     
        .UFC_TX_MS          (UFC_MS),              // O [8*NumCh-1:0] 
-     
+      
        .S_AXI_UFC_TX_TDATA (UFC_TX_DATA),         // I [64*NumCh-1:0]  
        .S_AXI_UFC_TX_TVALID(S_AXI_UFC_TX_TVALID), // I [NumCh-1:0]     
        .S_AXI_UFC_TX_TREADY(S_AXI_UFC_TX_TREADY), // O [NumCh-1:0]    
-     
+      
        .M_AXI_UFC_RX_TDATA (UFC_RX_DATA),         // O [64*NumCh-1:0] 
        .M_AXI_UFC_RX_TLAST (M_AXI_UFC_RX_TLAST ), // O [NumCh-1:0]   
-       .M_AXI_UFC_RX_TVALID(M_AXI_UFC_RX_TVALID), // O [NumCh-1:0]    
+       .M_AXI_UFC_RX_TVALID(M_AXI_UFC_RX_TVALID), // O [NumCh-1:0]       
 
        // NFC channel
        .S_AXI_NFC_TDATA    (NFC_TX_DATA),         // I [16*NumCh-1:0]  
@@ -133,13 +126,15 @@ module au50 #
        .S_AXI_NFC_TREADY   (S_AXI_NFC_TREADY)     // O [NumCh-1:0]    
        );
 
+   // No LED
+
    // ------------------------------------------------------------
    // Test stuff
 
-   wire [NumChB-1:0] GO;
+   wire [NumChB-1:0]         GO;
 
    // Frame generators
-   genvar            ch;
+   genvar                    ch;
    generate
       if (BondingEnable==0) begin : nobond_tp_gen
          for (ch=0; ch<NumCh; ch=ch+1) begin : txgen_gen
@@ -192,44 +187,26 @@ module au50 #
    endgenerate
    
 `ifndef NO_JTAG
-   vio_0 vio
-      ( .clk(AURORA_CLK[0]),
-        .probe_in0 (CH_UP),
-        .probe_out0(GO) );
-
-
+   vio vio_inst
+     ( .probe (CH_UP),
+       .source(GO) );
    generate
-      for (ch=0; ch<NumChB; ch=ch+1) begin : ila_gen
-         if (BondingEnable==0) begin : nobond_ila_gen
-            ila_0 ila
-              ( .clk(AURORA_CLK[ch]),
-                .probe0({S_AXI_TX_TDATA [ch], S_AXI_TX_TVALID[ch],
-                         S_AXI_TX_TREADY[ch], S_AXI_TX_TLAST [ch],
-                         M_AXI_RX_TDATA [ch], 
-                         M_AXI_RX_TVALID[ch], M_AXI_RX_TLAST [ch]}) );
-         end else begin : bond_ila_gen
-            ila4_0 ila
-              ( .clk(AURORA_CLK[ch]),
-                .probe0({S_AXI_TX_TDATA [ch], S_AXI_TX_TVALID[ch],
-                         S_AXI_TX_TREADY[ch], S_AXI_TX_TLAST [ch],
-                         M_AXI_RX_TDATA [ch], 
-                         M_AXI_RX_TVALID[ch], M_AXI_RX_TLAST [ch]}) );
-
-            ila4_0 ila_ufc
-              ( .clk(AURORA_CLK[ch]),
-                .probe0({S_AXI_UFC_TX_TDATA [ch], S_AXI_UFC_TX_TVALID[ch],
-                         S_AXI_UFC_TX_TREADY[ch], 
-                         M_AXI_UFC_RX_TDATA [ch], 
-                         M_AXI_UFC_RX_TVALID[ch], M_AXI_UFC_RX_TLAST [ch]}) );
-         end // block: bond_ila_gen
+      if (BondingEnable==0) begin : nobond_ila_gen
+         for (ch=0; ch<NumCh; ch=ch+1) begin : ila_gen
+            ila ila_inst
+                 ( .acq_clk(AURORA_CLK[ch]),
+                   .acq_data_in({S_AXI_TX_TDATA [ch], S_AXI_TX_TVALID[ch],
+                                 S_AXI_TX_TREADY[ch], S_AXI_TX_TLAST [ch],
+                                 M_AXI_RX_TDATA [ch], 
+                                 M_AXI_RX_TVALID[ch], M_AXI_RX_TLAST [ch]}),
+                   .acq_trigger_in(M_AXI_RX_TVALID[ch]) );
+         end
       end // ila_gen
-
    endgenerate
-
 `else
    assign GO = {NumCh{1'b1}};
 `endif
-   
-endmodule // au50
+
+endmodule // hawkeye
 
 `default_nettype wire

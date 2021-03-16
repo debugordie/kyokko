@@ -19,7 +19,7 @@ module kyokko_rx_init
   ( input wire CLK, RST,
     input wire [1:0]  RXHDR,
     input wire [63:0] RXDATA,
-    input wire        CB_FINISH,
+    input wire        CB_READY,
     output reg [3:0]  RX_STAT,
     output wire       RXSLIP,
     output reg        RXSLIP_LIMIT,
@@ -96,13 +96,14 @@ module kyokko_rx_init
                  RXSLIP_TIMER <= 0;
                  RXSLIP_LIMIT <= 0;
               end else begin
-                 if ((~(RX_IS_CC | RX_IS_CB | RX_IS_NR) | W4R_CNT ==400) & CB_FINISH) begin
+                 if ((~(RX_IS_CC | RX_IS_CB | RX_IS_NR) | W4R_CNT ==400) & CB_READY) begin
                     RX_STAT <= 'b0100;
                     W4R_CNT <= 0;
                     W4R_RXCNT <= 0;
                  end else begin
                     RX_STAT <= RX_STAT;
-                    if (RX_IS_CB | RX_IS_CC) W4R_CNT <= W4R_CNT + 1;
+                    if ((RX_IS_CB | RX_IS_CC) & CB_READY) 
+                      W4R_CNT <= W4R_CNT + 1;
                  end
               end
            end 

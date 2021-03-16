@@ -23,8 +23,8 @@ module au50_kyokko #
   ( input wire CLK100, RST,
     
     input wire                 QSFP_REFCLKP, QSFP_REFCLKN,
-    output wire [NumCh-1:0]    QSFP_TXP, QSFP_TXN,
-    input wire [NumCh-1:0]     QSFP_RXP, QSFP_RXN,
+    output wire [3:0]          QSFP_TXP, QSFP_TXN,
+    input wire [3:0]           QSFP_RXP, QSFP_RXN,
 
     // ------------------------------
     // Aurora compatible interface signals
@@ -83,11 +83,11 @@ module au50_kyokko #
    
    wire [NumCh-1:0]            RXPATH_RST, RXSLIP;
 
-   genvar                      ch, ch2;
+   assign USER_CLK = TXUSERCLK2;
+
+   genvar             ch, ch2;
    generate
       if (BondingEnable==0) begin : nobond_gen
-         assign USER_CLK = TXUSERCLK2;
-
          for (ch=0; ch<NumCh; ch=ch+1) begin : kyokko_gen
             
             defparam ky.tx.init.GenInit = 1;
@@ -359,3 +359,5 @@ module au50_kyokko #
 endmodule // au50_kyokko
 
 `default_nettype wire
+
+     
