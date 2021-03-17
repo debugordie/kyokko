@@ -22,7 +22,7 @@ set_property source_mgmt_mode All [current_project]
 
 
 set RTLs [ list \
-               ${TOP}/boards/au50/src/top.v \
+               ${TOP}/boards/au50/src/top.sv \
                ${TOP}/boards/au50/src/au50-kyokko.sv \
               ]
 

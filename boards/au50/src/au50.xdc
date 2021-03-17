@@ -51,4 +51,4 @@ set_false_path \
     -from [get_pins -match_style ucf */rxinit/RXSLIP_LIMIT_reg/C] \
     -to [get_pins -match_style ucf */rxrst/RXSLIP_LIMITi_reg/D]
 
-set_false_path -to [get_pins -match_style ucf */RXRST100i_reg/S]
+set_false_path -to [get_pins -match_style ucf */RXRST100i_reg/*]
