@@ -24,7 +24,9 @@ module au50 #
     input wire        CLK322P, CLK322N,
 
     input wire [3:0]  QSFP_RXP, QSFP_RXN,
-    output wire [3:0] QSFP_TXP, QSFP_TXN
+    output wire [3:0] QSFP_TXP, QSFP_TXN,
+
+    output wire       QSFP_ACT, QSFP_LEDG, QSFP_LEDY
    );
 
    parameter NumCh = 4;
@@ -133,6 +135,10 @@ module au50 #
        .S_AXI_NFC_TREADY   (S_AXI_NFC_TREADY)     // O [NumCh-1:0]    
        );
 
+   assign QSFP_LEDY = |CH_UP;
+   assign QSFP_LEDG = 0;
+   assign QSFP_ACT  = 0;
+   
    // ------------------------------------------------------------
    // Test stuff
 

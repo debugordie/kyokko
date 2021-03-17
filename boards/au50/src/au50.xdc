@@ -40,6 +40,13 @@ set_property PACKAGE_PIN C40  [get_ports QSFP_TXP[1]]
 set_property PACKAGE_PIN B42  [get_ports QSFP_TXP[2]]
 set_property PACKAGE_PIN A40  [get_ports QSFP_TXP[3]]
 
+# QSFP LED
+
+set_property PACKAGE_PIN E18      [get_ports QSFP_ACT]
+set_property PACKAGE_PIN E16      [get_ports QSFP_LEDG]
+set_property PACKAGE_PIN F17      [get_ports QSFP_LEDY]
+set_property IOSTANDARD  LVCMOS18 [get_ports {QSFP_ACT QSFP_LEDG QSFP_LEDY}]
+
 # Clocking stuff
 
 connect_debug_port dbg_hub/clk [get_nets CLK100]

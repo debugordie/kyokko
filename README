@@ -57,7 +57,7 @@ contributions are welcome.
 Getting started
 ----------------------------------------
 
-You'll need Xilinx Vivado HLx 2019.2, Intel Quartus Prime Pro 20.1, or
+You'll need Xilinx Vivado HLx 2020.1, Intel Quartus Prime Pro 20.1, or
 later version of them. For simulation, the development team uses
 Cadence Xcelium 19.03.
 

@@ -16,7 +16,7 @@
 source [file join [file dirname [info script]] "config.tcl"]
 
 set_property part xcu50-fsvh2104-2-e [current_project]
-set_property board_part xilinx.com:au50:1.0 [current_project]
+# set_property board_part xilinx.com:au50:1.0 [current_project]
 set_property simulator_language Verilog [current_project]
 set_property source_mgmt_mode All [current_project]
 
