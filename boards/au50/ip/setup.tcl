@@ -24,7 +24,7 @@ set_param board.repoPaths $::env(HOME)/.Xilinx/Vivado/[version -short]/xhub/boar
 set COREDIR [ file dirname [ file normalize [ info script ] ] ] 
 set PROJDIR ${COREDIR}/iploc
 set DEV xcu50-fsvh2104-2-e
-set BOARD xilinx.com:au50:1.0
+# set BOARD xilinx.com:au50:1.0
 
 set COREs [ list \
                 fifo_66x512_async \
@@ -37,7 +37,7 @@ set COREs [ list \
                ]
 
 create_project managed_ip_project ${PROJDIR}/managed_ip_project -part ${DEV} -ip -force
-set_property board_part ${BOARD} [current_project]
+# set_property board_part ${BOARD} [current_project]
 set_property simulator_language Verilog [current_project]
 set_property target_simulator IES [current_project]
 
