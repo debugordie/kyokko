@@ -10,7 +10,7 @@
 # Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 #
 # This file is to:
-#    Setup base project for Xilinx KCU1500, Kyokko on Dual-SFP (x4 bonding)
+#    Setup base project for Xilinx KCU1500, Kyokko on Dual-QSFP (x4 bonding)
 # ----------------------------------------------------------------------
 
 source [file join [file dirname [info script]] "config.tcl"]

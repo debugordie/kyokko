@@ -14,40 +14,18 @@
 # ----------------------------------------------------------------------
 
 source [file join [file dirname [info script]] "config.tcl"]
+source ${TOP}/tcl/hawkeye-kyokko.tcl
 
-set_global_assignment -name FAMILY Arria10
-set_global_assignment -name TOP_LEVEL_ENTITY hawkeye
-set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
-set_global_assignment -name MAX_CORE_JUNCTION_TEMP 100
-set_global_assignment -name DEVICE 10AX048E4F29E3SG
-# set_global_assignment -name SEARCH_PATH ${top}/path/to/verilog-headers
-set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
-set_global_assignment -name SDC_FILE ${TOP}/boards/hawkeye/src/hawkeye.sdc
+source ${TOP}/tcl/kyokko-cb.tcl
 
-set RTLs [ list \
-               ${TOP}/boards/hawkeye/src/top.sv \
-               ${TOP}/boards/hawkeye/src/hawkeye-kyokko.sv \
-               ${TOP}/boards/hawkeye/src/a10-xcvr-cb4.sv \
-               ${TOP}/src/intel-gx/fifo_66x512_async.v \
-              ]
+lappend CBRTLs ${TOP}/boards/hawkeye/src/a10-xcvr-cb4.sv
 
-set COREs [ list \
+set CBCOREs [ list \
                 ${TOP}/boards/hawkeye/ip/atx_5g_4cb.ip \
                 ${TOP}/boards/hawkeye/ip/phy_10g_4cb.ip \
-                ${TOP}/boards/hawkeye/ip/phy_rst_ctrl_4ch.ip \
-                ${TOP}/boards/hawkeye/ip/ila.ip \
-                ${TOP}/boards/hawkeye/ip/vio.ip \
                ]
 
-set CONSTRs [ list \
-                  ${TOP}/boards/hawkeye/src/hawkeye-constr.tcl ]
-
-source ${TOP}/tcl/kyokko-core.tcl
-source ${TOP}/tcl/kyokko-cb.tcl
-source ${TOP}/tcl/kyokko-test.tcl
-
-
-foreach r [concat $RTLs $CBRTLs] {
+foreach r $CBRTLs {
     if {[fileext $r] == "sv"} {
         set_global_assignment -name SYSTEMVERILOG_FILE $r
     } else {
@@ -55,12 +33,8 @@ foreach r [concat $RTLs $CBRTLs] {
     }
 }
 
-foreach c $COREs {
+foreach c $CBCOREs {
     set_global_assignment -name IP_FILE $c
-}
-
-foreach c $CONSTRs {
-    source $c
 }
 
 set_parameter -name BondingEnable 1

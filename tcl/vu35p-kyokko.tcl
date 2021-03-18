@@ -10,33 +10,31 @@
 # Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 #
 # This file is to:
-#    Setup base project for Xilinx KCU1500, Kyokko on Dual-QSFP
+#    Setup base project for a VU35P board, Kyokko on Dual-QSFP
 # ----------------------------------------------------------------------
 
 source [file join [file dirname [info script]] "config.tcl"]
 
-set_property part xcku115-flvb2104-2-e [current_project]
+set_property part xcvu35p-fsvh2892-2L-e [current_project]
 set_property simulator_language Verilog [current_project]
 set_property source_mgmt_mode All [current_project]
 
-
 set RTLs [ list \
-               ${TOP}/boards/kcu1500/src/top.sv \
-               ${TOP}/boards/kcu1500/src/kcu1500-kyokko.sv \
+               ${TOP}/boards/vu35p/src/top.sv \
+               ${TOP}/boards/vu35p/src/vu35p-kyokko.sv \
               ]
 
 set COREs [ list \
-                clk_300_100 \
                 fifo_66x512_async \
-                gth_w_qpll \
-                gth_wo_qpll \
-                gth4 \
+                gty_w_qpll \
+                gty_wo_qpll \
+                gty4 \
                 ila_0 \
                 vio_0 \
            ]
 
 set XDCs [ list \
-               ${TOP}/boards/kcu1500/src/kcu1500.xdc \
+               ${TOP}/boards/vu35p/src/vu35p.xdc \
                ]
 
 source ${TOP}/tcl/kyokko-core.tcl
@@ -46,7 +44,7 @@ source ${TOP}/tcl/kyokko-test.tcl
 
 set COREFILEs [list ]
 foreach c $COREs {
-    lappend COREFILEs ${TOP}/boards/kcu1500/ip/${c}.xci
+    lappend COREFILEs ${TOP}/boards/vu35p/ip/${c}.xci
 }
 
 add_files $RTLs

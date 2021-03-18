@@ -100,8 +100,8 @@ module vu35p #
    // ------------------------------------------------------------
    // Kyokko instance
 
-   au50_kyokko  #(.NumCh(NumCh), 
-                  .BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
+   vu35p_kyokko  #(.NumCh(NumCh), 
+                   .BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
      ( .CLK100(CLK100), .RST(RST),
        .QSFP_REFCLKP(CLK161P), .QSFP_REFCLKN(CLK161N),
 

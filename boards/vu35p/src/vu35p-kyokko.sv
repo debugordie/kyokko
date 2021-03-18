@@ -10,12 +10,12 @@
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 //
 // Modules in this file:
-//    au50_kyokko: Kyokko + GTY transceiver wrapper for Xilinx Alveo U50
+//    au50_kyokko: Kyokko + GTY transceiver wrapper for a VU35P board
 // ----------------------------------------------------------------------
 
 `default_nettype none
 
-module au50_kyokko # 
+module vu35p_kyokko # 
   ( parameter NumCh = 4,
     BondingEnable = 0,  // Set to 1 to enable
     BondingCh = 4,
@@ -23,8 +23,8 @@ module au50_kyokko #
   ( input wire CLK100, RST,
     
     input wire                 QSFP_REFCLKP, QSFP_REFCLKN,
-    output wire [3:0]          QSFP_TXP, QSFP_TXN,
-    input wire [3:0]           QSFP_RXP, QSFP_RXN,
+    output wire [NumCh-1:0]          QSFP_TXP, QSFP_TXN,
+    input wire [NumCh-1:0]           QSFP_RXP, QSFP_RXN,
 
     // ------------------------------
     // Aurora compatible interface signals
@@ -83,11 +83,10 @@ module au50_kyokko #
    
    wire [NumCh-1:0]            RXPATH_RST, RXSLIP;
 
-   assign USER_CLK = TXUSERCLK2;
-
    genvar             ch, ch2;
    generate
       if (BondingEnable==0) begin : nobond_gen
+         assign USER_CLK = TXUSERCLK2;
          for (ch=0; ch<NumCh; ch=ch+1) begin : kyokko_gen
             
             defparam ky.tx.init.GenInit = 1;
