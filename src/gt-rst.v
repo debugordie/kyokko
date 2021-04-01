@@ -25,7 +25,7 @@ module gt_rst
       if (RST) GT_RST_CNT <= 0;
       else GT_RST_CNT <= GT_RST_CNT + ((~&GT_RST_CNT) ? 1 : 0);
 
-      GT_RSTr <= (GT_RST_CNT==0) ? 1 : (GT_RST_CNT==100) ? 0 : GT_RSTr;
+      GT_RSTr <= (GT_RST_CNT==0) ? 1 : (GT_RST_CNT==200) ? 0 : GT_RSTr;
    end
 
    assign GT_RST = GT_RSTr;

@@ -44,16 +44,16 @@
   $QUARTUS/quartus/eda/sim_lib/cadence/cta_hssi_atoms_ncrypt.sv
 +xmendlib
 
-../ip/atx_5g/altera_xcvr_atx_pll_s10_htile_191/sim/*.v
-../ip/atx_5g/altera_xcvr_atx_pll_s10_htile_191/sim/*.sv
-../ip/atx_5g/sim/atx_5g.v
+${KYOKKO}/boards/s10/ip/atx_5g/altera_xcvr_atx_pll_s10_htile_191/sim/*.v
+${KYOKKO}/boards/s10/ip/atx_5g/altera_xcvr_atx_pll_s10_htile_191/sim/*.sv
+${KYOKKO}/boards/s10/ip/atx_5g/sim/atx_5g.v
 
-../ip/phy_rst_ctrl_4ch/altera_xcvr_reset_control_s10_1911/sim/*.v
-../ip/phy_rst_ctrl_4ch/altera_xcvr_reset_control_s10_1911/sim/*.sv
-../ip/phy_rst_ctrl_4ch/sim/phy_rst_ctrl_4ch.v
+${KYOKKO}/boards/s10/ip/phy_rst_ctrl_4ch/altera_xcvr_reset_control_s10_1911/sim/*.v
+${KYOKKO}/boards/s10/ip/phy_rst_ctrl_4ch/altera_xcvr_reset_control_s10_1911/sim/*.sv
+${KYOKKO}/boards/s10/ip/phy_rst_ctrl_4ch/sim/phy_rst_ctrl_4ch.v
 
-../ip/phy_10g_4ch/altera_xcvr_native_s10_htile_1921/sim/*v
-../ip/phy_10g_4ch/sim/phy_10g_4ch.v
+${KYOKKO}/boards/s10/ip/phy_10g_4ch/altera_xcvr_native_s10_htile_1921/sim/*v
+${KYOKKO}/boards/s10/ip/phy_10g_4ch/sim/phy_10g_4ch.v
 
 ${KYOKKO}/boards/s10/src/s10-xcvr-4ch.v
 

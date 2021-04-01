@@ -23,6 +23,7 @@ module kyokko_rx_cb # ( parameter BondingCh = 4 )
      output wire                TIMEOUT);
 
    parameter CB_Timeout = 3;
+//   parameter CB_Timeout = 5;
    parameter CB_Clear_cnt = 10;
    parameter CB_Limit = 400;
 

@@ -20,6 +20,7 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
      input wire [63:0]  RXS,
      input wire [1:0]   RXHDRi,
      input wire         FIFO_RE,
+     input wire         CB_ENABLE, 
      input wire         CB_READY,
      output wire [3:0]  RX_STAT,
      output wire        RX_ERR, 
@@ -63,6 +64,7 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
    wire               RXVALIDt;
 
    wire               FIFO_WE = ( ~RX_STAT[0] &
+                                  CB_ENABLE & 
 	                          ~((RXHDR == 2'b10) &
 	                            (RXDATA[63:56] == 8'h78) & 
 		                    RXDATA[55]) );

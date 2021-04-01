@@ -22,8 +22,8 @@ module s10 #
    ( input wire        PCIE_RESET_N,
     input wire              CLK250, // 250MHz
     input wire              CLK644P,
-    input wire [NumCh-1:0]  SFP_RXP,
-    output wire [NumCh-1:0] SFP_TXP
+    input wire [NumCh-1:0]  QSFP_RXP,
+    output wire [NumCh-1:0] QSFP_TXP
      );
 
    parameter NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh);
@@ -92,8 +92,8 @@ module s10 #
      ( .CLK250(CLK250), .RST(RST),
        .CLK644P(CLK644P),
 
-       .SFP_TXP(SFP_TXP),
-       .SFP_RXP(SFP_RXP),
+       .SFP_TXP(QSFP_TXP),
+       .SFP_RXP(QSFP_RXP),
 
        .CH_UP   (CH_UP),
        .USER_CLK(AURORA_CLK),

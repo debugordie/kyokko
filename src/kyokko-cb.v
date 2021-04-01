@@ -94,7 +94,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
    assign S_AXIS_NFC_TREADY  = &S_AXIS_NFC_TREADYi;
    
    // Channel bonding & FIFO Synchronous readout control
-   wire  CB_RST = ~(|RX_STAT_TX_CB[3:0]);
+   wire  CB_RST = ~(|RX_STAT_TX_CB);
    kyokko_rx_cb # (.BondingCh(BondingCh)) cb_init
      ( .CLK(TXCLK[0]),
        .RST(CB_RST),
@@ -141,6 +141,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
 	       .FIFO_RE(FIFO_RE[ch]),
 	       .RX_STAT_TX_CB(RX_STAT_TX_CB[ch]),
 	       .CB_READY(CB_STAT[3]),
+               .CB_ENABLE(&RX_STAT_TX_CB),
 
                .UFC_MODE_O(UFC_MODE[ch]),
                .UFC_MODE_I(|UFC_MODE),

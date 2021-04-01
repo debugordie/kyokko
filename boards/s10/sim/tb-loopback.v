@@ -22,8 +22,8 @@ module tb_s10 #
     )
   (
 `ifdef NO_LOOPBACK
-   output wire [3:0]    SFP_TXP,
-   input wire [3:0]     SFP_RXP
+   output wire [3:0]    QSFP_TXP,
+   input wire [3:0]     QSFP_RXP
 `endif
    );
    
@@ -39,14 +39,14 @@ module tb_s10 #
    always # (StepREF/2) CLKREF <= ~CLKREF;
 
 `ifndef NO_LOOPBACK
-   wire [3:0]     SFP_TXP;
-   reg [3:0] SFP_RXP;
+   wire [3:0]     QSFP_TXP;
+   reg [3:0]      QSFP_RXP;
 
    always @ (*) begin
-     SFP_RXP[0] <= #1.2 SFP_TXP[0];
-     SFP_RXP[1] <= #1.2 SFP_TXP[1];
-     SFP_RXP[2] <= #1.2 SFP_TXP[2];
-     SFP_RXP[3] <= #1.2 SFP_TXP[3];
+     QSFP_RXP[0] <= #1.2 QSFP_TXP[0];
+     QSFP_RXP[1] <= #1.2 QSFP_TXP[1];
+     QSFP_RXP[2] <= #1.2 QSFP_TXP[2];
+     QSFP_RXP[3] <= #1.2 QSFP_TXP[3];
    end
 `endif
 
@@ -56,8 +56,8 @@ module tb_s10 #
      ( .PCIE_RESET_N(~RST),
        .CLK250 (CLK250),
        .CLK644P(CLKREF),
-       .SFP_RXP(SFP_RXP),
-       .SFP_TXP(SFP_TXP) );
+       .QSFP_RXP(QSFP_RXP),
+       .QSFP_TXP(QSFP_TXP) );
 
 `ifndef NO_LOOPBACK
    initial begin
