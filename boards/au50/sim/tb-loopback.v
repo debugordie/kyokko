@@ -39,10 +39,14 @@ module tb_au50 #
 
 `ifndef NO_LOOPBACK
    wire [3:0]     QSFP_TXP, QSFP_TXN;
-   wire [3:0]     QSFP_RXP, QSFP_RXN;
+   reg [3:0]     QSFP_RXP, QSFP_RXN;
 
-   assign QSFP_RXP = QSFP_TXP;
-   assign QSFP_RXN = QSFP_TXN;
+   always @ (*) begin
+      QSFP_RXP[0] <= #1.2 QSFP_TXP[0];   QSFP_RXN[0] <= #1.2 QSFP_TXN[0];
+      QSFP_RXP[1] <= #3.4 QSFP_TXP[1];   QSFP_RXN[1] <= #3.4 QSFP_TXN[1];
+      QSFP_RXP[2] <= #5.6 QSFP_TXP[2];   QSFP_RXN[2] <= #5.6 QSFP_TXN[2];
+      QSFP_RXP[3] <= #7.8 QSFP_TXP[3];   QSFP_RXN[3] <= #7.8 QSFP_TXN[3];
+   end
 `endif
    
    reg            RST;

@@ -9,12 +9,12 @@ set_property PACKAGE_PIN AY37 [get_ports CLK300P]
 set_property PACKAGE_PIN AY38 [get_ports CLK300N]
 set_property IOSTANDARD DIFF_SSTL12 [get_ports {CLK300P CLK300N}]
 
-# QSFP0 GTrefclk @ 156.25MHz
+# QSFP0 GTrefclk @ 161.1328125MHz  
 
-set_property PACKAGE_PIN K10 [get_ports CLK156N]
-set_property PACKAGE_PIN K11 [get_ports CLK156P]
+set_property PACKAGE_PIN K10 [get_ports CLK161N]
+set_property PACKAGE_PIN K11 [get_ports CLK161P]
 
-create_clock -period 6.40 -name clk156 [get_ports CLK156N]
+create_clock -period 6.206 -name clk161 [get_ports CLK161N]
 
 # QSFP signals
 set_property PACKAGE_PIN N3 [get_ports QSFP0_RXN[0] ]

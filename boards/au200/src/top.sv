@@ -21,7 +21,7 @@ module au200 #
   ( input wire        PCIE_RESET_N,
     
     input wire        CLK300P, CLK300N,
-    input wire        CLK156P, CLK156N,
+    input wire        CLK161P, CLK161N,
 
     input wire [3:0]  QSFP0_RXP, QSFP0_RXN, QSFP1_RXP, QSFP1_RXN,
     output wire [3:0] QSFP0_TXP, QSFP0_TXN, QSFP1_TXP, QSFP1_TXN);
@@ -101,7 +101,7 @@ module au200 #
 
    au200_kyokko #(.BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
      ( .CLK100(CLK100), .RST(RST),
-       .QSFP_REFCLKP(CLK156P), .QSFP_REFCLKN(CLK156N),
+       .QSFP_REFCLKP(CLK161P), .QSFP_REFCLKN(CLK161N),
 
        .QSFP_TXP({QSFP1_TXP, QSFP0_TXP}), 
        .QSFP_TXN({QSFP1_TXN, QSFP0_TXN}),
