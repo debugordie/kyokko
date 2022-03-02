@@ -210,6 +210,21 @@ module vu35p #
         .probe_in0 (CH_UP),
         .probe_out0(GO) );
 
+    // FIFO full checker
+    /*
+   vio_0 vio_fif0
+     ( .clk(AURORA_CLK[0]),
+       .probe_in0 ({ ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[0].ky.rx.FIFO_FULL_R,
+                     ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[1].ky.rx.FIFO_FULL_R,
+                     ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[2].ky.rx.FIFO_FULL_R,
+                     ky.chbond_gen.kyokko_cb_gen[0].kycb.kyokko_gen[3].ky.rx.FIFO_FULL_R,
+                     ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[0].ky.rx.FIFO_FULL_R,
+                     ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[1].ky.rx.FIFO_FULL_R,
+                     ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[2].ky.rx.FIFO_FULL_R,
+                     ky.chbond_gen.kyokko_cb_gen[4].kycb.kyokko_gen[3].ky.rx.FIFO_FULL_R
+                     
+                    }) );
+     */
 
    generate
       for (ch=0; ch<NumChB; ch=ch+1) begin : ila_gen

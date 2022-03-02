@@ -17,22 +17,24 @@
 
 module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
   (  input wire CLK, RST, TXCLK, TXRST,
-     input wire [63:0]  RXS,
-     input wire [1:0]   RXHDRi,
-     input wire         FIFO_RE,
-     input wire         CB_ENABLE, 
-     input wire         CB_READY,
-     output wire [3:0]  RX_STAT,
-     output wire        RX_ERR, 
-     output wire        RXSLIP,
-     output wire        RXSLIP_LIMIT,
-     output wire        RX_IS_CB,
-     output wire        NFC_PAUSE,
-     output wire        UFC_MODE_O,
-     input wire         UFC_MODE_I,
-     output wire        FIFO_EMPTY,
-     output wire        M_AXIS_TVALID, M_AXIS_TLAST,
-     output wire        M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
+     input wire [63:0] 	RXS,
+     input wire [1:0] 	RXHDRi,
+     input wire 	FIFO_RE,
+     input wire [4:0] 	CB_STAT,
+     input wire 	CB_ENABLE, 
+     input wire 	CB_READY,
+     output wire [3:0] 	RX_STAT,
+     output wire 	RX_ERR, 
+     output wire 	RXSLIP,
+     output wire 	RXSLIP_LIMIT,
+     output wire 	RX_IS_CB,
+     output wire 	DATA_IS_VALID,
+     output wire 	NFC_PAUSE,
+     output wire 	UFC_MODE_O,
+     input wire 	UFC_MODE_I,
+     output wire 	FIFO_EMPTY,
+     output wire 	M_AXIS_TVALID, M_AXIS_TLAST,
+     output wire 	M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
      output wire [63:0] M_AXIS_TDATA, M_AXIS_UFC_TDATA );
 
    wire [63:0]          RXDATA;
@@ -44,9 +46,12 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
    reg [1:0]          RXHDR;
    always @ (posedge CLK) RXHDR <= RXHDRi[1:0];
 
+   
    // CB status synchronizer
+   reg [4:0] 	      CB_STAT_RX, CB_STATi;
    reg                CB_READY_R, CB_READYi;
    always @ (posedge CLK) begin
+      CB_STATi <= CB_STAT; CB_STAT_RX <= CB_STATi;      
       CB_READYi <= CB_READY_R; CB_READY_R <= CB_READY; end
 
    kyokko_rx_init rxinit
@@ -63,11 +68,28 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
    wire [63:0]        RXDATAt;
    wire               RXVALIDt;
 
+   wire 	      WE_NML = ( ~RX_STAT[0] &
+                                 CB_ENABLE & 
+	                         ~((RXHDR == 2'b10) &
+	                           (RXDATA[63:56] == 8'h78) & 
+		                   RXDATA[55]) );
+
+   wire 	      WE_CB = ( ~RX_STAT[0] &
+				CB_ENABLE &
+				(RXHDR == 2'b10) &
+				((RXDATA[63:56] == 8'h78) &
+                                 (RXDATA[51:0] == 0) &
+				 RXDATA[54]) );
+
+   wire 	      FIFO_WE = CB_STAT_RX[1] ? WE_CB : WE_NML;
+   
+   /*
    wire               FIFO_WE = ( ~RX_STAT[0] &
-                                  CB_ENABLE & 
-	                          ~((RXHDR == 2'b10) &
-	                            (RXDATA[63:56] == 8'h78) & 
-		                    RXDATA[55]) );
+				  CB_ENABLE & 
+				  ~((RXHDR == 2'b10) &
+				    (RXDATA[63:56] == 8'h78) & 
+				    RXDATA[55]) );
+    */
 
    wire               FIFO_REi = (BondingEnable==1) ? FIFO_RE : 1;
    
@@ -84,10 +106,15 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
        .valid(RXVALIDt)           // O
       );
 
-   assign RX_IS_CB = ((RXHDRt == 2'b10) &
-		      (RXDATAt[63:56] == 8'h78 &
-		       RXDATAt[51:0] == 0) &
-		      RXDATAt[54] );
+   wire 	      RX_IS_CTRL = (RXHDRt == 2'b10);
+   wire 	      RX_IS_IDLE = (RXVALIDt &
+				    RX_IS_CTRL &
+				    (RXDATAt[63:56] == 8'h78 &
+				     RXDATAt[51:0] == 0) );
+   wire 	      RX_IS_SA = RXVALIDt & RX_IS_IDLE & RXDATAt[52];
+   assign             RX_IS_CB = RXVALIDt & RX_IS_IDLE & RXDATAt[54];
+   
+   assign DATA_IS_VALID = (RX_IS_IDLE | RX_IS_SA | RX_IS_CB);
   
    wire [63:0]        IDLE_SA = {8'h78, 8'b0001_0000, 48'h0 };
    wire [1:0]         HDR_HDR = 2'b10;

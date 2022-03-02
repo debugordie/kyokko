@@ -16,10 +16,10 @@
 `default_nettype none
 
 module kyokko_cb # ( parameter BondingCh=4 )
-   ( input wire                 CLK,   CLK100,
+   ( input wire                     CLK, CLK100,
      input wire [BondingCh-1:0]     RXCLK, TXCLK,
      input wire [BondingCh-1:0]     RXRST, TXRST,
-     output wire                    CH_UP,
+     output wire 		    CH_UP,
 
     // Rx signals
      input wire [BondingCh* 2-1:0]  RXHDR,
@@ -31,36 +31,36 @@ module kyokko_cb # ( parameter BondingCh=4 )
      output wire [BondingCh*64-1:0] TXS,
 
     // AXIS data
-     input wire                     S_AXIS_TVALID, S_AXIS_TLAST,
+     input wire 		    S_AXIS_TVALID, S_AXIS_TLAST,
      input wire [BondingCh*64-1:0]  S_AXIS_TDATA,
-     output wire                    S_AXIS_TREADY,
+     output wire 		    S_AXIS_TREADY,
 
-     output wire                    M_AXIS_TVALID, M_AXIS_TLAST,
+     output wire 		    M_AXIS_TVALID, M_AXIS_TLAST,
      output wire [BondingCh*64-1:0] M_AXIS_TDATA,
 
     // UFC signals
-     input wire                     UFC_REQ,
-     input wire [7:0]               UFC_MS,
+     input wire 		    UFC_REQ,
+     input wire [7:0] 		    UFC_MS,
 
-     input wire                     S_AXIS_UFC_TVALID,
+     input wire 		    S_AXIS_UFC_TVALID,
      input wire [BondingCh*64-1:0]  S_AXIS_UFC_TDATA,
-     output wire                    S_AXIS_UFC_TREADY,
+     output wire 		    S_AXIS_UFC_TREADY,
 
-     output wire                    M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
+     output wire 		    M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
      output wire [BondingCh*64-1:0] M_AXIS_UFC_TDATA,
 
     // NFC signals
-     input wire                     S_AXIS_NFC_TVALID,
-     output wire                    S_AXIS_NFC_TREADY,
-     input wire [15:0]              S_AXIS_NFC_TDATA
+     input wire 		    S_AXIS_NFC_TVALID,
+     output wire 		    S_AXIS_NFC_TREADY,
+     input wire [15:0] 		    S_AXIS_NFC_TDATA
      );
 
    wire [BondingCh-1:0]             LANE_UP, TX_WFR_CB, TX_SEND_CC, RX_ERR;
 
 
    // Channel Bonding signals
-   wire [BondingCh-1:0] 	    RX_IS_CB, FIFO_RE;
-   wire [3:0] 			    CB_STAT;
+   wire [BondingCh-1:0] 	    RX_IS_CB, DATA_IS_VALID, FIFO_RE;
+   wire [4:0] 			    CB_STAT;
    wire [BondingCh-1:0] 	    RX_STAT_TX_CB;
    wire [BondingCh-1:0]             UFC_MODE;
 
@@ -96,12 +96,13 @@ module kyokko_cb # ( parameter BondingCh=4 )
    // Channel bonding & FIFO Synchronous readout control
    wire  CB_RST = ~(|RX_STAT_TX_CB);
    kyokko_rx_cb # (.BondingCh(BondingCh)) cb_init
-     ( .CLK(TXCLK[0]),
-       .RST(CB_RST),
-       .RX_IS_CB(RX_IS_CB),
-       .CB_STAT(CB_STAT),
-       .FIFO_RE(FIFO_RE),
-       .TIMEOUT(CB_TIMEOUT)
+     ( .CLK           (TXCLK[0]),
+       .RST           (CB_RST),
+       .RX_IS_CB      (RX_IS_CB),
+       .DATA_IS_VALIDi(DATA_IS_VALID),
+       .CB_STAT       (CB_STAT),
+       .FIFO_RE       (FIFO_RE),
+       .TIMEOUT       (CB_TIMEOUT)
        );
 
    // Rx reset on Rx error while link is UP
@@ -137,11 +138,13 @@ module kyokko_cb # ( parameter BondingCh=4 )
                .TX_SEND_CC_I (TX_SEND_CC[0]),
                .TX_SEND_CC_O (TX_SEND_CC[ch]),
 
-	       .RX_IS_CB(RX_IS_CB[ch]),
-	       .FIFO_RE(FIFO_RE[ch]),
+	       .RX_IS_CB     (RX_IS_CB[ch]),
+	       .DATA_IS_VALID(DATA_IS_VALID[ch]),
+	       .CB_STAT      (CB_STAT),
+	       .FIFO_RE      (FIFO_RE[ch]),
 	       .RX_STAT_TX_CB(RX_STAT_TX_CB[ch]),
-	       .CB_READY(CB_STAT[3]),
-               .CB_ENABLE(&RX_STAT_TX_CB),
+	       .CB_READY     (|CB_STAT[4:3]),
+               .CB_ENABLE    (&RX_STAT_TX_CB),
 
                .UFC_MODE_O(UFC_MODE[ch]),
                .UFC_MODE_I(|UFC_MODE),

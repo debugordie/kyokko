@@ -17,8 +17,8 @@
 
 module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
   ( input wire         CLK,   CLK100,
-    input wire         RXCLK, TXCLK,
-    input wire         RXRST, TXRST,
+    input wire 	       RXCLK, TXCLK,
+    input wire 	       RXRST, TXRST,
     output wire        CH_UP,
 
     // Rx signals
@@ -32,21 +32,23 @@ module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
     output wire [63:0] TXS,
 
     // CB/CC sync
-    input wire         TX_WFR_CB_I, TX_SEND_CC_I,
+    input wire 	       TX_WFR_CB_I, TX_SEND_CC_I,
     output wire        TX_WFR_CB_O, TX_SEND_CC_O,
     
     // CB signal
     output wire        RX_IS_CB,
-    input wire         FIFO_RE,
+    output wire        DATA_IS_VALID, 
+    input wire [4:0]   CB_STAT,
+    input wire 	       FIFO_RE,
     output wire        RX_STAT_TX_CB,
-    input wire         CB_ENABLE,
-    input wire         CB_READY,
+    input wire 	       CB_ENABLE,
+    input wire 	       CB_READY,
     output wire        UFC_MODE_O,
-    input wire         UFC_MODE_I,
+    input wire 	       UFC_MODE_I,
     output wire        FIFO_EMPTY,
     
     // AXIS data
-    input wire         S_AXIS_TVALID, S_AXIS_TLAST,
+    input wire 	       S_AXIS_TVALID, S_AXIS_TLAST,
     input wire [63:0]  S_AXIS_TDATA,
     output wire        S_AXIS_TREADY,
 
@@ -54,10 +56,10 @@ module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
     output wire [63:0] M_AXIS_TDATA,
 
     // UFC signals
-    input wire         UFC_REQ,
+    input wire 	       UFC_REQ,
     input wire [7:0]   UFC_MS,
 
-    input wire         S_AXIS_UFC_TVALID,
+    input wire 	       S_AXIS_UFC_TVALID,
     input wire [63:0]  S_AXIS_UFC_TDATA,
     output wire        S_AXIS_UFC_TREADY,
     
@@ -65,7 +67,7 @@ module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
     output wire [63:0] M_AXIS_UFC_TDATA,
 
     // NFC signals
-    input wire         S_AXIS_NFC_TVALID,
+    input wire 	       S_AXIS_NFC_TVALID,
     output wire        S_AXIS_NFC_TREADY,
     input wire [15:0]  S_AXIS_NFC_TDATA
    );
@@ -87,7 +89,9 @@ module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
        .RX_ERR (RX_ERR),
        .RXSLIP (RXSLIP),
        .RXSLIP_LIMIT (RXSLIP_LIMIT),
-       .RX_IS_CB     (RX_IS_CB), 
+       .RX_IS_CB     (RX_IS_CB),
+       .DATA_IS_VALID(DATA_IS_VALID),
+       .CB_STAT      (CB_STAT),
        .CB_ENABLE    (CB_ENABLEi),
        .CB_READY     (CB_READYi),
        .NFC_PAUSE    (NFC_PAUSE),

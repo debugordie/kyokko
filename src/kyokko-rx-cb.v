@@ -17,20 +17,21 @@
 
 module kyokko_rx_cb # ( parameter BondingCh = 4 )
    ( input wire CLK, RST,
-     input wire [BondingCh-1:0] RX_IS_CB,
-     output reg [BondingCh-1:0] CB_STAT,
+     input wire [BondingCh-1:0] DATA_IS_VALIDi, RX_IS_CB,
+     output reg [4:0] CB_STAT,
      output reg [BondingCh-1:0] FIFO_RE,
      output wire                TIMEOUT);
 
    parameter CB_Timeout = 3;
-//   parameter CB_Timeout = 5;
-   parameter CB_Clear_cnt = 10;
+   parameter CB_SYNC_max = 7;
+   parameter WORD_CNT_max = 100;
    parameter CB_Limit = 400;
 
    reg [BondingCh-1:0] 	    CB;
    reg [4:0] 	    CNT;
-   reg [7:0] 	    CB_Clear;
+   reg [7:0] 	    CB_SYNC;
 
+   /*
    always @ (posedge CLK) begin
       if (RST) begin
 	 CB_STAT <= 1;
@@ -50,7 +51,8 @@ module kyokko_rx_cb # ( parameter BondingCh = 4 )
                  else     CB_Clear <= 0;  // Reset on fail
 		 CB_STAT <= 'b0001;
 	      end else  CNT <= CNT +1;
-	   end // case: 'b001
+
+    	   end // case: 'b001
            
 	   'b0100: begin
               // Wait for all FIFO_RE goes down
@@ -73,6 +75,66 @@ module kyokko_rx_cb # ( parameter BondingCh = 4 )
 	 endcase // case (CB_STAT)
       end
    end // always @ (posedge CLK)
+    
+
+
+   reg [4:0] CB_STATt;
+   reg [4:0] CNTt;
+   reg [7:0] CB_Cleart;*/
+   reg [7:0] 	    WORD_CNT;
+   wire 	    DATA_IS_VALID = &DATA_IS_VALIDi;
+   reg 		    WAIT_CB;
+
+   always @ (posedge CLK) begin
+      if (RST) begin
+	 CB_STAT <= 1;
+      end else begin
+	 case (CB_STAT)
+	   'b00001: begin // Reset
+	      CNT <= 0;
+	      CB_SYNC <= 0;
+	      WORD_CNT <= 0;
+	      CB_STAT <= 'b0010;
+	      WAIT_CB <= 0;
+	   end
+
+	   'b00010: begin // Write CB words to FIFO
+	      if (WAIT_CB) begin // Start count
+		 if (CNT == CB_Timeout) begin
+		    CB_STAT <= (CB_SYNC == CB_SYNC_max) ? 'b00100:
+			       'b00010;
+		    CB_SYNC <= (&CB) ? CB_SYNC +1: 0;
+		    CNT <= 0;
+		    WAIT_CB <= 0;
+		 end else CNT <= CNT +1;
+	      end else if (|RX_IS_CB) WAIT_CB <= 1;
+	   end
+	   
+	   'b00100: begin // Write all words to FIFO
+/*	      if (WAIT_CB) begin
+		 if (CNT == CB_Timeout) begin
+		    CB_STAT <=  (WORD_SYNC == WORD_SYNC_max) ? 'b01000:
+			     'b00100;
+		    WORD_SYNC <= (&CB) ?  WORD_SYNC +1: 0;
+		    CNT <= 0;
+		    WAIT_CB <= 0;
+		 end else CNT <= CNT +1;
+	      end else if (|RX_IS_CB) WAIT_CB <= 1; */
+	      if (WORD_CNT == WORD_CNT_max) CB_STAT <= 'b01000;
+	      else WORD_CNT <= DATA_IS_VALID ? WORD_CNT +1: WORD_CNT;
+	   end
+
+	   'b01000: begin
+	      if (&(~FIFO_RE)) CB_STAT <= 'b10000;
+	   end
+
+	   'b10000: begin
+	      if ((RX_IS_CB != 0) && (RX_IS_CB == 0)) CB_STAT <= 'b0001;
+	   end
+	 endcase
+      end
+   end
+   
 
    /* 
    // 4-lane 
@@ -121,21 +183,21 @@ module kyokko_rx_cb # ( parameter BondingCh = 4 )
                CB_CNT  <= 0;
                CB_WAIT_CNT   <= 0;
             end else begin
-	       if (|CB_STAT[1:0]) begin
+	       if (|CB_STAT[2:0]) begin
 	          if (CB_STAT[1] & CNT == CB_Timeout) CB[lane] <= 0;
 	          else if (RX_IS_CB[lane]) CB[lane] <= 1;
 	       end
 
-	       if (CB_STAT[2]) begin
+	       if (CB_STAT[3]) begin
 	          if (&(~FIFO_RE)) FIFO_RE[lane] <= 'b1;
 	          else if (RX_IS_CB[lane]) FIFO_RE[lane] <= 0;
 	       end
 
-               if (RX_IS_CB[lane] & ~CB_STAT[3] & ~CB_CNT_FULL[lane]) begin
+               if (RX_IS_CB[lane] & ~CB_STAT[4] & ~CB_CNT_FULL[lane]) begin
                   CB_CNT <= CB_CNT + 1;
                end
 
-               if (~CB_WAIT_CNT_FULL[lane] & ~CB_STAT[3]) 
+               if (~CB_WAIT_CNT_FULL[lane] & ~CB_STAT[4]) 
                  CB_WAIT_CNT <= RX_IS_CB[lane] ? 0 : CB_WAIT_CNT+1;
                
             end // else: !if(RST)
