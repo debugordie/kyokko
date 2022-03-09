@@ -32,7 +32,7 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
      output wire 	NFC_PAUSE,
      output wire 	UFC_MODE_O,
      input wire 	UFC_MODE_I,
-     output wire 	FIFO_EMPTY,
+     output wire 	FIFO_EMPTY, FIFO_AEMPTY,
      output wire 	M_AXIS_TVALID, M_AXIS_TLAST,
      output wire 	M_AXIS_UFC_TVALID, M_AXIS_UFC_TLAST,
      output wire [63:0] M_AXIS_TDATA, M_AXIS_UFC_TDATA );
@@ -72,7 +72,7 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
                                  CB_ENABLE & 
 	                         ~((RXHDR == 2'b10) &
 	                           (RXDATA[63:56] == 8'h78) & 
-		                   RXDATA[55]) );
+		                   RXDATA[55]) ); // discard CC
 
    wire 	      WE_CB = ( ~RX_STAT[0] &
 				CB_ENABLE &
@@ -91,19 +91,28 @@ module kyokko_rx_ctrl # ( parameter BondingEnable = 0, BondingCh = 1 )
 				    RXDATA[55]) );
     */
 
+   // BEGIN for ILA_ONLY
+   wire               FIFO_FULL; // for ILA
+   wire               FIFO_IN_CB = ( (RXHDR == 2'b10) &
+                                     (RXDATA[63:56] == 8'h78) &
+                                     RXDATA[54] & 
+				     (RXDATA[51:0] == 0) );
+   // END for ILA_ONLY
+   
    wire               FIFO_REi = (BondingEnable==1) ? FIFO_RE : 1;
    
    fifo_66x512_async rxfifo
-     ( .rst(RST),                 // I
-       .wr_clk(CLK),              // I
-       .rd_clk(TXCLK),            // I
-       .din  ({RXHDR, RXDATA}),   // I [65:0]
-       .wr_en(FIFO_WE),           // I
-       .rd_en(FIFO_REi),          // I
-       .dout({RXHDRt, RXDATAt}),  // O [65:0]
-       .full(),                   // O
-       .empty(FIFO_EMPTY),        // O
-       .valid(RXVALIDt)           // O
+     ( .rst(RST),                  // I
+       .wr_clk(CLK),               // I
+       .rd_clk(TXCLK),             // I
+       .din  ({RXHDR, RXDATA}),    // I [65:0]
+       .wr_en(FIFO_WE),            // I
+       .rd_en(FIFO_REi),           // I
+       .dout({RXHDRt, RXDATAt}),   // O [65:0]
+       .full (FIFO_FULL),          // O
+       .empty(FIFO_EMPTY),         // O
+       .almost_empty(FIFO_AEMPTY), // O
+       .valid(RXVALIDt)            // O
       );
 
    wire 	      RX_IS_CTRL = (RXHDRt == 2'b10);

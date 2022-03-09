@@ -23,11 +23,14 @@ module fifo_66x512_async
     input wire [65:0]  din,
     output wire        empty,
     output wire        full,
-    output wire        prog_full,
-    output wire        valid
+    output reg         prog_full,
+    output reg         almost_empty,
+    output reg         valid
    );
 
-
+   wire [8:0]          rdusedw, wrusedw;
+   wire                wrempty;
+   
    dcfifo #
      ( .lpm_width(66),
        .lpm_widthu(9),
@@ -53,16 +56,20 @@ module fifo_66x512_async
        .rdfull (), 
        .wrfull (full), 
        .rdempty(empty), 
-       .wrempty(), 
-       .rdusedw(), 
-       .wrusedw(), 
+       .wrempty(wrempty), 
+       .rdusedw(rdusedw), 
+       .wrusedw(wrusedw), 
        .q      (dout)
        );
 
-   reg                 VALIDi;
-   always @ (posedge rd_clk) VALIDi <= ~empty & rd_en;
-   assign valid = VALIDi;
-
+   always @ (posedge wr_clk)
+      prog_full <= ( wrusedw > 400 | (wrusedw==0 & ~wrempty) );
+   
+   always @ (posedge rd_clk) begin
+      valid <= ~empty & rd_en;
+      almost_empty = (rdusedw < 3);
+   end
+   
 endmodule // fifo_64x512_afull
 
 `default_nettype wire

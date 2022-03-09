@@ -128,12 +128,28 @@ module kyokko_rx_cb # ( parameter BondingCh = 4 )
 	      if (&(~FIFO_RE)) CB_STAT <= 'b10000;
 	   end
 
-	   'b10000: begin
-	      if ((RX_IS_CB != 0) && (RX_IS_CB == 0)) CB_STAT <= 'b0001;
+	   'b10000: begin // CB misalignment Error detection
+	      // if ( (&RX_IS_CB) != (|RX_IS_CB) ) CB_STAT <= 'b0001;
+              CB_STAT <= 'b1_0000;
 	   end
 	 endcase
       end
    end
+
+   // BEGIN debug-only signals
+   reg ALL_CB, ANY_CB;
+   always @ (posedge CLK) begin
+      ALL_CB <= &RX_IS_CB;
+      ANY_CB <= |RX_IS_CB;
+   end
+     
+   wire OUT_OF_SYNC = CB_STAT[4] & (ALL_CB != ANY_CB);
+
+   reg [31:0] NO_CB_CNT;
+   always @ (posedge CLK) 
+     NO_CB_CNT <= ANY_CB ? 0 : NO_CB_CNT+1;
+   
+   // END debug-only signals
    
 
    /* 
@@ -207,11 +223,8 @@ module kyokko_rx_cb # ( parameter BondingCh = 4 )
          assign CB_WAIT_CNT_FULL[lane] = &CB_WAIT_CNT;
       end // block: cb_reg_gen
    endgenerate
-   
 
    assign TIMEOUT = |{CB_CNT_FULL, CB_WAIT_CNT_FULL};
-   
 endmodule
 
 `default_nettype wire
-  

@@ -313,7 +313,7 @@ module kcu1500 #
  -----/\----- EXCLUDED -----/\----- */
    
 `else
-   assign GO = {NumChB{1'b1}};
+   assign (weak1, weak0) GO = {NumChB{1'b1}};
 `endif
 
 

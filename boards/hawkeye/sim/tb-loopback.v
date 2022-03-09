@@ -16,10 +16,7 @@
 `timescale 1ns/1ps
 `default_nettype none
 
-module tb_hawkeye #
-  ( BondingEnable=0, // Set to 1 to enable
-    BondingCh=4
-    )
+module tb_hawkeye 
   (
 `ifdef NO_LOOPBACK
    output wire [3:0]    SFP_TXP,
@@ -27,6 +24,9 @@ module tb_hawkeye #
 `endif
    );
    
+   parameter BondingEnable=0; // Set to 1 to enable
+   parameter BondingCh=4;
+
    parameter real Step125 = 8;
    parameter real StepREF = 1000.0/644.53125;
    parameter NumCh = 4;

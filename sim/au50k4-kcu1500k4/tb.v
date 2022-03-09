@@ -26,6 +26,9 @@ module tb();
 
    wdelay dly15_0p ( .I(KCU1500_TXP0), .O(KCU1500_TXP0d) );
    wdelay dly15_0n ( .I(KCU1500_TXN0), .O(KCU1500_TXN0d) );
+
+   // Use faster clock for AU50
+   defparam au50.StepREF = 1000.0/322.4;
    
    tb_au50 # (.BondingEnable(1), .BondingCh(4)) au50
      ( .QSFP_TXP(AU50_TXP),
@@ -34,6 +37,8 @@ module tb();
        .QSFP_RXN(LINK_UP & KCU1500_TXN0d)
        );
 
+   reg [1:0] KCU1500_GO;
+   assign kcu1500.uut.GO = KCU1500_GO;
    
    tb_kcu1500  # (.BondingEnable(1), .BondingCh(4)) kcu1500
      ( .QSFP0_TXP(KCU1500_TXP0),
@@ -49,17 +54,28 @@ module tb();
    initial begin
       `include "wave-record.vh"
       LINK_UP <= 4'h0;
-
-      #( 5*1000) LINK_UP <= 4'b0001;
-      #(   2000) LINK_UP <= 4'b0011;
-      #(   2000) LINK_UP <= 4'b0111;
-      #(   2000) LINK_UP <= 4'b1111;
+      KCU1500_GO <= 2'b11;
       
-      #(80*1000)  LINK_UP <= 0;
-      #(   1000) LINK_UP <= 4'b0001;
-      #(   2000) LINK_UP <= 4'b0011;
-      #(   2000) LINK_UP <= 4'b0111;
-      #(   2000) LINK_UP <= 4'b1111;
+      #(  5*1000) LINK_UP <= 4'b0001;
+      #(    2000) LINK_UP <= 4'b0011;
+      #(    2000) LINK_UP <= 4'b0111;
+      #(    2000) LINK_UP <= 4'b1111;
+
+      #( 80*1000) KCU1500_GO <= 0;
+      #(  2*1000) KCU1500_GO <= 2'b11;
+
+      #( 40*1000) KCU1500_GO <= 0;
+      #(  2*1000) KCU1500_GO <= 2'b11;
+
+      #( 80*1000) KCU1500_GO <= 0;
+      #(  2*1000) KCU1500_GO <= 2'b11;
+      
+      #( 40*1000)  LINK_UP <= 0;
+//      #(80*1000)  LINK_UP <= 0;
+      #(    1000) LINK_UP <= 4'b0001;
+      #(    2000) LINK_UP <= 4'b0011;
+      #(    2000) LINK_UP <= 4'b0111;
+      #(    2000) LINK_UP <= 4'b1111;
 
       #(80*1000)  $finish;
    end

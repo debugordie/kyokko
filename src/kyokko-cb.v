@@ -110,6 +110,14 @@ module kyokko_cb # ( parameter BondingCh=4 )
 
    // Kyokko lane instances
    genvar ch;
+
+   // Inter-lane FIFO synchronization
+   wire [BondingCh-1:0] FIFO_AEMPTY, FIFO_EMPTY;
+   
+//   wire                 FIFO_RDISABLE = CB_STAT[4] & (&FIFO_AEMPTY != |FIFO_AEMPTY);
+   wire                 FIFO_RDISABLE = CB_STAT[4] & (|FIFO_AEMPTY);
+   
+   
    
    generate
       for (ch=0; ch<BondingCh; ch=ch+1)
@@ -141,7 +149,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
 	       .RX_IS_CB     (RX_IS_CB[ch]),
 	       .DATA_IS_VALID(DATA_IS_VALID[ch]),
 	       .CB_STAT      (CB_STAT),
-	       .FIFO_RE      (FIFO_RE[ch]),
+	       .FIFO_RE      (FIFO_RDISABLE ? 0 : FIFO_RE[ch]),
 	       .RX_STAT_TX_CB(RX_STAT_TX_CB[ch]),
 	       .CB_READY     (|CB_STAT[4:3]),
                .CB_ENABLE    (&RX_STAT_TX_CB),
@@ -149,7 +157,8 @@ module kyokko_cb # ( parameter BondingCh=4 )
                .UFC_MODE_O(UFC_MODE[ch]),
                .UFC_MODE_I(|UFC_MODE),
 
-               .FIFO_EMPTY (),
+               .FIFO_AEMPTY  (FIFO_AEMPTY[ch]),
+               .FIFO_EMPTY   (FIFO_EMPTY [ch]),
 
                // Data channel
                .M_AXIS_TVALID (M_AXIS_TVALIDi[ch]),

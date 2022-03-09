@@ -45,7 +45,7 @@ module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
     input wire 	       CB_READY,
     output wire        UFC_MODE_O,
     input wire 	       UFC_MODE_I,
-    output wire        FIFO_EMPTY,
+    output wire        FIFO_EMPTY, FIFO_AEMPTY,
     
     // AXIS data
     input wire 	       S_AXIS_TVALID, S_AXIS_TLAST,
@@ -98,6 +98,7 @@ module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
        .UFC_MODE_O   (UFC_MODE_O),
        .UFC_MODE_I   (UFC_MODE_Ii),
        .FIFO_EMPTY   (FIFO_EMPTY),
+       .FIFO_AEMPTY  (FIFO_AEMPTY),
        
        .M_AXIS_TVALID(M_AXIS_TVALID),
        .M_AXIS_TLAST (M_AXIS_TLAST ),

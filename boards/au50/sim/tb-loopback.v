@@ -16,18 +16,19 @@
 `timescale 1ns/1ps
 `default_nettype none
 
-module tb_au50 #
-  ( BondingEnable=0, // Set to 1 to enable
-    BondingCh=4
-    )
+module tb_au50
   (
 `ifdef NO_LOOPBACK
    output wire [3:0]     QSFP_TXP, QSFP_TXN,
    input wire [3:0]     QSFP_RXP, QSFP_RXN
 `endif
    );
+
+   parameter BondingEnable=0; // Set to 1 to enable
+   parameter BondingCh=4;
+
    parameter real Step100 = 10.0;
-   parameter real StepREF = 1000.0/322.265625;
+   parameter real StepREF = 1000.0/322.265625; // correct freq
    parameter NumCh = 4;
 
    parameter NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh);

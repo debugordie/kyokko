@@ -233,7 +233,7 @@ module au50 #
    endgenerate
 
 `else
-   assign GO = {NumCh{1'b1}};
+   assign (weak1, weak0) GO = {NumCh{1'b1}};
 `endif
    
 endmodule // au50
