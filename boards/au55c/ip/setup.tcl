@@ -20,7 +20,7 @@
 
 set COREDIR [ file dirname [ file normalize [ info script ] ] ] 
 set PROJDIR ${COREDIR}/iploc
-set DEV xcvu35p-fsvh2892-2L-e
+set DEV xcu55c-fsvh2892-2L-e
 
 set COREs [ list \
                 fifo_66x512_async \

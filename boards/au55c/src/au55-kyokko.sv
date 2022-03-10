@@ -10,12 +10,12 @@
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 //
 // Modules in this file:
-//    au50_kyokko: Kyokko + GTY transceiver wrapper for a VU35P board
+//    au55_kyokko: Kyokko + GTY transceiver wrapper for Alve U55
 // ----------------------------------------------------------------------
 
 `default_nettype none
 
-module vu35p_kyokko # 
+module au55_kyokko # 
   ( parameter NumCh = 4,
     BondingEnable = 0,  // Set to 1 to enable
     BondingCh = 4,

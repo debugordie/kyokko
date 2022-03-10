@@ -10,12 +10,12 @@
 // Kyokko project: an open Multi-vendor Aurora 64B/66B-compatible link
 //
 // Modules in this file:
-//    vu35p: Top-level module for Xilinx XCVU35P board, with 2x QSFP
+//    au55: Top-level module for Xilinx Alveo U55C board, with 2x QSFP
 // ----------------------------------------------------------------------
 
 `default_nettype none
 
-module vu35p #
+module au55 #
   ( BondingEnable=0, // Set to 1 to enable
     BondingCh=4 )
   ( input wire        PCIE_RESET_N,
@@ -100,7 +100,7 @@ module vu35p #
    // ------------------------------------------------------------
    // Kyokko instance
 
-   vu35p_kyokko  #(.NumCh(NumCh), 
+   au55_kyokko  #(.NumCh(NumCh), 
                    .BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
      ( .CLK100(CLK100), .RST(RST),
        .QSFP_REFCLKP(CLK161P), .QSFP_REFCLKN(CLK161N),

@@ -34,20 +34,24 @@ Revision History
 
 You can find the releases in https://lut.eee.u-ryukyu.ac.jp/svn/kyokko/tags/.
  - 0.99   (Sep.07, 2020): the initial release
- - 0.99.1 (Feb.12, 2021): Initial support for channel bonding on KCU1500 board
+ - 0.99.1 (Feb.12, 2021): Initial support for channel bonding on KCU1500 card
+ - 0.99.2 (Feb.12, 2021): Bug fixes + channel bonding support for Alveo U50
+ - 0.99.3 (Mar.10, 2022): Channel-bonding improvements + more card supports
 
 ----------------------------------------
-Supported FPGAs and boards
+Supported FPGAs and cards
 ----------------------------------------
 
 Kyokko is confirmed to work on:
- - Avnet Kintex Ultrascale Development Board    (XCKU040, 2x SFP + 2x SMA)
- - Xilinx KCU1500 Acceleration Development Kit  (XCKU115, 2x QSFP)
- - Xilinx Alveo U50 Datacenter Accelerator Card (XCVU35P, 1x QSFP)
- - Intel Cyclone 10 GX Development Kit          (10CX220, 2x SFP)
- - Gidel HawkEye-40G-48 (Arria 10 GX)           (10AX480, 4x SFP)
-at a line-rate of 10.3125 Gbps and below. We're working on faster
-line-rates: up to 25 Gbps on Alveo U50.
+ - Avnet Kintex Ultrascale Development Card      (XCKU040, 2x SFP + 2x SMA)
+ - Xilinx KCU1500 Acceleration Development Kit   (XCKU115, 2x QSFP)
+ - Xilinx Alveo U50 Datacenter Accelerator Card  (XCVU35P, 1x QSFP)
+ - Xilinx Alveo U55C Datacenter Accelerator Card (XCVU47P, 2x QSFP)
+ - Xilinx Alveo U200 Datacenter Accelerator Card (XCVU9P,  2x QSFP)
+ - Intel Cyclone 10 GX Development Kit           (10CX220, 2x SFP)
+ - Gidel HawkEye-40G-48 (Arria 10 GX)            (10AX480, 4x SFP)
+at a line-rate of 10.3125 Gbps and below. On FPGAs with 25Gbps transceivers,
+Kyokko may work at faster bitrate.
 
 Porting to similar FPGAs with Xilinx GTH/GTY or Intel GX transceivers
 is easy. We'll need some hack for other transceivers. Requests and
@@ -94,8 +98,9 @@ Included simulation scripts and testbenches for loopback tests are for:
     - 1x Aurora core on SFP port
     - 1x Kyokko on SFP port
     - 4x Kyokko on 2x SFP and 2x SMA ports
- - Xilinx KCU1500: 8x Kyokko on 2x QSFP ports
- - Xilinx Alveo U50: 4x Kyokko on QSFP port
+ - Xilinx KCU1500, Alveo U55C, and Alveo U200:
+    - 8 independent or or 2x 4-lane bonding Kyokko on 2 QSFP ports
+ - Xilinx Alveo U50: 4 independent or a 4-lane bonding Kyokko on QSFP port
  - Intel Cyclone 10 GX Development Kit: 2x Kyokko on SFP ports
  - Gidel HawkEye: 4x Kyokko on SFP ports
 
@@ -108,6 +113,9 @@ There also board-to-board simulation scripts included:
  - KC705 Aurora + KU040 Kyokko to Cyclone 10 GX (1+1=2 channels)
  - KCU1500 Kyokko to Alveo U50 + HawkEye (4+4=8 channels)
  - KC705 with 4x SFP FMC card to KCU1500 Kyokko (4-lane ch bonding)
+ - Alveo U50 + Hawkeye (4-ch bonding)
+ - Alveo U50 + KCU1500 (4-ch bonding)
+ - KC705 Aurora + Alveo U50 (4-ch bonding)
 
 All these scripts have link-down (or hotplug) events scheduled in the
 middle of the simulation runtime. An example is:
@@ -116,7 +124,6 @@ middle of the simulation runtime. An example is:
 - - - - - - - - - - - - - - - - - - - -
 Note for other simulators
 
-
 Most of Cadence simulator (or environment) specific stuff is in:
  - sim/sim-common.f (simulator script)
  - sim/wave-record.vh (Verilog system tasks for waveform recording)
@@ -124,7 +131,7 @@ Most of Cadence simulator (or environment) specific stuff is in:
 Also, board/*/sim/*.f need simulator spefic modifications for Quartus library.
 
 ----------------------------------------
-Testing with FPGA boards
+Testing with FPGA cards
 ----------------------------------------
 
 Kyokko has pre-defined Vivado/Quartus project setup scripts for:
@@ -135,7 +142,7 @@ Kyokko has pre-defined Vivado/Quartus project setup scripts for:
  - Gidel HawkEye with 4x Kyokko (4x
 in ${KYOKKO}/tcl directory. To use these scripts,
  1. Create an empty Vivado/Quartus project (random choice of device or
-    board is OK, the script will fix it)
+    card is OK, the script will fix it)
  2. Source the Tcl console in Vivado or Quartus. For example:
       source path/to/kyokko/tcl/ku040-kyokko.tcl
     (replace path/to/kyokko by your own)
