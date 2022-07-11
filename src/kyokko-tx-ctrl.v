@@ -15,7 +15,8 @@
 
 `default_nettype none
 
-module kyokko_tx_ctrl # (parameter BondingEnable = 0, BondingCh = 1, ChNo = 0)
+module kyokko_tx_ctrl # (parameter BondingEnable = 0, 
+                         BondingCh = 1, ChNo = 0, GenInit = 1)
    ( input wire CLK,
      input wire         TXRST, RXRST,
      input wire [3:0]   RX_STAT,
@@ -51,7 +52,7 @@ module kyokko_tx_ctrl # (parameter BondingEnable = 0, BondingCh = 1, ChNo = 0)
    assign            RX_STAT_TX_CB = |RX_STAT_TX[3:1];
    wire [63:0]       TXDATA_INIT;
 
-   kyokko_tx_init # (.BondingEnable(BondingEnable)) init
+   kyokko_tx_init # (.BondingEnable(BondingEnable), .GenInit(GenInit) ) init
      ( .CLK(CLK), .RST(TXRST), .RXRST(RXRST),
        .RX_STAT     (RX_STAT),      .RX_STAT_TX  (RX_STAT_TX),
        .TX_WFR_CB_I (TX_WFR_CB_I),  .TX_WFR_CB_O (TX_WFR_CB_O),

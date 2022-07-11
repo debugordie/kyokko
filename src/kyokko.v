@@ -15,7 +15,8 @@
 
 `default_nettype none
 
-module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
+module kyokko # ( parameter BondingEnable = 0, 
+                  BondingCh = 1, ChNo = 0, GenInit = 1 )
   ( input wire         CLK,   CLK100,
     input wire 	       RXCLK, TXCLK,
     input wire 	       RXRST, TXRST,
@@ -117,7 +118,7 @@ module kyokko # ( parameter BondingEnable = 0, BondingCh = 1, ChNo = 0 )
        .RXSLIP_LIMIT(RXSLIP_LIMIT), .RXPATH_RST(RXPATH_RST) );
    
    kyokko_tx_ctrl # (.BondingEnable(BondingEnable), .BondingCh(BondingCh), 
-                     .ChNo(ChNo) ) tx
+                     .ChNo(ChNo), .GenInit(GenInit) ) tx
      ( .CLK(TXCLK), 
        .TXRST(TXRST), 
        .RXRST(RXRST),

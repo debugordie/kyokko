@@ -117,17 +117,14 @@ module kyokko_cb # ( parameter BondingCh=4 )
 //   wire                 FIFO_RDISABLE = CB_STAT[4] & (&FIFO_AEMPTY != |FIFO_AEMPTY);
    wire                 FIFO_RDISABLE = CB_STAT[4] & (|FIFO_AEMPTY);
    
-   
-   
    generate
       for (ch=0; ch<BondingCh; ch=ch+1)
         begin : kyokko_gen
-           defparam ky.tx.init.GenInit = (ch==0) ? 1 : 0;
-
            wire RXPATH_RSTi;
            assign RXPATH_RST[ch] = RXPATH_RSTi | CB_TIMEOUT;
 
-           kyokko # (.BondingEnable(1), .BondingCh(BondingCh), .ChNo(ch)) ky
+           kyokko # (.BondingEnable(1), .BondingCh(BondingCh), .ChNo(ch),
+                     .GenInit((ch==0) ? 1 : 0) ) ky
              ( .CLK(),  // still not used
                .CLK100(CLK100),
                .RXCLK(RXCLK[ch]),              .TXCLK(TXCLK[ch]),
