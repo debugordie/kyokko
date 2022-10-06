@@ -80,6 +80,7 @@ module kyokko # ( parameter BondingEnable = 0,
    wire                CB_READYi = (BondingEnable==1) ? CB_READY : 1;
    wire                UFC_MODE_Ii = (BondingEnable==1) ? UFC_MODE_I : 0;
    wire                CB_ENABLEi = (BondingEnable==1) ? CB_ENABLE : 1;
+   wire [4:0]          CB_STATi = (BondingEnable==1) ? CB_STAT : 'b1;
    
    kyokko_rx_ctrl # (.BondingEnable(BondingEnable), .BondingCh(BondingCh)) rx
      ( .CLK(RXCLK),   .RST(RXRST),
@@ -92,7 +93,7 @@ module kyokko # ( parameter BondingEnable = 0,
        .RXSLIP_LIMIT (RXSLIP_LIMIT),
        .RX_IS_CB     (RX_IS_CB),
        .DATA_IS_VALID(DATA_IS_VALID),
-       .CB_STAT      (CB_STAT),
+       .CB_STAT      (CB_STATi),
        .CB_ENABLE    (CB_ENABLEi),
        .CB_READY     (CB_READYi),
        .NFC_PAUSE    (NFC_PAUSE),
