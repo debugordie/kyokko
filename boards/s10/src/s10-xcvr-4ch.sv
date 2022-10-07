@@ -78,38 +78,38 @@ module s10_xcvr_4ch # ( parameter NumCh=4, BondingEnable=0 )
              .pll_locked    (PLL_LOCKED),   // O
              .pll_cal_busy  () );           // O
 
-            phy_10g_4ch phy0
-     ( .tx_analogreset          (TX_ARST   ),  // I
-       .tx_digitalreset         (TX_DRST   ),  // I
-       .rx_analogreset          (RX_ARST   ),  // I
-       .rx_digitalreset         (RX_DRST   ),  // I
-       .tx_analogreset_stat     (TX_ASTAT  ),  // O
-       .tx_digitalreset_stat    (TX_DSTAT  ),  // O
-       .rx_analogreset_stat     (RX_ASTAT  ),  // O
-       .rx_digitalreset_stat    (RX_DSTAT  ),  // O
-       .tx_cal_busy             (TX_CALBUSY),  // O
-       .rx_cal_busy             (RX_CALBUSY),  // O
-       .tx_serial_clk0          ({NumCh{TX_SCLK}}),         // I
-       .rx_cdr_refclk0          (REFCLK644P),      // I
-       .tx_serial_data          (SFP_TXP   ),  // O
-       .rx_serial_data          (SFP_RXP   ),  // I
-       .rx_is_lockedtoref       (),                // O
-       .rx_is_lockedtodata      (RX_LOCKED ),  // O
-       .tx_coreclkin            (TX_USRCLK ),  // I
-       .rx_coreclkin            (RX_USRCLK ),  // I
-       .tx_clkout               (TX_USRCLK ),  // O PMA divclk
-       .rx_clkout               (RX_USRCLK ),  // O PMA divclk
-       .tx_parallel_data        (TX_DATAi),        // I [63:0]
-       .tx_control              (TX_CTRLi),        // I [1:0]
-       .unused_tx_parallel_data (),                // I
-       .rx_fifo_rd_en           ({NumCh{1'b1}}),            // I
-       .rx_parallel_data        (RX_DATAi),        // O [63:0]
-       .rx_control              (RX_CTRLi),        // O [1:0]
-       .unused_rx_parallel_data (),                // O
-       .rx_bitslip              (RX_BITSLIP),  // I
-       .tx_dll_lock             (TX_DLL_LOCK),     // O
-       .tx_fifo_wr_en           ({NumCh{TX_VALID[0]}} & TX_DLL_LOCK)   // I
-       );
+         phy_10g_4ch phy0
+           ( .tx_analogreset          (TX_ARST   ),  // I
+             .tx_digitalreset         (TX_DRST   ),  // I
+             .rx_analogreset          (RX_ARST   ),  // I
+             .rx_digitalreset         (RX_DRST   ),  // I
+             .tx_analogreset_stat     (TX_ASTAT  ),  // O
+             .tx_digitalreset_stat    (TX_DSTAT  ),  // O
+             .rx_analogreset_stat     (RX_ASTAT  ),  // O
+             .rx_digitalreset_stat    (RX_DSTAT  ),  // O
+             .tx_cal_busy             (TX_CALBUSY),  // O
+             .rx_cal_busy             (RX_CALBUSY),  // O
+             .tx_serial_clk0          ({NumCh{TX_SCLK}}),         // I
+             .rx_cdr_refclk0          (REFCLK644P),      // I
+             .tx_serial_data          (SFP_TXP   ),  // O
+             .rx_serial_data          (SFP_RXP   ),  // I
+             .rx_is_lockedtoref       (),                // O
+             .rx_is_lockedtodata      (RX_LOCKED ),  // O
+             .tx_coreclkin            (TX_USRCLK ),  // I
+             .rx_coreclkin            (RX_USRCLK ),  // I
+             .tx_clkout               (TX_USRCLK ),  // O PMA divclk
+             .rx_clkout               (RX_USRCLK ),  // O PMA divclk
+             .tx_parallel_data        (TX_DATAi),        // I [63:0]
+             .tx_control              (TX_CTRLi),        // I [1:0]
+             .unused_tx_parallel_data (),                // I
+             .rx_fifo_rd_en           ({NumCh{1'b1}}),            // I
+             .rx_parallel_data        (RX_DATAi),        // O [63:0]
+             .rx_control              (RX_CTRLi),        // O [1:0]
+             .unused_rx_parallel_data (),                // O
+             .rx_bitslip              (RX_BITSLIP),  // I
+             .tx_dll_lock             (TX_DLL_LOCK),     // O
+             .tx_fifo_wr_en           ({NumCh{TX_VALID[0]}} & TX_DLL_LOCK) // I
+             );
 
       end else begin : bond_gen
          atx_5g_4cb atxpll 
