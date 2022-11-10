@@ -4177,12 +4177,12 @@
         <ipxact:parameter parameterId="qsf_assignments_enable" type="int">
           <ipxact:name>qsf_assignments_enable</ipxact:name>
           <ipxact:displayName>Provide sample QSF assignments</ipxact:displayName>
-          <ipxact:value>0</ipxact:value>
+          <ipxact:value>1</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="qsf_assignments_list" type="string">
           <ipxact:name>qsf_assignments_list</ipxact:name>
           <ipxact:displayName>Sample QSF Assignments</ipxact:displayName>
-          <ipxact:value></ipxact:value>
+          <ipxact:value># These QSF assignments are provided for your reference.,# Normally you do not need these assignments. The IP will,# make these settings for you. Refer to the user guide for,# scenarios where you might want to override default IP settings.,# Replace your pin names in the pin lists below.,set tx_pin_list { &lt;tx_pin_0&gt; &lt;tx_pin_1&gt; },set rx_pin_list { &lt;rx_pin_0&gt; &lt;rx_pin_1&gt; },# TX pin assignments,foreach tx_pin $tx_pin_list {,set_instance_assignment -name HSSI_PARAMETER "cdr_pll_power_mode=mid_power" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_pma_rx_divclk_hz=161132812" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_power_mode=mid_power" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_power_mode=mid_power" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_power_rail_er=1030" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_sel_vcm_ctle=vocm_eq_gndref" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_vcm_sel=vcm_l2" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_vcm_sel_vccref=5" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_power_mode=mid_power" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_odi_power_mode=mid_power" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_sd_power_mode=mid_power" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_pma_tx_divclk_hz=161132812" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_power_mode=mid_power" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_power_rail_et=1030" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_uc_vcc_setting=vcc_setting1" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_power_rail_er=1030" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_powermode_ac_cgb=cgb_ac_off" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_powermode_dc_cgb=powerdown_cgb" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_uc_vcc_setting=vcc_setting1" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_ser_power_rail_er=1030" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_ser_powermode_ac_ser=ac_clk_divtx_user_33_jitcomp1p0" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_ser_powermode_dc_ser=dc_clk_divtx_user_33_jitcomp1p0" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_ser_uc_vcc_setting=vcc_setting1" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_analog_mode=user_custom" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_compensation_en=enable" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_compensation_posttap_en=disable" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_cpen_ctrl=cp_l1" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_datarate_bps=10312500000" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_gt_enabled=disable" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_link=link_off" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_link=sr" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_optimal=false" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_optimal=false" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_powermode_ac_post_tap=tx_post_tap_ac_off" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_powermode_ac_pre_tap=tx_pre_tap_ac_off" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_powermode_ac_tx_vod_no_jitcomp=tx_vod_no_jitcomp_ac_l0" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_powermode_ac_tx_vod_w_jitcomp=tx_vod_w_jitcomp_ac_l31" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_powermode_dc_post_tap=powerdown_tx_post_tap" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_powermode_dc_pre_tap=powerdown_tx_pre_tap" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_powermode_dc_tx_vod_no_jitcomp=powerdown_tx_vod_no_jitcomp" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_powermode_dc_tx_vod_w_jitcomp=tx_vod_w_jitcomp_dc_l31" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pre_emp_sign_1st_post_tap=fir_post_1t_neg" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pre_emp_sign_pre_tap_1t=fir_pre_1t_neg" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pre_emp_switching_ctrl_1st_post_tap=0" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pre_emp_switching_ctrl_pre_tap_1t=0" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_slew_rate_ctrl=slew_r5" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_term_sel=r_r1" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_vod_output_swing_ctrl=31" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_vreg_output=vccdreg_nominal" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_bitslip_enable=disable_bitslip" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_datarate_bps=10312500000" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_uc_cgb_vreg_boost=boost_5_step" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_x1_clock_source_sel=lcpll_top" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_x1_div_m_sel=divbypass" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_ser_ser_clk_divtx_user_sel=divtx_user_33" -to ${tx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_sequencer_tx_path_rstn_overrideb=use_sequencer" -to ${tx_pin},},# RX pin assignments,foreach rx_pin $rx_pin_list {,set_instance_assignment -name HSSI_PARAMETER "cdr_pll_power_mode=mid_power" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_pma_rx_divclk_hz=161132812" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_power_mode=mid_power" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_power_mode=mid_power" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_power_rail_er=1030" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_sel_vcm_ctle=vocm_eq_gndref" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_vcm_sel=vcm_l2" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_vcm_sel_vccref=5" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_power_mode=mid_power" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_odi_power_mode=mid_power" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_sd_power_mode=mid_power" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_pma_tx_divclk_hz=161132812" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_power_mode=mid_power" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_pm_cr2_tx_path_power_rail_et=1030" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_buf_uc_vcc_setting=vcc_setting1" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_power_rail_er=1030" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_powermode_ac_cgb=cgb_ac_off" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_powermode_dc_cgb=powerdown_cgb" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_cgb_uc_vcc_setting=vcc_setting1" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_ser_power_rail_er=1030" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_ser_powermode_ac_ser=ac_clk_divtx_user_33_jitcomp1p0" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_ser_powermode_dc_ser=dc_clk_divtx_user_33_jitcomp1p0" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_tx_ser_uc_vcc_setting=vcc_setting1" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adapt_mode=ctle_dfe" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_ac_ctle_en=radp_ac_ctle_en_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_ac_ctle_hold_en=radp_ac_ctle_hold_en_not_hold" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_ac_ctle_initial_value=radp_ac_ctle_initial_value_8" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_ac_ctle_mode_sel=radp_ac_ctle_mode_sel_concurrent" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_ctle_bypass_ac=radp_ctle_bypass_ac_not_bypass" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_ctle_bypass_dc=radp_ctle_bypass_dc_not_bypass" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dc_ctle_en=radp_dc_ctle_en_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dc_ctle_mode0_win_size=radp_dc_ctle_mode0_win_size_4_taps" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dc_ctle_mode0_win_start=0" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dc_ctle_mode2_h2_limit=7" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dc_ctle_mode_sel=radp_dc_ctle_mode_sel_mode_2" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dc_ctle_onetime=radp_dc_ctle_onetime_disable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dfe_en=radp_dfe_en_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dfe_fxtap_bypass=radp_dfe_fxtap_bypass_not_bypass" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dfe_hold_sel=radp_dfe_hold_sel_no" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dfe_tap1_initial_value=radp_dfe_tap1_initial_value_0" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dfe_tap_sel_en=radp_dfe_tap_sel_en_no" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dlev_bypass=radp_dlev_bypass_not_bypass" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_dlev_en=radp_dlev_en_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_vga_bypass=radp_vga_bypass_not_bypass" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_vga_ctle_low_limit=radp_vga_ctle_low_limit_4" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_vga_dlev_target=25" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_adp_vga_en=radp_vga_en_enalbe" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_optimal=false" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_powermode_ac_adaptation=adapt_ac_off" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_powermode_ac_deser_adapt=adapt_deser_ac_off" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_powermode_ac_dfe_adapt=adapt_dfe_ac_off" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_powermode_dc_adaptation=powerdown_adapt" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_powermode_dc_deser_adapt=powerdown_adapt_deser" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_adapt_powermode_dc_dfe_adapt=powerdown_adapt_dfe" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "cdr_pll_analog_mode=user_custom" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "cdr_pll_bypass_a_edge=bypass_a_edge_off" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "cdr_pll_optimal=false" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_analog_mode=user_custom" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_ctle_ac_gain=0" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_ctle_eq_gain=0" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_ctle_rf_cal=3" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_datarate_bps=10312500000" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_gt_enabled=disable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_link=link_off" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_link=sr" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_optimal=false" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_pm_cr2_rx_path_optimal=false" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_rx_ltr_load_init=rx_load_original" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_term_sel=r_r2" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_vga_dc_gain=0" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_buf_vga_ib_max_en=vga_ib_max_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_deser_datarate_bps=10312500000" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_deser_optimal=false" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_datarate_bps=10312500000" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_dfe_mode=dfe_tap1_15" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_latch_xcouple_disable=latch_xcouple_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_optimal=false" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_pdb_edge_pre_h1=cdr_pre_h1_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_pdb_edge_pst_h1=cdr_pst_h1_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_pdb_tap_10t15=tap10t15_dfe_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_pdb_tap_4t9=tap4t9_dfe_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_pdb_tapsum=tapsum_enable" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_powermode_ac_dfe=ac_cdr_mode" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_powermode_dc_dfe=powerdown_dfe" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_dfe_tapsum_bw_sel=tapsum_medbw" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_odi_datarate_bps=10312500000" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_odi_monitor_bw_sel=bw_3" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_odi_optimal=false" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_odi_xrx_path_x119_rx_path_rstn_overrideb=use_sequencer" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_odi_vreg_voltage_sel=vreg1" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_sd_link=sr" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_sd_optimal=false" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_rx_sd_sd_threshold=sdlv_3" -to ${rx_pin},set_instance_assignment -name HSSI_PARAMETER "pma_reset_sequencer_rx_path_rstn_overrideb=use_sequencer" -to ${rx_pin},}</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="enable_backup_pma_adapt_modes" type="int">
           <ipxact:name>enable_backup_pma_adapt_modes</ipxact:name>
@@ -4202,22 +4202,22 @@
         <ipxact:parameter parameterId="tx_pma_optimal_settings" type="int">
           <ipxact:name>tx_pma_optimal_settings</ipxact:name>
           <ipxact:displayName>Use default TX PMA analog settings</ipxact:displayName>
-          <ipxact:value>1</ipxact:value>
+          <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="l_tx_pma_optimal_settings" type="string">
           <ipxact:name>l_tx_pma_optimal_settings</ipxact:name>
           <ipxact:displayName>l_tx_pma_optimal_settings</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="l_tx_pma_optimal_atom_settings" type="string">
           <ipxact:name>l_tx_pma_optimal_atom_settings</ipxact:name>
           <ipxact:displayName>l_tx_pma_optimal_atom_settings</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="tx_pma_output_swing_ctrl" type="int">
           <ipxact:name>tx_pma_output_swing_ctrl</ipxact:name>
           <ipxact:displayName>Output Swing Level (VOD)</ipxact:displayName>
-          <ipxact:value>12</ipxact:value>
+          <ipxact:value>31</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="tx_pma_pre_emp_sign_pre_tap_1t" type="string">
           <ipxact:name>tx_pma_pre_emp_sign_pre_tap_1t</ipxact:name>
@@ -4247,7 +4247,7 @@
         <ipxact:parameter parameterId="tx_pma_slew_rate_ctrl" type="int">
           <ipxact:name>tx_pma_slew_rate_ctrl</ipxact:name>
           <ipxact:displayName>Slew Rate Control</ipxact:displayName>
-          <ipxact:value>0</ipxact:value>
+          <ipxact:value>5</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="tx_pma_term_sel" type="string">
           <ipxact:name>tx_pma_term_sel</ipxact:name>
@@ -4262,17 +4262,17 @@
         <ipxact:parameter parameterId="rx_pma_optimal_settings" type="int">
           <ipxact:name>rx_pma_optimal_settings</ipxact:name>
           <ipxact:displayName>Use default RX PMA analog settings</ipxact:displayName>
-          <ipxact:value>1</ipxact:value>
+          <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="l_rx_pma_optimal_settings" type="string">
           <ipxact:name>l_rx_pma_optimal_settings</ipxact:name>
           <ipxact:displayName>l_rx_pma_optimal_settings</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="l_adapt_mode_manual" type="int">
           <ipxact:name>l_adapt_mode_manual</ipxact:name>
           <ipxact:displayName>l_adapt_mode_manual</ipxact:displayName>
-          <ipxact:value>1</ipxact:value>
+          <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="l_adapt_mode_dfe" type="int">
           <ipxact:name>l_adapt_mode_dfe</ipxact:name>
@@ -4282,7 +4282,7 @@
         <ipxact:parameter parameterId="rx_pma_adapt_mode" type="string">
           <ipxact:name>rx_pma_adapt_mode</ipxact:name>
           <ipxact:displayName>RX adaptation mode</ipxact:displayName>
-          <ipxact:value>manual</ipxact:value>
+          <ipxact:value>ctle_dfe</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="rx_pma_term_sel" type="string">
           <ipxact:name>rx_pma_term_sel</ipxact:name>
@@ -8417,7 +8417,7 @@
         <ipxact:parameter parameterId="pma_adapt_adapt_mode" type="string">
           <ipxact:name>pma_adapt_adapt_mode</ipxact:name>
           <ipxact:displayName>pma_adapt_adapt_mode</ipxact:displayName>
-          <ipxact:value>manual</ipxact:value>
+          <ipxact:value>ctle_dfe</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_ac_ctle_cal_win" type="string">
           <ipxact:name>pma_adapt_adp_ac_ctle_cal_win</ipxact:name>
@@ -8432,7 +8432,7 @@
         <ipxact:parameter parameterId="pma_adapt_adp_ac_ctle_en" type="string">
           <ipxact:name>pma_adapt_adp_ac_ctle_en</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_ac_ctle_en</ipxact:displayName>
-          <ipxact:value>radp_ac_ctle_en_disable</ipxact:value>
+          <ipxact:value>radp_ac_ctle_en_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_ac_ctle_hold_en" type="string">
           <ipxact:name>pma_adapt_adp_ac_ctle_hold_en</ipxact:name>
@@ -8497,12 +8497,12 @@
         <ipxact:parameter parameterId="pma_adapt_adp_ctle_bypass_ac" type="string">
           <ipxact:name>pma_adapt_adp_ctle_bypass_ac</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_ctle_bypass_ac</ipxact:displayName>
-          <ipxact:value>radp_ctle_bypass_ac_bypass</ipxact:value>
+          <ipxact:value>radp_ctle_bypass_ac_not_bypass</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_ctle_bypass_dc" type="string">
           <ipxact:name>pma_adapt_adp_ctle_bypass_dc</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_ctle_bypass_dc</ipxact:displayName>
-          <ipxact:value>radp_ctle_bypass_dc_bypass</ipxact:value>
+          <ipxact:value>radp_ctle_bypass_dc_not_bypass</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dc_ctle_accum_depth" type="int">
           <ipxact:name>pma_adapt_adp_dc_ctle_accum_depth</ipxact:name>
@@ -8512,7 +8512,7 @@
         <ipxact:parameter parameterId="pma_adapt_adp_dc_ctle_en" type="string">
           <ipxact:name>pma_adapt_adp_dc_ctle_en</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_dc_ctle_en</ipxact:displayName>
-          <ipxact:value>radp_dc_ctle_en_disable</ipxact:value>
+          <ipxact:value>radp_dc_ctle_en_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dc_ctle_hold_en" type="string">
           <ipxact:name>pma_adapt_adp_dc_ctle_hold_en</ipxact:name>
@@ -8572,12 +8572,12 @@
         <ipxact:parameter parameterId="pma_adapt_adp_dfe_en" type="string">
           <ipxact:name>pma_adapt_adp_dfe_en</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_dfe_en</ipxact:displayName>
-          <ipxact:value>radp_dfe_en_disable</ipxact:value>
+          <ipxact:value>radp_dfe_en_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dfe_fxtap_bypass" type="string">
           <ipxact:name>pma_adapt_adp_dfe_fxtap_bypass</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_dfe_fxtap_bypass</ipxact:displayName>
-          <ipxact:value>radp_dfe_fxtap_bypass_bypass</ipxact:value>
+          <ipxact:value>radp_dfe_fxtap_bypass_not_bypass</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dfe_hold_en" type="string">
           <ipxact:name>pma_adapt_adp_dfe_hold_en</ipxact:name>
@@ -8622,12 +8622,12 @@
         <ipxact:parameter parameterId="pma_adapt_adp_dlev_bypass" type="string">
           <ipxact:name>pma_adapt_adp_dlev_bypass</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_dlev_bypass</ipxact:displayName>
-          <ipxact:value>radp_dlev_bypass_bypass</ipxact:value>
+          <ipxact:value>radp_dlev_bypass_not_bypass</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dlev_en" type="string">
           <ipxact:name>pma_adapt_adp_dlev_en</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_dlev_en</ipxact:displayName>
-          <ipxact:value>radp_dlev_en_disable</ipxact:value>
+          <ipxact:value>radp_dlev_en_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dlev_hold_en" type="string">
           <ipxact:name>pma_adapt_adp_dlev_hold_en</ipxact:name>
@@ -8922,12 +8922,12 @@
         <ipxact:parameter parameterId="pma_adapt_adp_vga_bypass" type="string">
           <ipxact:name>pma_adapt_adp_vga_bypass</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_vga_bypass</ipxact:displayName>
-          <ipxact:value>radp_vga_bypass_bypass</ipxact:value>
+          <ipxact:value>radp_vga_bypass_not_bypass</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_vga_ctle_low_limit" type="string">
           <ipxact:name>pma_adapt_adp_vga_ctle_low_limit</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_vga_ctle_low_limit</ipxact:displayName>
-          <ipxact:value>radp_vga_ctle_low_limit_0</ipxact:value>
+          <ipxact:value>radp_vga_ctle_low_limit_4</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_vga_dlev_offset" type="int">
           <ipxact:name>pma_adapt_adp_vga_dlev_offset</ipxact:name>
@@ -8937,12 +8937,12 @@
         <ipxact:parameter parameterId="pma_adapt_adp_vga_dlev_target" type="int">
           <ipxact:name>pma_adapt_adp_vga_dlev_target</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_vga_dlev_target</ipxact:displayName>
-          <ipxact:value>15</ipxact:value>
+          <ipxact:value>25</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_vga_en" type="string">
           <ipxact:name>pma_adapt_adp_vga_en</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_vga_en</ipxact:displayName>
-          <ipxact:value>radp_vga_en_disable</ipxact:value>
+          <ipxact:value>radp_vga_en_enalbe</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_vga_hold_en" type="string">
           <ipxact:name>pma_adapt_adp_vga_hold_en</ipxact:name>
@@ -8997,7 +8997,7 @@
         <ipxact:parameter parameterId="pma_adapt_optimal" type="string">
           <ipxact:name>pma_adapt_optimal</ipxact:name>
           <ipxact:displayName>pma_adapt_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_power_mode" type="string">
           <ipxact:name>pma_adapt_power_mode</ipxact:name>
@@ -9367,7 +9367,7 @@
         <ipxact:parameter parameterId="cdr_pll_optimal" type="string">
           <ipxact:name>cdr_pll_optimal</ipxact:name>
           <ipxact:displayName>cdr_pll_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="cdr_pll_out_freq" type="string">
           <ipxact:name>cdr_pll_out_freq</ipxact:name>
@@ -9817,12 +9817,12 @@
         <ipxact:parameter parameterId="pma_rx_buf_optimal" type="string">
           <ipxact:name>pma_rx_buf_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_buf_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_pm_cr2_rx_path_optimal" type="string">
           <ipxact:name>pma_rx_buf_pm_cr2_rx_path_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_buf_pm_cr2_rx_path_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_pm_cr2_tx_rx_pcie_gen" type="string">
           <ipxact:name>pma_rx_buf_pm_cr2_tx_rx_pcie_gen</ipxact:name>
@@ -9887,7 +9887,7 @@
         <ipxact:parameter parameterId="pma_rx_buf_powermode_ac_vga" type="string">
           <ipxact:name>pma_rx_buf_powermode_ac_vga</ipxact:name>
           <ipxact:displayName>pma_rx_buf_powermode_ac_vga</ipxact:displayName>
-          <ipxact:value>vga_pwr_ac_half</ipxact:value>
+          <ipxact:value>vga_pwr_ac_full</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_powermode_dc_aoc" type="string">
           <ipxact:name>pma_rx_buf_powermode_dc_aoc</ipxact:name>
@@ -9907,7 +9907,7 @@
         <ipxact:parameter parameterId="pma_rx_buf_powermode_dc_vga" type="string">
           <ipxact:name>pma_rx_buf_powermode_dc_vga</ipxact:name>
           <ipxact:displayName>pma_rx_buf_powermode_dc_vga</ipxact:displayName>
-          <ipxact:value>vga_pwr_dc_half</ipxact:value>
+          <ipxact:value>vga_pwr_dc_full</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_prot_mode" type="string">
           <ipxact:name>pma_rx_buf_prot_mode</ipxact:name>
@@ -10012,7 +10012,7 @@
         <ipxact:parameter parameterId="pma_rx_buf_term_sel" type="string">
           <ipxact:name>pma_rx_buf_term_sel</ipxact:name>
           <ipxact:displayName>pma_rx_buf_term_sel</ipxact:displayName>
-          <ipxact:value>r_r4</ipxact:value>
+          <ipxact:value>r_r2</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_term_sync_bypass" type="string">
           <ipxact:name>pma_rx_buf_term_sync_bypass</ipxact:name>
@@ -10112,7 +10112,7 @@
         <ipxact:parameter parameterId="pma_rx_buf_vga_ib_max_en" type="string">
           <ipxact:name>pma_rx_buf_vga_ib_max_en</ipxact:name>
           <ipxact:displayName>pma_rx_buf_vga_ib_max_en</ipxact:displayName>
-          <ipxact:value>vga_ib_max_disable</ipxact:value>
+          <ipxact:value>vga_ib_max_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_vga_mode" type="string">
           <ipxact:name>pma_rx_buf_vga_mode</ipxact:name>
@@ -10192,7 +10192,7 @@
         <ipxact:parameter parameterId="pma_rx_deser_optimal" type="string">
           <ipxact:name>pma_rx_deser_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_deser_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_deser_pcie_g3_hclk_en" type="string">
           <ipxact:name>pma_rx_deser_pcie_g3_hclk_en</ipxact:name>
@@ -10292,7 +10292,7 @@
         <ipxact:parameter parameterId="pma_rx_dfe_dfe_mode" type="string">
           <ipxact:name>pma_rx_dfe_dfe_mode</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_dfe_mode</ipxact:displayName>
-          <ipxact:value>cdr_mode</ipxact:value>
+          <ipxact:value>dfe_tap1_15</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_dft_en" type="string">
           <ipxact:name>pma_rx_dfe_dft_en</ipxact:name>
@@ -10482,7 +10482,7 @@
         <ipxact:parameter parameterId="pma_rx_dfe_optimal" type="string">
           <ipxact:name>pma_rx_dfe_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_pdb" type="string">
           <ipxact:name>pma_rx_dfe_pdb</ipxact:name>
@@ -10497,22 +10497,22 @@
         <ipxact:parameter parameterId="pma_rx_dfe_pdb_edge_pst_h1" type="string">
           <ipxact:name>pma_rx_dfe_pdb_edge_pst_h1</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_pdb_edge_pst_h1</ipxact:displayName>
-          <ipxact:value>cdr_pst_h1_disable</ipxact:value>
+          <ipxact:value>cdr_pst_h1_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_pdb_tap_10t15" type="string">
           <ipxact:name>pma_rx_dfe_pdb_tap_10t15</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_pdb_tap_10t15</ipxact:displayName>
-          <ipxact:value>tap10t15_dfe_powerdown</ipxact:value>
+          <ipxact:value>tap10t15_dfe_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_pdb_tap_4t9" type="string">
           <ipxact:name>pma_rx_dfe_pdb_tap_4t9</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_pdb_tap_4t9</ipxact:displayName>
-          <ipxact:value>tap4t9_dfe_powerdown</ipxact:value>
+          <ipxact:value>tap4t9_dfe_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_pdb_tapsum" type="string">
           <ipxact:name>pma_rx_dfe_pdb_tapsum</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_pdb_tapsum</ipxact:displayName>
-          <ipxact:value>tapsum_disable</ipxact:value>
+          <ipxact:value>tapsum_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_power_mode" type="string">
           <ipxact:name>pma_rx_dfe_power_mode</ipxact:name>
@@ -10737,7 +10737,7 @@
         <ipxact:parameter parameterId="pma_rx_odi_optimal" type="string">
           <ipxact:name>pma_rx_odi_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_odi_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_odi_phase_steps_64_vs_128" type="string">
           <ipxact:name>pma_rx_odi_phase_steps_64_vs_128</ipxact:name>
@@ -10797,7 +10797,7 @@
         <ipxact:parameter parameterId="pma_rx_sd_optimal" type="string">
           <ipxact:name>pma_rx_sd_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_sd_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_sd_power_mode" type="string">
           <ipxact:name>pma_rx_sd_power_mode</ipxact:name>
@@ -11082,12 +11082,12 @@
         <ipxact:parameter parameterId="pma_tx_buf_optimal" type="string">
           <ipxact:name>pma_tx_buf_optimal</ipxact:name>
           <ipxact:displayName>pma_tx_buf_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_tx_buf_pm_cr2_tx_path_optimal" type="string">
           <ipxact:name>pma_tx_buf_pm_cr2_tx_path_optimal</ipxact:name>
           <ipxact:displayName>pma_tx_buf_pm_cr2_tx_path_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_tx_buf_pcie_gen" type="string">
           <ipxact:name>pma_tx_buf_pcie_gen</ipxact:name>
@@ -11477,7 +11477,7 @@
         <ipxact:parameter parameterId="pma_cgb_uc_cgb_vreg_boost" type="string">
           <ipxact:name>pma_cgb_uc_cgb_vreg_boost</ipxact:name>
           <ipxact:displayName>pma_cgb_uc_cgb_vreg_boost</ipxact:displayName>
-          <ipxact:value>no_voltage_boost</ipxact:value>
+          <ipxact:value>boost_5_step</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_cgb_uc_vcc_setting" type="string">
           <ipxact:name>pma_cgb_uc_vcc_setting</ipxact:name>

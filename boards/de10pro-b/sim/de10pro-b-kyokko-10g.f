@@ -55,6 +55,9 @@ ${KYOKKO}/boards/de10pro-b/ip/phy_rst_ctrl_4ch/sim/phy_rst_ctrl_4ch.v
 ${KYOKKO}/boards/de10pro-b/ip/phy_10g_4ch/altera_xcvr_native_s10_htile_1921/sim/*v
 ${KYOKKO}/boards/de10pro-b/ip/phy_10g_4ch/sim/phy_10g_4ch.v
 
+${KYOKKO}/boards/de10pro-b/ip/rst_rel/sim/rst_rel.v
+${KYOKKO}/boards/de10pro-b/ip/rst_rel/altera_s10_user_rst_clkgate_1910/sim/altera_s10_user_rst_clkgate.sv
+
 ${KYOKKO}/boards/s10/src/s10-xcvr-4ch.sv
 
 ${KYOKKO}/boards/s10/src/s10-kyokko.sv

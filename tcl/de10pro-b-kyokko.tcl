@@ -37,6 +37,7 @@ set COREs [ list \
                 ${TOP}/boards/de10pro-b/ip/phy_rst_ctrl_4ch.ip \
                 ${TOP}/boards/de10pro-b/ip/ila.ip \
                 ${TOP}/boards/de10pro-b/ip/vio.ip \
+                ${TOP}/boards/de10pro-b/ip/rst_rel.ip \
                ]
 
 set CONSTRs [ list \

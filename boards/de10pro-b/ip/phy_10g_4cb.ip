@@ -4202,22 +4202,22 @@
         <ipxact:parameter parameterId="tx_pma_optimal_settings" type="int">
           <ipxact:name>tx_pma_optimal_settings</ipxact:name>
           <ipxact:displayName>Use default TX PMA analog settings</ipxact:displayName>
-          <ipxact:value>1</ipxact:value>
+          <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="l_tx_pma_optimal_settings" type="string">
           <ipxact:name>l_tx_pma_optimal_settings</ipxact:name>
           <ipxact:displayName>l_tx_pma_optimal_settings</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="l_tx_pma_optimal_atom_settings" type="string">
           <ipxact:name>l_tx_pma_optimal_atom_settings</ipxact:name>
           <ipxact:displayName>l_tx_pma_optimal_atom_settings</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="tx_pma_output_swing_ctrl" type="int">
           <ipxact:name>tx_pma_output_swing_ctrl</ipxact:name>
           <ipxact:displayName>Output Swing Level (VOD)</ipxact:displayName>
-          <ipxact:value>12</ipxact:value>
+          <ipxact:value>31</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="tx_pma_pre_emp_sign_pre_tap_1t" type="string">
           <ipxact:name>tx_pma_pre_emp_sign_pre_tap_1t</ipxact:name>
@@ -4247,7 +4247,7 @@
         <ipxact:parameter parameterId="tx_pma_slew_rate_ctrl" type="int">
           <ipxact:name>tx_pma_slew_rate_ctrl</ipxact:name>
           <ipxact:displayName>Slew Rate Control</ipxact:displayName>
-          <ipxact:value>0</ipxact:value>
+          <ipxact:value>5</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="tx_pma_term_sel" type="string">
           <ipxact:name>tx_pma_term_sel</ipxact:name>
@@ -4262,17 +4262,17 @@
         <ipxact:parameter parameterId="rx_pma_optimal_settings" type="int">
           <ipxact:name>rx_pma_optimal_settings</ipxact:name>
           <ipxact:displayName>Use default RX PMA analog settings</ipxact:displayName>
-          <ipxact:value>1</ipxact:value>
+          <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="l_rx_pma_optimal_settings" type="string">
           <ipxact:name>l_rx_pma_optimal_settings</ipxact:name>
           <ipxact:displayName>l_rx_pma_optimal_settings</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="l_adapt_mode_manual" type="int">
           <ipxact:name>l_adapt_mode_manual</ipxact:name>
           <ipxact:displayName>l_adapt_mode_manual</ipxact:displayName>
-          <ipxact:value>1</ipxact:value>
+          <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="l_adapt_mode_dfe" type="int">
           <ipxact:name>l_adapt_mode_dfe</ipxact:name>
@@ -4282,7 +4282,7 @@
         <ipxact:parameter parameterId="rx_pma_adapt_mode" type="string">
           <ipxact:name>rx_pma_adapt_mode</ipxact:name>
           <ipxact:displayName>RX adaptation mode</ipxact:displayName>
-          <ipxact:value>manual</ipxact:value>
+          <ipxact:value>ctle_dfe</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="rx_pma_term_sel" type="string">
           <ipxact:name>rx_pma_term_sel</ipxact:name>
@@ -8417,7 +8417,7 @@
         <ipxact:parameter parameterId="pma_adapt_adapt_mode" type="string">
           <ipxact:name>pma_adapt_adapt_mode</ipxact:name>
           <ipxact:displayName>pma_adapt_adapt_mode</ipxact:displayName>
-          <ipxact:value>manual</ipxact:value>
+          <ipxact:value>ctle_dfe</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_ac_ctle_cal_win" type="string">
           <ipxact:name>pma_adapt_adp_ac_ctle_cal_win</ipxact:name>
@@ -8432,7 +8432,7 @@
         <ipxact:parameter parameterId="pma_adapt_adp_ac_ctle_en" type="string">
           <ipxact:name>pma_adapt_adp_ac_ctle_en</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_ac_ctle_en</ipxact:displayName>
-          <ipxact:value>radp_ac_ctle_en_disable</ipxact:value>
+          <ipxact:value>radp_ac_ctle_en_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_ac_ctle_hold_en" type="string">
           <ipxact:name>pma_adapt_adp_ac_ctle_hold_en</ipxact:name>
@@ -8497,12 +8497,12 @@
         <ipxact:parameter parameterId="pma_adapt_adp_ctle_bypass_ac" type="string">
           <ipxact:name>pma_adapt_adp_ctle_bypass_ac</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_ctle_bypass_ac</ipxact:displayName>
-          <ipxact:value>radp_ctle_bypass_ac_bypass</ipxact:value>
+          <ipxact:value>radp_ctle_bypass_ac_not_bypass</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_ctle_bypass_dc" type="string">
           <ipxact:name>pma_adapt_adp_ctle_bypass_dc</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_ctle_bypass_dc</ipxact:displayName>
-          <ipxact:value>radp_ctle_bypass_dc_bypass</ipxact:value>
+          <ipxact:value>radp_ctle_bypass_dc_not_bypass</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dc_ctle_accum_depth" type="int">
           <ipxact:name>pma_adapt_adp_dc_ctle_accum_depth</ipxact:name>
@@ -8512,7 +8512,7 @@
         <ipxact:parameter parameterId="pma_adapt_adp_dc_ctle_en" type="string">
           <ipxact:name>pma_adapt_adp_dc_ctle_en</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_dc_ctle_en</ipxact:displayName>
-          <ipxact:value>radp_dc_ctle_en_disable</ipxact:value>
+          <ipxact:value>radp_dc_ctle_en_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dc_ctle_hold_en" type="string">
           <ipxact:name>pma_adapt_adp_dc_ctle_hold_en</ipxact:name>
@@ -8572,12 +8572,12 @@
         <ipxact:parameter parameterId="pma_adapt_adp_dfe_en" type="string">
           <ipxact:name>pma_adapt_adp_dfe_en</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_dfe_en</ipxact:displayName>
-          <ipxact:value>radp_dfe_en_disable</ipxact:value>
+          <ipxact:value>radp_dfe_en_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dfe_fxtap_bypass" type="string">
           <ipxact:name>pma_adapt_adp_dfe_fxtap_bypass</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_dfe_fxtap_bypass</ipxact:displayName>
-          <ipxact:value>radp_dfe_fxtap_bypass_bypass</ipxact:value>
+          <ipxact:value>radp_dfe_fxtap_bypass_not_bypass</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dfe_hold_en" type="string">
           <ipxact:name>pma_adapt_adp_dfe_hold_en</ipxact:name>
@@ -8622,12 +8622,12 @@
         <ipxact:parameter parameterId="pma_adapt_adp_dlev_bypass" type="string">
           <ipxact:name>pma_adapt_adp_dlev_bypass</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_dlev_bypass</ipxact:displayName>
-          <ipxact:value>radp_dlev_bypass_bypass</ipxact:value>
+          <ipxact:value>radp_dlev_bypass_not_bypass</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dlev_en" type="string">
           <ipxact:name>pma_adapt_adp_dlev_en</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_dlev_en</ipxact:displayName>
-          <ipxact:value>radp_dlev_en_disable</ipxact:value>
+          <ipxact:value>radp_dlev_en_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_dlev_hold_en" type="string">
           <ipxact:name>pma_adapt_adp_dlev_hold_en</ipxact:name>
@@ -8922,12 +8922,12 @@
         <ipxact:parameter parameterId="pma_adapt_adp_vga_bypass" type="string">
           <ipxact:name>pma_adapt_adp_vga_bypass</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_vga_bypass</ipxact:displayName>
-          <ipxact:value>radp_vga_bypass_bypass</ipxact:value>
+          <ipxact:value>radp_vga_bypass_not_bypass</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_vga_ctle_low_limit" type="string">
           <ipxact:name>pma_adapt_adp_vga_ctle_low_limit</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_vga_ctle_low_limit</ipxact:displayName>
-          <ipxact:value>radp_vga_ctle_low_limit_0</ipxact:value>
+          <ipxact:value>radp_vga_ctle_low_limit_4</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_vga_dlev_offset" type="int">
           <ipxact:name>pma_adapt_adp_vga_dlev_offset</ipxact:name>
@@ -8937,12 +8937,12 @@
         <ipxact:parameter parameterId="pma_adapt_adp_vga_dlev_target" type="int">
           <ipxact:name>pma_adapt_adp_vga_dlev_target</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_vga_dlev_target</ipxact:displayName>
-          <ipxact:value>15</ipxact:value>
+          <ipxact:value>25</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_vga_en" type="string">
           <ipxact:name>pma_adapt_adp_vga_en</ipxact:name>
           <ipxact:displayName>pma_adapt_adp_vga_en</ipxact:displayName>
-          <ipxact:value>radp_vga_en_disable</ipxact:value>
+          <ipxact:value>radp_vga_en_enalbe</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_adp_vga_hold_en" type="string">
           <ipxact:name>pma_adapt_adp_vga_hold_en</ipxact:name>
@@ -8997,7 +8997,7 @@
         <ipxact:parameter parameterId="pma_adapt_optimal" type="string">
           <ipxact:name>pma_adapt_optimal</ipxact:name>
           <ipxact:displayName>pma_adapt_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_adapt_power_mode" type="string">
           <ipxact:name>pma_adapt_power_mode</ipxact:name>
@@ -9367,7 +9367,7 @@
         <ipxact:parameter parameterId="cdr_pll_optimal" type="string">
           <ipxact:name>cdr_pll_optimal</ipxact:name>
           <ipxact:displayName>cdr_pll_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="cdr_pll_out_freq" type="string">
           <ipxact:name>cdr_pll_out_freq</ipxact:name>
@@ -9817,12 +9817,12 @@
         <ipxact:parameter parameterId="pma_rx_buf_optimal" type="string">
           <ipxact:name>pma_rx_buf_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_buf_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_pm_cr2_rx_path_optimal" type="string">
           <ipxact:name>pma_rx_buf_pm_cr2_rx_path_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_buf_pm_cr2_rx_path_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_pm_cr2_tx_rx_pcie_gen" type="string">
           <ipxact:name>pma_rx_buf_pm_cr2_tx_rx_pcie_gen</ipxact:name>
@@ -9887,7 +9887,7 @@
         <ipxact:parameter parameterId="pma_rx_buf_powermode_ac_vga" type="string">
           <ipxact:name>pma_rx_buf_powermode_ac_vga</ipxact:name>
           <ipxact:displayName>pma_rx_buf_powermode_ac_vga</ipxact:displayName>
-          <ipxact:value>vga_pwr_ac_half</ipxact:value>
+          <ipxact:value>vga_pwr_ac_full</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_powermode_dc_aoc" type="string">
           <ipxact:name>pma_rx_buf_powermode_dc_aoc</ipxact:name>
@@ -9907,7 +9907,7 @@
         <ipxact:parameter parameterId="pma_rx_buf_powermode_dc_vga" type="string">
           <ipxact:name>pma_rx_buf_powermode_dc_vga</ipxact:name>
           <ipxact:displayName>pma_rx_buf_powermode_dc_vga</ipxact:displayName>
-          <ipxact:value>vga_pwr_dc_half</ipxact:value>
+          <ipxact:value>vga_pwr_dc_full</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_prot_mode" type="string">
           <ipxact:name>pma_rx_buf_prot_mode</ipxact:name>
@@ -10012,7 +10012,7 @@
         <ipxact:parameter parameterId="pma_rx_buf_term_sel" type="string">
           <ipxact:name>pma_rx_buf_term_sel</ipxact:name>
           <ipxact:displayName>pma_rx_buf_term_sel</ipxact:displayName>
-          <ipxact:value>r_r4</ipxact:value>
+          <ipxact:value>r_r2</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_term_sync_bypass" type="string">
           <ipxact:name>pma_rx_buf_term_sync_bypass</ipxact:name>
@@ -10112,7 +10112,7 @@
         <ipxact:parameter parameterId="pma_rx_buf_vga_ib_max_en" type="string">
           <ipxact:name>pma_rx_buf_vga_ib_max_en</ipxact:name>
           <ipxact:displayName>pma_rx_buf_vga_ib_max_en</ipxact:displayName>
-          <ipxact:value>vga_ib_max_disable</ipxact:value>
+          <ipxact:value>vga_ib_max_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_buf_vga_mode" type="string">
           <ipxact:name>pma_rx_buf_vga_mode</ipxact:name>
@@ -10192,7 +10192,7 @@
         <ipxact:parameter parameterId="pma_rx_deser_optimal" type="string">
           <ipxact:name>pma_rx_deser_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_deser_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_deser_pcie_g3_hclk_en" type="string">
           <ipxact:name>pma_rx_deser_pcie_g3_hclk_en</ipxact:name>
@@ -10292,7 +10292,7 @@
         <ipxact:parameter parameterId="pma_rx_dfe_dfe_mode" type="string">
           <ipxact:name>pma_rx_dfe_dfe_mode</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_dfe_mode</ipxact:displayName>
-          <ipxact:value>cdr_mode</ipxact:value>
+          <ipxact:value>dfe_tap1_15</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_dft_en" type="string">
           <ipxact:name>pma_rx_dfe_dft_en</ipxact:name>
@@ -10482,7 +10482,7 @@
         <ipxact:parameter parameterId="pma_rx_dfe_optimal" type="string">
           <ipxact:name>pma_rx_dfe_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_pdb" type="string">
           <ipxact:name>pma_rx_dfe_pdb</ipxact:name>
@@ -10497,22 +10497,22 @@
         <ipxact:parameter parameterId="pma_rx_dfe_pdb_edge_pst_h1" type="string">
           <ipxact:name>pma_rx_dfe_pdb_edge_pst_h1</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_pdb_edge_pst_h1</ipxact:displayName>
-          <ipxact:value>cdr_pst_h1_disable</ipxact:value>
+          <ipxact:value>cdr_pst_h1_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_pdb_tap_10t15" type="string">
           <ipxact:name>pma_rx_dfe_pdb_tap_10t15</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_pdb_tap_10t15</ipxact:displayName>
-          <ipxact:value>tap10t15_dfe_powerdown</ipxact:value>
+          <ipxact:value>tap10t15_dfe_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_pdb_tap_4t9" type="string">
           <ipxact:name>pma_rx_dfe_pdb_tap_4t9</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_pdb_tap_4t9</ipxact:displayName>
-          <ipxact:value>tap4t9_dfe_powerdown</ipxact:value>
+          <ipxact:value>tap4t9_dfe_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_pdb_tapsum" type="string">
           <ipxact:name>pma_rx_dfe_pdb_tapsum</ipxact:name>
           <ipxact:displayName>pma_rx_dfe_pdb_tapsum</ipxact:displayName>
-          <ipxact:value>tapsum_disable</ipxact:value>
+          <ipxact:value>tapsum_enable</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_dfe_power_mode" type="string">
           <ipxact:name>pma_rx_dfe_power_mode</ipxact:name>
@@ -10737,7 +10737,7 @@
         <ipxact:parameter parameterId="pma_rx_odi_optimal" type="string">
           <ipxact:name>pma_rx_odi_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_odi_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_odi_phase_steps_64_vs_128" type="string">
           <ipxact:name>pma_rx_odi_phase_steps_64_vs_128</ipxact:name>
@@ -10797,7 +10797,7 @@
         <ipxact:parameter parameterId="pma_rx_sd_optimal" type="string">
           <ipxact:name>pma_rx_sd_optimal</ipxact:name>
           <ipxact:displayName>pma_rx_sd_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_rx_sd_power_mode" type="string">
           <ipxact:name>pma_rx_sd_power_mode</ipxact:name>
@@ -11082,12 +11082,12 @@
         <ipxact:parameter parameterId="pma_tx_buf_optimal" type="string">
           <ipxact:name>pma_tx_buf_optimal</ipxact:name>
           <ipxact:displayName>pma_tx_buf_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_tx_buf_pm_cr2_tx_path_optimal" type="string">
           <ipxact:name>pma_tx_buf_pm_cr2_tx_path_optimal</ipxact:name>
           <ipxact:displayName>pma_tx_buf_pm_cr2_tx_path_optimal</ipxact:displayName>
-          <ipxact:value>true</ipxact:value>
+          <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_tx_buf_pcie_gen" type="string">
           <ipxact:name>pma_tx_buf_pcie_gen</ipxact:name>
@@ -11477,7 +11477,7 @@
         <ipxact:parameter parameterId="pma_cgb_uc_cgb_vreg_boost" type="string">
           <ipxact:name>pma_cgb_uc_cgb_vreg_boost</ipxact:name>
           <ipxact:displayName>pma_cgb_uc_cgb_vreg_boost</ipxact:displayName>
-          <ipxact:value>no_voltage_boost</ipxact:value>
+          <ipxact:value>boost_5_step</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_cgb_uc_vcc_setting" type="string">
           <ipxact:name>pma_cgb_uc_vcc_setting</ipxact:name>

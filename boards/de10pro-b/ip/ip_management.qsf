@@ -15,6 +15,8 @@ set_global_assignment -name IP_FILE vio.ip
 set_global_assignment -name IP_FILE phy_rst_ctrl_4ch.ip
 set_global_assignment -name IP_FILE phy_10g_4ch.ip
 set_global_assignment -name IP_FILE phy_10g_4cb.ip
-set_global_assignment -name IP_FILE phy_10g.ip
 set_global_assignment -name IP_FILE atx_5g_4cb.ip
 set_global_assignment -name IP_FILE atx_5g.ip
+set_global_assignment -name IP_FILE rst_rel.ip
+set_instance_assignment -name IO_STANDARD LVDS -to CLK300 -entity ip_management
+set_location_assignment PIN_M35 -to CLK300

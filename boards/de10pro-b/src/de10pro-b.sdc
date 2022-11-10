@@ -7,4 +7,7 @@ set_false_path -from {*|rx|rxinit|RX_STAT[*]} -to {*|tx|init|RX_STAT_TXi[*]}
 set_false_path -to {ky|kyokko_cb_gen.kycb|kyokko_gen[*].ky|rx|CB_READY_R}
 set_false_path -to {ky|kyokko_cb_gen.kycb|kyokko_gen[*].ky|tx|init|RXRST_TXi}
 
+set_false_path -from [get_clocks {qsfp_gen[*].ky|xcv|bond_gen.phy0|tx_clkout|ch0}] -to [get_clocks {qsfp_gen[*].ky|xcv|bond_gen.phy0|rx_clkout|ch0}]
+set_false_path -from [get_clocks {qsfp_gen[*].ky|xcv|bond_gen.phy0|rx_clkout|ch0}] -to [get_clocks {qsfp_gen[*].ky|xcv|bond_gen.phy0|tx_clkout|ch0}]
+
 derive_pll_clocks -create_base_clocks

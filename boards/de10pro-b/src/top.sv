@@ -19,8 +19,10 @@ module de10pro_b #
   ( parameter NumCh = 16,
     BondingEnable = 0, // Set to 1 to enable
     BondingCh = 4 )
-   ( input wire PCIE_PERST_N, // PCIe reset
+   ( input wire             PCIE_PERST_N, // PCIe reset
      input wire             CLK100,
+
+     output wire [1:0]      SI5340_RST_N, SI5340_OE_N,
      output wire [3:0]      LED_N,
 
      input wire [3:0]       QSFP_REFCLKP,
@@ -32,20 +34,26 @@ module de10pro_b #
    parameter BusW = (BondingEnable==0) ? 64 : 64*BondingCh;
 
    // ------------------------------------------------------------
-   // LED polarity
+   // LED polarity and clock generator enable
 
    wire [3:0] LED;
    assign LED_N = ~LED;
 
+   assign SI5340_RST_N = 2'b11;
+   assign SI5340_OE_N  = 2'b00;
+
    // ------------------------------------------------------------
    // Configuration-to-reset or PCIe reset
+
+   wire       RST_REL_N;
+   rst_rel rrel ( .ninit_done (RST_REL_N) );
 
    reg [9:0]                 RST_CNT = 0;
    wire                      RST_FULL = &RST_CNT;
    reg                       RST;
 
    always @ (posedge CLK100) begin
-      if (~PCIE_PERST_N) begin
+      if (~PCIE_PERST_N | RST_REL_N) begin
          RST_CNT <= 0;
       end else begin
          if (~RST_FULL) RST_CNT <= RST_CNT + 1;

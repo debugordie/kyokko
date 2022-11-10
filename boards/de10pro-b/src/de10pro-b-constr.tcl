@@ -6,13 +6,20 @@ set_instance_assignment -name IO_STANDARD  "3.0-V LVTTL" -to PCIE_PERST_N
 set_location_assignment  PIN_U24                  -to CLK100
 set_instance_assignment -name IO_STANDARD "1.8 V" -to CLK100
 
-
 # LEDs
 set_location_assignment PIN_B24  -to LED_N[0]
 set_location_assignment PIN_A24  -to LED_N[1]
 set_location_assignment PIN_A25  -to LED_N[2]
 set_location_assignment PIN_A26  -to LED_N[3]
 set_instance_assignment -name IO_STANDARD "1.8 V" -to LED_N
+
+# Clock generators
+set_location_assignment PIN_BH25 -to SI5340_OE_N[0]
+set_location_assignment PIN_G23  -to SI5340_OE_N[1]
+set_location_assignment PIN_BH27 -to SI5340_RST_N[0]
+set_location_assignment PIN_G24  -to SI5340_RST_N[1]
+set_instance_assignment -name IO_STANDARD "1.8 V" -to SI5340_OE_N
+set_instance_assignment -name IO_STANDARD "1.8 V" -to SI5340_RST_N
 
 # MGT refclk [D:A] -> [3:0]
 set_instance_assignment -name IO_STANDARD "LVDS" -to QSFP_REFCLKP
