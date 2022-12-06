@@ -37,6 +37,7 @@ You can find the releases in https://lut.eee.u-ryukyu.ac.jp/svn/kyokko/tags/.
  - 0.99.1 (Feb.12, 2021): Initial support for channel bonding on KCU1500 card
  - 0.99.2 (Feb.12, 2021): Bug fixes + channel bonding support for Alveo U50
  - 0.99.3 (Mar.10, 2022): Channel-bonding improvements + more card supports
+ - 0.99.4 (Nov.xx, 2022): Intel L-tile support for Terasic DE10-Pro Rev.B
 
 ----------------------------------------
 Supported FPGAs and cards
@@ -50,6 +51,7 @@ Kyokko is confirmed to work on:
  - Xilinx Alveo U200 Datacenter Accelerator Card (XCVU9P,  2x QSFP)
  - Intel Cyclone 10 GX Development Kit           (10CX220, 2x SFP)
  - Gidel HawkEye-40G-48 (Arria 10 GX)            (10AX480, 4x SFP)
+ - Terasic DE10-Pro Rev.B                        (1SG280L, 4x QSFP)
 at a line-rate of 10.3125 Gbps and below. On FPGAs with 25Gbps transceivers,
 Kyokko may work at faster bitrate.
 
@@ -103,6 +105,7 @@ Included simulation scripts and testbenches for loopback tests are for:
  - Xilinx Alveo U50: 4 independent or a 4-lane bonding Kyokko on QSFP port
  - Intel Cyclone 10 GX Development Kit: 2x Kyokko on SFP ports
  - Gidel HawkEye: 4x Kyokko on SFP ports
+ - DE10-Pro Rev.B: 4x QSFP ports (4-lane bonding or 16 independent chnannels)
 
 For example, KCU1500's loopback test runs by:
  % xmverilog -f ${KYOKKO}/boards/kcu1500/sim/sim-loopback.f
@@ -113,6 +116,7 @@ There also board-to-board simulation scripts included:
  - KC705 Aurora + KU040 Kyokko to Cyclone 10 GX (1+1=2 channels)
  - KCU1500 Kyokko to Alveo U50 + HawkEye (4+4=8 channels)
  - KC705 with 4x SFP FMC card to KCU1500 Kyokko (4-lane ch bonding)
+ - KC705 with 4x SFP FMC card to KCU1500+DE10-Pro Kyokko (4-lane ch bonding)
  - Alveo U50 + Hawkeye (4-ch bonding)
  - Alveo U50 + KCU1500 (4-ch bonding)
  - KC705 Aurora + Alveo U50 (4-ch bonding)
@@ -139,7 +143,8 @@ Kyokko has pre-defined Vivado/Quartus project setup scripts for:
  - Xilinx KCU1500 with 8x Kyokko (2x QSFP)
  - Xilinx Alveo U50 with 4x Kyokko (1x QSFP)
  - Intel Cyclone 10 GX Development Kit with 2x Kyokko (2x SFP)
- - Gidel HawkEye with 4x Kyokko (4x
+ - Gidel HawkEye with 4x Kyokko (4x SFP)
+ - Terasic DE10-Pro Rev.B with 16x Kyokko (4x QSFP)
 in ${KYOKKO}/tcl directory. To use these scripts,
  1. Create an empty Vivado/Quartus project (random choice of device or
     card is OK, the script will fix it)
