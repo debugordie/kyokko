@@ -2,23 +2,25 @@
 `default_nettype none
 
 module tb_de10_agilex #
-  (BondingEnable=0, // Set to 1 to enable
-   BondingCh=4
-   )
+  ( parameter BondingEnable=0, // Set to 1 to enable
+    BondingCh=4,
+    NumCh = 16 )
    (
 `ifdef NO_LOOPBACK
-    output wire [3:0] QSFP_TXP, QSFP_TXN,
-    input wire [3:0] QSFP_RXP, QSFP_RXN
+    output wire [NumCh-1:0] QSFP_TXP, QSFP_TXN,
+    input wire  [NumCh-1:0] QSFP_RXP, QSFP_RXN
 `endif
     );
 
    parameter real    StepREF = 1000.0/156.25;
 
-   parameter NumCh = 8;
    parameter NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh);
 
    reg 		     CLKREF = 1;
    always # (StepREF/2) CLKREF <= ~CLKREF;  // 156.25 MHz
+
+   reg               CLK100 = 1;
+   always # (5) CLK100 <= ~CLK100;
    
 `ifndef NO_LOOPBACK
    wire [NumCh-1:0] 	     QSFP_TXP, QSFP_TXN;
@@ -35,10 +37,10 @@ module tb_de10_agilex #
    reg RST;
 
    de10_agilex #(.BondingEnable(BondingEnable), .BondingCh(BondingCh)) uut
-     (.PCIE_RESET_N(~RST),
-      .CLK156  (CLKREF  ), 
-      .QSFP_RXP(QSFP_RXP), .QSFP_RXN(QSFP_RXN),
-      .QSFP_TXP(QSFP_TXP), .QSFP_TXN(QSFP_TXN)
+     (.PCIE_RESET_N(~RST), .CLK100(CLK100),
+      .QSFPDD_REFCLK({CLKREF, CLKREF}), 
+      .QSFPDD_RXP(QSFP_RXP), .QSFPDD_RXN(QSFP_RXN),
+      .QSFPDD_TXP(QSFP_TXP), .QSFPDD_TXN(QSFP_TXN)
       );
 
 `ifndef NO_LOOPBACK

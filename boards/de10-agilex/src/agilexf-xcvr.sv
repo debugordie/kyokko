@@ -28,7 +28,7 @@ module agilexf_xcvr # ( parameter NumCh=8, BondingEnable=0, BondingCh=4)
       if (BondingEnable==0) begin : nobond_gen
          phy_10g_8ch phy0 // width is for 4ch
            ( .tx_dll_lock        (TX_DLL_LOCK  ), // O [7:0]
-             .reset              (RST          ), // I [7:0]
+             .reset              ({NumCh{RST}} ), // I [7:0]
              .tx_ready           (TX_READY     ), // O [7:0]
              .rx_ready           (RX_READY     ), // O [7:0]
              .tx_pma_ready       (TX_PMA_READY ), // O [7:0]

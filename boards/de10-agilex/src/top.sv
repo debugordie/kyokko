@@ -2,17 +2,20 @@
 `default_nettype none
 
 module de10_agilex #
-  ( parameter NumCh = 8,
-    BondingEnable = 0, // Set to 1 to enable
+  ( parameter BondingEnable = 0, // Set to 1 to enable
     BondingCh = 4 )
    ( input wire PCIE_RESET_N,
-     input wire 	     CLK156, // 156 MHz
-     input wire [NumCh-1:0]  QSFP_RXP, QSFP_RXN,
-     output wire [NumCh-1:0] QSFP_TXP, QSFP_TXN
+     input wire             CLK100,
+     input wire [1:0]       QSFPDD_REFCLK, // 156 MHz
+     input wire [1:0][7:0]  QSFPDD_RXP, QSFPDD_RXN,
+     output wire [1:0][7:0] QSFPDD_TXP, QSFPDD_TXN
      );
 
-   parameter NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh);
-   parameter BusW = (BondingEnable==0) ? 64 : 64*BondingCh;
+   localparam               NumCh=16; // Dual QSFP-DD
+   localparam NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh);
+   localparam BusW = (BondingEnable==0) ? 64 : 64*BondingCh;
+
+   localparam NumChC = NumChB/2; // Channels per QSFP-DD Connector
    
    // ------------------------------------------------------------
    // Configuration-to-reset or PCIe reset
@@ -21,7 +24,7 @@ module de10_agilex #
    wire                      RST_FULL = &RST_CNT;
    reg                       RST;
 
-   always @ (posedge CLK156) begin
+   always @ (posedge CLK100) begin
       if (~PCIE_RESET_N) begin
          RST_CNT <= 0;
       end else begin
@@ -55,60 +58,52 @@ module de10_agilex #
    wire [NumChB-1:0]            S_AXI_NFC_TVALID, S_AXI_NFC_TREADY;
 
    // ------------------------------------------------------------
-   // Signal bundles
-
-   wire [NumCh*64-1:0]      TX_DATA, RX_DATA, UFC_TX_DATA, UFC_RX_DATA;
-   wire [NumChB*16-1:0]      NFC_TX_DATA;
-   wire [NumChB* 8-1:0]      UFC_MS;
-
-   assign TX_DATA     = S_AXI_TX_TDATA     [NumChB-1:0];
-   assign UFC_TX_DATA = S_AXI_UFC_TX_TDATA [NumChB-1:0];
-   assign NFC_TX_DATA = S_AXI_NFC_TDATA    [NumChB-1:0];
-   assign UFC_MS      = UFC_TX_MS          [NumChB-1:0];
-   
-   assign M_AXI_RX_TDATA     [NumChB-1:0] = RX_DATA;
-   assign M_AXI_UFC_RX_TDATA [NumChB-1:0] = UFC_RX_DATA;
-   
-   // ------------------------------------------------------------
    // Kyokko instance
 
+   genvar                       c;
+   generate
+      for (c=0; c<2; c++) begin : ddcage_gen
+   
    de10_agilex_kyokko 
-     #(.BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
-     ( .CLK156(CLK156), .RST(RST),
+             #(.BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
+     ( .CLK156(QSFPDD_REFCLK[c]), .RST(RST),
 
-       .SFP_TXP(QSFP_TXP), .SFP_TXN(QSFP_TXN),
-       .SFP_RXP(QSFP_RXP), .SFP_RXN(QSFP_RXN),
+       .SFP_TXP(QSFPDD_TXP[c]), .SFP_TXN(QSFPDD_TXN[c]),
+       .SFP_RXP(QSFPDD_RXP[c]), .SFP_RXN(QSFPDD_RXN[c]),
 
-       .CH_UP   (CH_UP),
-       .USER_CLK(AURORA_CLK),
+       .CH_UP   (CH_UP     [c*NumChC +: NumChC]),
+       .USER_CLK(AURORA_CLK[c*NumChC +: NumChC]),
 
        // Data channel
-       .S_AXI_TX_TDATA     (TX_DATA),             // I [64*NumCh-1:0]  
-       .S_AXI_TX_TLAST     (S_AXI_TX_TLAST ),     // I [NumCh-1:0]    
-       .S_AXI_TX_TVALID    (S_AXI_TX_TVALID),     // I [NumCh-1:0]     
-       .S_AXI_TX_TREADY    (S_AXI_TX_TREADY),     // O [NumCh-1:0]    
+       .S_AXI_TX_TDATA     (S_AXI_TX_TDATA [c*NumChC +: NumChC]), // I
+       .S_AXI_TX_TLAST     (S_AXI_TX_TLAST [c*NumChC +: NumChC]), // I 
+       .S_AXI_TX_TVALID    (S_AXI_TX_TVALID[c*NumChC +: NumChC]), // I 
+       .S_AXI_TX_TREADY    (S_AXI_TX_TREADY[c*NumChC +: NumChC]), // O 
       
-       .M_AXI_RX_TDATA     (RX_DATA),             // O [64*NumCh-1:0] 
-       .M_AXI_RX_TLAST     (M_AXI_RX_TLAST ),     // O [NumCh-1:0]   
-       .M_AXI_RX_TVALID    (M_AXI_RX_TVALID),     // O [NumCh-1:0]    
+       .M_AXI_RX_TDATA     (M_AXI_RX_TDATA [c*NumChC +: NumChC]), // O [63:0] 
+       .M_AXI_RX_TLAST     (M_AXI_RX_TLAST [c*NumChC +: NumChC]), // O 
+       .M_AXI_RX_TVALID    (M_AXI_RX_TVALID[c*NumChC +: NumChC]), // O 
       
        // UFC channel
-       .UFC_TX_REQ         (UFC_TX_REQ),          // I [NumCh-1:0]     
-       .UFC_TX_MS          (UFC_MS),              // O [8*NumCh-1:0] 
+       .UFC_TX_REQ         (UFC_TX_REQ     [c*NumChC +: NumChC]), // I
+       .UFC_TX_MS          (UFC_TX_MS      [c*NumChC +: NumChC]), // O [7:0]
       
-       .S_AXI_UFC_TX_TDATA (UFC_TX_DATA),         // I [64*NumCh-1:0]  
-       .S_AXI_UFC_TX_TVALID(S_AXI_UFC_TX_TVALID), // I [NumCh-1:0]     
-       .S_AXI_UFC_TX_TREADY(S_AXI_UFC_TX_TREADY), // O [NumCh-1:0]    
+       .S_AXI_UFC_TX_TDATA (S_AXI_UFC_TX_TDATA [c*NumChC +: NumChC]),  // I [63:0]  
+       .S_AXI_UFC_TX_TVALID(S_AXI_UFC_TX_TVALID[c*NumChC +: NumChC]), // I
+       .S_AXI_UFC_TX_TREADY(S_AXI_UFC_TX_TREADY[c*NumChC +: NumChC]), // O
       
-       .M_AXI_UFC_RX_TDATA (UFC_RX_DATA),         // O [64*NumCh-1:0] 
-       .M_AXI_UFC_RX_TLAST (M_AXI_UFC_RX_TLAST ), // O [NumCh-1:0]   
-       .M_AXI_UFC_RX_TVALID(M_AXI_UFC_RX_TVALID), // O [NumCh-1:0]       
+       .M_AXI_UFC_RX_TDATA (M_AXI_UFC_RX_TDATA [c*NumChC +: NumChC]),  // O [63:0]
+       .M_AXI_UFC_RX_TLAST (M_AXI_UFC_RX_TLAST [c*NumChC +: NumChC]), // O 
+       .M_AXI_UFC_RX_TVALID(M_AXI_UFC_RX_TVALID[c*NumChC +: NumChC]), // O 
 
        // NFC channel
-       .S_AXI_NFC_TDATA    (NFC_TX_DATA),         // I [16*NumCh-1:0]  
-       .S_AXI_NFC_TVALID   (S_AXI_NFC_TVALID),    // I [NumCh-1:0]     
-       .S_AXI_NFC_TREADY   (S_AXI_NFC_TREADY)     // O [NumCh-1:0]    
+       .S_AXI_NFC_TDATA    (S_AXI_NFC_TDATA [c*NumChC +: NumChC]),     // I [5:0]
+       .S_AXI_NFC_TVALID   (S_AXI_NFC_TVALID[c*NumChC +: NumChC]),    // I
+       .S_AXI_NFC_TREADY   (S_AXI_NFC_TREADY[c*NumChC +: NumChC])     // O
        );
+
+      end // block: ddcage_gen
+   endgenerate
 
    // No LED
 

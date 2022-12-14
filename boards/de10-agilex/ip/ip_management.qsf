@@ -10,4 +10,7 @@ set_global_assignment -name FAMILY Agilex
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
 set_global_assignment -name PWRMGT_VOLTAGE_OUTPUT_FORMAT "LINEAR FORMAT"
 set_global_assignment -name PWRMGT_LINEAR_FORMAT_N "-12"
+set_global_assignment -name POWER_APPLY_THERMAL_MARGIN ADDITIONAL
+set_global_assignment -name IP_FILE ila.ip
+set_global_assignment -name IP_FILE vio.ip
 set_global_assignment -name IP_FILE phy_10g_8ch.ip

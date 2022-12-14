@@ -4,41 +4,41 @@ module de10_agilex_kyokko #
   ( parameter NumCh=8,
     BondingEnable = 0, // Set to 1 to enable
     BondingCh = 4,
+    ChW = ((BondingEnable==0) ? 64 : BondingCh*64 ),
     NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh) )
   ( input wire CLK156, RST,
     
-    output wire [NumCh-1:0]    SFP_TXP, SFP_TXN,
-    input wire [NumCh-1:0]     SFP_RXP, SFP_RXN,
+    output wire [NumCh-1:0]           SFP_TXP, SFP_TXN,
+    input wire [NumCh-1:0]            SFP_RXP, SFP_RXN,
 
     // ------------------------------
     // Aurora compatible interface signals
     
-    output wire [NumCh-1:0]    CH_UP, USER_CLK,
+    output wire [NumChB-1:0]          CH_UP, USER_CLK,
     
     // Data channel
-    input wire [64*NumCh-1:0]  S_AXI_TX_TDATA,
-    input wire [ NumCh-1:0]    S_AXI_TX_TLAST, S_AXI_TX_TVALID,
-    output wire [NumCh-1:0]    S_AXI_TX_TREADY,
+    input wire [NumChB-1:0][ChW-1:0]  S_AXI_TX_TDATA,
+    input wire [ NumChB-1:0]          S_AXI_TX_TLAST, S_AXI_TX_TVALID,
+    output wire [NumChB-1:0]          S_AXI_TX_TREADY,
     
-    output wire [64*NumCh-1:0] M_AXI_RX_TDATA,
-    output wire [ NumCh-1:0]   M_AXI_RX_TLAST, M_AXI_RX_TVALID,
-
+    output wire [NumChB-1:0][ChW-1:0] M_AXI_RX_TDATA,
+    output wire [NumChB-1:0]          M_AXI_RX_TLAST, M_AXI_RX_TVALID,
+    
     // UFC channel
-    input wire [NumCh-1:0]     UFC_TX_REQ,
-    input wire [8*NumCh-1:0]   UFC_TX_MS,
+    input wire [NumChB-1:0]           UFC_TX_REQ,
+    input wire [NumChB-1:0][7:0]      UFC_TX_MS,
     
-    input wire [64*NumCh-1:0]  S_AXI_UFC_TX_TDATA,
-    input wire [NumCh-1:0]     S_AXI_UFC_TX_TVALID,
-    output wire [NumCh-1:0]    S_AXI_UFC_TX_TREADY,
-
-    output wire [64*NumCh-1:0] M_AXI_UFC_RX_TDATA,
-    output wire [ NumCh-1:0]   M_AXI_UFC_RX_TLAST, M_AXI_UFC_RX_TVALID,
+    input wire [NumChB-1:0][ChW-1:0]  S_AXI_UFC_TX_TDATA,
+    input wire [NumChB-1:0]           S_AXI_UFC_TX_TVALID,
+    output wire [NumChB-1:0]          S_AXI_UFC_TX_TREADY,
+    
+    output wire [NumChB-1:0][ChW-1:0] M_AXI_UFC_RX_TDATA,
+    output wire [NumChB-1:0]          M_AXI_UFC_RX_TLAST, M_AXI_UFC_RX_TVALID,
     
     // NFC channel
-    input wire [16*NumCh-1:0]  S_AXI_NFC_TDATA,
-    input wire [NumCh-1:0]     S_AXI_NFC_TVALID,
-    output wire [NumCh-1:0]    S_AXI_NFC_TREADY
-    
+    input wire [NumChB-1:0][15:0]     S_AXI_NFC_TDATA,
+    input wire [NumChB-1:0]           S_AXI_NFC_TVALID,
+    output wire [NumChB-1:0]          S_AXI_NFC_TREADY
    );
 
    wire                        GT_RST;
@@ -86,29 +86,29 @@ module de10_agilex_kyokko #
                   // Data channels
                   .M_AXIS_TVALID(M_AXI_RX_TVALID[ch]),
                   .M_AXIS_TLAST (M_AXI_RX_TLAST [ch]),
-                  .M_AXIS_TDATA (M_AXI_RX_TDATA [ch*64+63 : ch*64]),
+                  .M_AXIS_TDATA (M_AXI_RX_TDATA [ch]),
 
                   .S_AXIS_TVALID (S_AXI_TX_TVALID[ch]),
                   .S_AXIS_TREADY (S_AXI_TX_TREADY[ch]),
                   .S_AXIS_TLAST  (S_AXI_TX_TLAST [ch]),
-                  .S_AXIS_TDATA  (S_AXI_TX_TDATA [ch*64+63 : ch*64]),
+                  .S_AXIS_TDATA  (S_AXI_TX_TDATA [ch]),
 
                   // UFC channels
                   .UFC_REQ           (UFC_TX_REQ [ch]),
-                  .UFC_MS            (UFC_TX_MS  [ch*8+7 : ch*8]),
+                  .UFC_MS            (UFC_TX_MS  [ch]),
 
                   .S_AXIS_UFC_TVALID (S_AXI_UFC_TX_TVALID[ch]),
                   .S_AXIS_UFC_TREADY (S_AXI_UFC_TX_TREADY[ch]),
-                  .S_AXIS_UFC_TDATA  (S_AXI_UFC_TX_TDATA [ch*64+63 : ch*64]),
+                  .S_AXIS_UFC_TDATA  (S_AXI_UFC_TX_TDATA [ch]),
 
                   .M_AXIS_UFC_TVALID (M_AXI_UFC_RX_TVALID[ch]),
                   .M_AXIS_UFC_TLAST  (M_AXI_UFC_RX_TLAST [ch]),
-                  .M_AXIS_UFC_TDATA  (M_AXI_UFC_RX_TDATA [ch*64+63 : ch*64]),
+                  .M_AXIS_UFC_TDATA  (M_AXI_UFC_RX_TDATA [ch]),
 
                   // NFC channels
                   .S_AXIS_NFC_TVALID (S_AXI_NFC_TVALID[ch]),
                   .S_AXIS_NFC_TREADY (S_AXI_NFC_TREADY[ch]),
-                  .S_AXIS_NFC_TDATA  (S_AXI_NFC_TDATA [ch*16+15 : ch*16])
+                  .S_AXIS_NFC_TDATA  (S_AXI_NFC_TDATA [ch])
                   );
            end // block: kyokko-gen
       end else begin : chbond_gen // block: nobond_gen
@@ -136,29 +136,29 @@ module de10_agilex_kyokko #
                 // BondingCh channels
                 .M_AXIS_TVALID(M_AXI_RX_TVALID[chB]),
                 .M_AXIS_TLAST (M_AXI_RX_TLAST [chB]),
-                .M_AXIS_TDATA (M_AXI_RX_TDATA [ch*64 +: 64*BondingCh]),
+                .M_AXIS_TDATA (M_AXI_RX_TDATA [chB]),
                 
                 .S_AXIS_TVALID (S_AXI_TX_TVALID[chB]),
                 .S_AXIS_TREADY (S_AXI_TX_TREADY[chB]),
                 .S_AXIS_TLAST  (S_AXI_TX_TLAST [chB]),
-                .S_AXIS_TDATA  (S_AXI_TX_TDATA [ch*64 +: 64*BondingCh]),
+                .S_AXIS_TDATA  (S_AXI_TX_TDATA [chB]),
                 
                 // UFC channels
                 .UFC_REQ           (UFC_TX_REQ [chB]),
-                .UFC_MS            (UFC_TX_MS  [chB*8 +: 8]),
+                .UFC_MS            (UFC_TX_MS  [chB]),
                 
                 .S_AXIS_UFC_TVALID (S_AXI_UFC_TX_TVALID[chB]),
                 .S_AXIS_UFC_TREADY (S_AXI_UFC_TX_TREADY[chB]),
-                .S_AXIS_UFC_TDATA  (S_AXI_UFC_TX_TDATA [ch*64 +: 64*BondingCh]),
+                .S_AXIS_UFC_TDATA  (S_AXI_UFC_TX_TDATA [chB]),
                 
                 .M_AXIS_UFC_TVALID (M_AXI_UFC_RX_TVALID[chB]),
                 .M_AXIS_UFC_TLAST  (M_AXI_UFC_RX_TLAST [chB]),
-                .M_AXIS_UFC_TDATA  (M_AXI_UFC_RX_TDATA [ch*64 +: 64*BondingCh]),
+                .M_AXIS_UFC_TDATA  (M_AXI_UFC_RX_TDATA [chB]),
                 
                 // NFC channels
                 .S_AXIS_NFC_TVALID (S_AXI_NFC_TVALID[chB]),
                 .S_AXIS_NFC_TREADY (S_AXI_NFC_TREADY[chB]),
-                .S_AXIS_NFC_TDATA  (S_AXI_NFC_TDATA [chB*16 +: 16])
+                .S_AXIS_NFC_TDATA  (S_AXI_NFC_TDATA [chB])
                 );
          end // block: kyokko_cb_gen
       end // block: chbond_gen
