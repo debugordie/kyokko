@@ -28,7 +28,7 @@ module tb_au200 #
 `endif
    );
    parameter real Step300 = 1000.0/300.0;
-   parameter real StepREF = 1000.0/156.25;
+   parameter real StepREF = 1000.0/161.1328125;
 
    parameter NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh);
 
@@ -50,7 +50,7 @@ module tb_au200 #
    au200 #(.BondingEnable(BondingEnable), .BondingCh(BondingCh)) uut
      ( .PCIE_RESET_N(~RST),
        .CLK300P(CLK300), .CLK300N(~CLK300),
-       .CLK156P(CLKREF), .CLK156N(~CLKREF),
+       .CLK161P(CLKREF), .CLK161N(~CLKREF),
        .QSFP0_RXP(QSFP0_RXP), .QSFP0_RXN(QSFP0_RXN),
        .QSFP0_TXP(QSFP0_TXP), .QSFP0_TXN(QSFP0_TXN),
        .QSFP1_RXP(QSFP1_RXP), .QSFP1_RXN(QSFP1_RXN),
