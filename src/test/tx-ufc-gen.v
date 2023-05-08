@@ -24,6 +24,11 @@ module tx_ufc_gen
    reg [3:0] 	       CNT_SEND;
 
    assign DATA = (VALID & READY) ? CNT_DATA : 0;
+
+   wire [7:0] 	       MS_TOGO_PRE, MS_TOGO;
+   assign MS_TOGO_PRE = MS + 1;
+   assign MS_TOGO = (MS_TOGO_PRE % 8 == 0) ? MS_TOGO_PRE : 
+		    MS_TOGO_PRE + 8 - (MS_TOGO_PRE % 8);
    
    always @ (posedge CLK) begin
       if (RST) begin
@@ -39,7 +44,7 @@ module tx_ufc_gen
 	    CNT_SEND <= CNT_SEND + 1;
 	 end
 
-	 if (CNT_SEND == ((MS+1)/8 - 1)) begin
+	 if (CNT_SEND == (MS_TOGO/8 - 1)) begin
 	    VALID <= 0;
 	    CNT_SEND <= 0;	    
 	 end

@@ -41,6 +41,9 @@ module kyokko_tx_ufc # (parameter BondingEnable = 0, BondingCh = 1, ChNo = 0)
                                 ~HOLD &    // Not sending/in NFC
                                 ~CC  );    // Not sending CC
 
+
+   wire [7:0] 	       UFC_MS_TOGO =  UFC_MS+1;
+
    // If have valid UFC message block
    assign MSG_VALID = (S_AXIS_UFC_TREADY & S_AXIS_UFC_TVALID);
 
@@ -52,7 +55,7 @@ module kyokko_tx_ufc # (parameter BondingEnable = 0, BondingCh = 1, ChNo = 0)
 	 case (STAT)
 	   'b001: begin // idle
 	      if (UFC_REQ) begin
-		 MS_R <= UFC_MS + 1;
+		 MS_R <= UFC_MS_TOGO;
 		 STAT <= 'b010;
 	      end
 	   end
@@ -63,7 +66,7 @@ module kyokko_tx_ufc # (parameter BondingEnable = 0, BondingCh = 1, ChNo = 0)
 
 	   'b100: begin
               if (~CC) begin
-                 if (MS_R == BondingCh*8) 
+                 if (BondingCh*8 >= MS_R) 
 		   STAT <= 'b001;
                  else
                    MS_R <= (MSG_VALID) ? MS_R - (BondingCh*8) : MS_R;

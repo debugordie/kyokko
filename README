@@ -165,3 +165,10 @@ Inc.
 
 FPGA design tools for development of Kyoko are provided through Xilinx
 University Program and Intel FPGA Academic Program.
+
+----------------------------------------
+Patch & Bug report contributors
+----------------------------------------
+
+- Masahiro Nishida (UFC compatibility issue with Aurora 64b66b 12.0, Apr. 2022)
+

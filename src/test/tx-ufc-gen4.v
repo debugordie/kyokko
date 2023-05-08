@@ -28,7 +28,12 @@ module tx_ufc_gen4
                                     32'hFC22_FC22, CNT_DATA,
                                     32'hFC33_FC33, CNT_DATA, 
                                     32'hFC44_FC44, CNT_DATA } : 0;
-   
+
+   wire [7:0] 	       MS_TOGO_PRE, MS_TOGO;
+   assign MS_TOGO_PRE = MS + 1;
+   assign MS_TOGO = (MS_TOGO_PRE % 32 == 0) ? MS_TOGO_PRE : 
+		    MS_TOGO_PRE + 32 - (MS_TOGO_PRE % 32);
+
    always @ (posedge CLK) begin
       if (RST) begin
 	 CNT_REQ <= 64'h0;
@@ -44,13 +49,13 @@ module tx_ufc_gen4
 	    CNT_SEND <= CNT_SEND + 1;
 	 end
 
-	 if (CNT_SEND == ((MS+1)/32 - 1)) begin
+	 if (CNT_SEND == (MS_TOGO/32 - 1)) begin
 	    VALID <= 0;
 	    CNT_SEND <= 0;	    
 	 end
 	 
 	 case (CNT_REQ[15:0])
-	   'h150: MS    <= 63;
+	   'h150: MS    <= 63; // was 63
 	   
 /* -----\/----- EXCLUDED -----\/-----
 	   'h200: REQ   <= 1;
@@ -61,7 +66,7 @@ module tx_ufc_gen4
 	   
 	   'h400: VALID <= 1;
 
-	   'h650: MS    <= 63;
+	   'h650: MS    <= 33; // was 63
 	   
 	   'h700: REQ   <= 1;
 	   'h701: REQ   <= 0;

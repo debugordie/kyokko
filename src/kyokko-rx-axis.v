@@ -44,7 +44,7 @@ module kyokko_rx_axis # ( parameter BondingEnable = 0, BondingCh = 1 )
    end
 
    // - - - - - - - - - - - - - - -
-   // Natie Flow Control
+   // Native Flow Control
    wire                RX_IS_NFC = RX_IS_CTRL & (RXDATA[63:56] == 8'haa);
    wire [7:0]          RX_NFC_PAUSE = RXDATA[55:48];
    wire                RX_NFC_XOFF = RXDATA[47];
@@ -78,6 +78,12 @@ module kyokko_rx_axis # ( parameter BondingEnable = 0, BondingCh = 1 )
                                      (RXDATA[47:0] == 0) );
    reg [1:0]           UFC_STAT;
    reg [7:0]           UFC_MS;
+
+   // Round up TOGO to 8n bytes
+   wire [7:0] 	       UFC_MS_TOGO, UFC_MS_NEXT;
+   
+   assign UFC_MS_TOGO = RXDATA[55:48] + 1;
+   assign UFC_MS_NEXT = UFC_MS - (8*BondingCh);
    
    // UFC control FSM
    always @ (posedge CLK) begin
@@ -88,15 +94,19 @@ module kyokko_rx_axis # ( parameter BondingEnable = 0, BondingCh = 1 )
            'b01: begin // idle
               if (RX_UFC_REQ) begin
                  UFC_STAT <= 'b10;
-                 UFC_MS <= (RXDATA[55:48] + 1);
+                 UFC_MS <= UFC_MS_TOGO;
               end
            end
 
            'b10: begin //receive UFC data
-	      if (UFC_MS == 0) UFC_STAT <= 'b01;
-	      else  UFC_MS <= (~RX_IS_IDLE) ? UFC_MS - (8*BondingCh) :
+	      if (M_AXIS_UFC_TLAST) UFC_STAT <= 'b01;
+	      else  UFC_MS <= // May receive multiple UFC headers :(
+			      ( RX_UFC_REQ) ? UFC_MS_TOGO :
+			      (~RX_IS_IDLE) ? UFC_MS_NEXT : 
 			      UFC_MS;
            end
+
+	   default: UFC_STAT <= 'b01;
          endcase // case (UFC_STAT)
       end
    end // always @ (posedge CLK)
@@ -135,7 +145,7 @@ module kyokko_rx_axis # ( parameter BondingEnable = 0, BondingCh = 1 )
    
    assign M_AXIS_UFC_TDATA =   UFC_MODE ? RXDATA2 : 0;
    assign M_AXIS_UFC_TVALID =  UFC_MODE;
-   assign M_AXIS_UFC_TLAST = ( UFC_MODE & (UFC_MS == (8*BondingCh)) );
+   assign M_AXIS_UFC_TLAST = ( UFC_MODE & ((8*BondingCh) >= UFC_MS) );
 
 endmodule // kyokko_rx_axis
 
