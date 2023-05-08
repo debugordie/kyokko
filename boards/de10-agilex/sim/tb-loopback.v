@@ -37,7 +37,7 @@ module tb_de10_agilex #
    reg RST;
 
    de10_agilex #(.BondingEnable(BondingEnable), .BondingCh(BondingCh)) uut
-     (.PCIE_RESET_N(~RST), .CLK100(CLK100),
+     (.CPU_RESET_N(~RST), .CLK100(CLK100),
       .QSFPDD_REFCLK({CLKREF, CLKREF}), 
       .QSFPDD_RXP(QSFP_RXP), .QSFPDD_RXN(QSFP_RXN),
       .QSFPDD_TXP(QSFP_TXP), .QSFPDD_TXN(QSFP_TXN)

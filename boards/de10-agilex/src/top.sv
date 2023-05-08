@@ -1,14 +1,17 @@
-
 `default_nettype none
 
 module de10_agilex #
   ( parameter BondingEnable = 0, // Set to 1 to enable
     BondingCh = 4 )
-   ( input wire PCIE_RESET_N,
+   ( input wire CPU_RESET_N,
      input wire             CLK100,
+     output wire            SI5397A_OE_N, SI5397A_RST_N,
+     
      input wire [1:0]       QSFPDD_REFCLK, // 156 MHz
      input wire [1:0][7:0]  QSFPDD_RXP, QSFPDD_RXN,
-     output wire [1:0][7:0] QSFPDD_TXP, QSFPDD_TXN
+     output wire [1:0][7:0] QSFPDD_TXP, QSFPDD_TXN,
+     
+     output wire [3:0]      LED_BRACKET_N
      );
 
    localparam               NumCh=16; // Dual QSFP-DD
@@ -16,16 +19,24 @@ module de10_agilex #
    localparam BusW = (BondingEnable==0) ? 64 : 64*BondingCh;
 
    localparam NumChC = NumChB/2; // Channels per QSFP-DD Connector
+
+   // ------------------------------------------------------------
+   // Enable clock generator
+
+   assign {SI5397A_OE_N, SI5397A_RST_N} = 2'b01;
    
    // ------------------------------------------------------------
    // Configuration-to-reset or PCIe reset
+
+   wire       RST_REL_N;
+   rst_rel rrel ( .ninit_done (RST_REL_N) );
    
    reg [9:0]                 RST_CNT = 0;
    wire                      RST_FULL = &RST_CNT;
    reg                       RST;
 
    always @ (posedge CLK100) begin
-      if (~PCIE_RESET_N) begin
+      if (~CPU_RESET_N | RST_REL_N) begin
          RST_CNT <= 0;
       end else begin
          if (~RST_FULL) RST_CNT <= RST_CNT + 1;
@@ -58,49 +69,68 @@ module de10_agilex #
    wire [NumChB-1:0]            S_AXI_NFC_TVALID, S_AXI_NFC_TREADY;
 
    // ------------------------------------------------------------
+   // Link state LED
+
+   wire [3:0] LINK_LED = ( (BondingEnable==1) ? CH_UP :
+                           {|CH_UP[15:12], |CH_UP[11:8], 
+                            |CH_UP[ 7: 4], |CH_UP[ 3:0]} );
+
+/* -----\/----- EXCLUDED -----\/-----
+   reg [25:0]                   CNT100, CNTAU;
+   always @ (posedge CLK100) CNT100 <= CNT100+1;
+   always @ (posedge AURORA_CLK) CNTAU <= CNTAU+1;
+   
+   wire [3:0]                   LINK_LED = {CNT100[25:24], CNTAU[25:24]};
+ -----/\----- EXCLUDED -----/\----- */
+   
+   assign LED_BRACKET_N = ~LINK_LED;
+
+   
+   
+   // ------------------------------------------------------------
    // Kyokko instance
 
    genvar                       c;
    generate
       for (c=0; c<2; c++) begin : ddcage_gen
    
-   de10_agilex_kyokko 
+         de10_agilex_kyokko 
              #(.BondingEnable(BondingEnable), .BondingCh(BondingCh) ) ky
-     ( .CLK156(QSFPDD_REFCLK[c]), .RST(RST),
+             ( .CLK156(QSFPDD_REFCLK[c]), .RST(RST), .CLK100(CLK100),
+               
+               .SFP_TXP(QSFPDD_TXP[c]), .SFP_TXN(QSFPDD_TXN[c]),
+               .SFP_RXP(QSFPDD_RXP[c]), .SFP_RXN(QSFPDD_RXN[c]),
 
-       .SFP_TXP(QSFPDD_TXP[c]), .SFP_TXN(QSFPDD_TXN[c]),
-       .SFP_RXP(QSFPDD_RXP[c]), .SFP_RXN(QSFPDD_RXN[c]),
+               .CH_UP   (CH_UP     [c*NumChC +: NumChC]),
+               .USER_CLK(AURORA_CLK[c*NumChC +: NumChC]),
 
-       .CH_UP   (CH_UP     [c*NumChC +: NumChC]),
-       .USER_CLK(AURORA_CLK[c*NumChC +: NumChC]),
+               // Data channel
+               .S_AXI_TX_TDATA     (S_AXI_TX_TDATA [c*NumChC +: NumChC]), // I
+               .S_AXI_TX_TLAST     (S_AXI_TX_TLAST [c*NumChC +: NumChC]), // I 
+               .S_AXI_TX_TVALID    (S_AXI_TX_TVALID[c*NumChC +: NumChC]), // I 
+               .S_AXI_TX_TREADY    (S_AXI_TX_TREADY[c*NumChC +: NumChC]), // O 
+               
+               .M_AXI_RX_TDATA     (M_AXI_RX_TDATA [c*NumChC +: NumChC]), // O [63:0] 
+               .M_AXI_RX_TLAST     (M_AXI_RX_TLAST [c*NumChC +: NumChC]), // O 
+               .M_AXI_RX_TVALID    (M_AXI_RX_TVALID[c*NumChC +: NumChC]), // O 
+               
+               // UFC channel
+               .UFC_TX_REQ         (UFC_TX_REQ     [c*NumChC +: NumChC]), // I
+               .UFC_TX_MS          (UFC_TX_MS      [c*NumChC +: NumChC]), // O [7:0]
+               
+               .S_AXI_UFC_TX_TDATA (S_AXI_UFC_TX_TDATA [c*NumChC +: NumChC]),  // I [63:0]  
+               .S_AXI_UFC_TX_TVALID(S_AXI_UFC_TX_TVALID[c*NumChC +: NumChC]), // I
+               .S_AXI_UFC_TX_TREADY(S_AXI_UFC_TX_TREADY[c*NumChC +: NumChC]), // O
+               
+               .M_AXI_UFC_RX_TDATA (M_AXI_UFC_RX_TDATA [c*NumChC +: NumChC]),  // O [63:0]
+               .M_AXI_UFC_RX_TLAST (M_AXI_UFC_RX_TLAST [c*NumChC +: NumChC]), // O 
+               .M_AXI_UFC_RX_TVALID(M_AXI_UFC_RX_TVALID[c*NumChC +: NumChC]), // O 
 
-       // Data channel
-       .S_AXI_TX_TDATA     (S_AXI_TX_TDATA [c*NumChC +: NumChC]), // I
-       .S_AXI_TX_TLAST     (S_AXI_TX_TLAST [c*NumChC +: NumChC]), // I 
-       .S_AXI_TX_TVALID    (S_AXI_TX_TVALID[c*NumChC +: NumChC]), // I 
-       .S_AXI_TX_TREADY    (S_AXI_TX_TREADY[c*NumChC +: NumChC]), // O 
-      
-       .M_AXI_RX_TDATA     (M_AXI_RX_TDATA [c*NumChC +: NumChC]), // O [63:0] 
-       .M_AXI_RX_TLAST     (M_AXI_RX_TLAST [c*NumChC +: NumChC]), // O 
-       .M_AXI_RX_TVALID    (M_AXI_RX_TVALID[c*NumChC +: NumChC]), // O 
-      
-       // UFC channel
-       .UFC_TX_REQ         (UFC_TX_REQ     [c*NumChC +: NumChC]), // I
-       .UFC_TX_MS          (UFC_TX_MS      [c*NumChC +: NumChC]), // O [7:0]
-      
-       .S_AXI_UFC_TX_TDATA (S_AXI_UFC_TX_TDATA [c*NumChC +: NumChC]),  // I [63:0]  
-       .S_AXI_UFC_TX_TVALID(S_AXI_UFC_TX_TVALID[c*NumChC +: NumChC]), // I
-       .S_AXI_UFC_TX_TREADY(S_AXI_UFC_TX_TREADY[c*NumChC +: NumChC]), // O
-      
-       .M_AXI_UFC_RX_TDATA (M_AXI_UFC_RX_TDATA [c*NumChC +: NumChC]),  // O [63:0]
-       .M_AXI_UFC_RX_TLAST (M_AXI_UFC_RX_TLAST [c*NumChC +: NumChC]), // O 
-       .M_AXI_UFC_RX_TVALID(M_AXI_UFC_RX_TVALID[c*NumChC +: NumChC]), // O 
-
-       // NFC channel
-       .S_AXI_NFC_TDATA    (S_AXI_NFC_TDATA [c*NumChC +: NumChC]),     // I [5:0]
-       .S_AXI_NFC_TVALID   (S_AXI_NFC_TVALID[c*NumChC +: NumChC]),    // I
-       .S_AXI_NFC_TREADY   (S_AXI_NFC_TREADY[c*NumChC +: NumChC])     // O
-       );
+               // NFC channel
+               .S_AXI_NFC_TDATA    (S_AXI_NFC_TDATA [c*NumChC +: NumChC]),     // I [5:0]
+               .S_AXI_NFC_TVALID   (S_AXI_NFC_TVALID[c*NumChC +: NumChC]),    // I
+               .S_AXI_NFC_TREADY   (S_AXI_NFC_TREADY[c*NumChC +: NumChC])     // O
+               );
 
       end // block: ddcage_gen
    endgenerate

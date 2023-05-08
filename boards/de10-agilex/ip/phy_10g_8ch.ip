@@ -2775,12 +2775,12 @@ https://fpgasoftware.intel.com/eula.-->
         <ipxact:parameter parameterId="pma_tx_eq_powerup_disable" type="int">
           <ipxact:name>pma_tx_eq_powerup_disable</ipxact:name>
           <ipxact:displayName>Use default TX PMA pre-equalization settings</ipxact:displayName>
-          <ipxact:value>1</ipxact:value>
+          <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_tx_eq_atten_tap" type="int">
           <ipxact:name>pma_tx_eq_atten_tap</ipxact:name>
           <ipxact:displayName>Attenuation</ipxact:displayName>
-          <ipxact:value>0</ipxact:value>
+          <ipxact:value>2</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="pma_tx_eq_pre1_tap" type="int">
           <ipxact:name>pma_tx_eq_pre1_tap</ipxact:name>

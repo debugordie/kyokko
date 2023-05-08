@@ -43,6 +43,8 @@
      ${QUARTUS}/quartus/eda/sim_lib/ctp_hssi_atoms_ncrypt.sv
      +xmendlib
 
+     ${KYOKKO}/boards/de10-agilex/ip/rst_rel/sim/rst_rel.v
+     ${KYOKKO}/boards/de10-agilex/ip/rst_rel/altera_s10_user_rst_clkgate_1932/sim/altera_s10_user_rst_clkgate.sv
 
      ${KYOKKO}/boards/de10-agilex/ip/phy_10g_8ch/sim/phy_10g_8ch.v
 

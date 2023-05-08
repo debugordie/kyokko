@@ -6,7 +6,7 @@ module de10_agilex_kyokko #
     BondingCh = 4,
     ChW = ((BondingEnable==0) ? 64 : BondingCh*64 ),
     NumChB = ((BondingEnable==0) ? NumCh : NumCh/BondingCh) )
-  ( input wire CLK156, RST,
+  ( input wire CLK156, CLK100, RST,
     
     output wire [NumCh-1:0]           SFP_TXP, SFP_TXN,
     input wire [NumCh-1:0]            SFP_RXP, SFP_RXN,
@@ -43,7 +43,7 @@ module de10_agilex_kyokko #
 
    wire                        GT_RST;
    gt_rst grst
-     ( .CLK(CLK156), .RST(RST), .GT_RST(GT_RST) );
+     ( .CLK(CLK100), .RST(RST), .GT_RST(GT_RST) );
 
    // ------------------------------
    // Kyokko instances
@@ -73,7 +73,7 @@ module de10_agilex_kyokko #
               wire [5:0] RXHDRc = RXHDRi[ch];
               kyokko ky
                 ( .CLK(),  // still not used
-                  .CLK100(CLK156),
+                  .CLK100(CLK100),
                   .RXCLK(RXUSERCLK2[ch]),  .TXCLK(TXUSERCLK2[ch]),
                   .RXRST(RXRST[ch]),       .TXRST(TXRST[ch]),
                   .CH_UP(CH_UP[ch]),
@@ -118,7 +118,7 @@ module de10_agilex_kyokko #
             
             kyokko_cb # ( .BondingCh(BondingCh) ) kycb
               ( .CLK(),  // still not used
-                .CLK100(CLK156),
+                .CLK100(CLK100),
                 .RXCLK({BondingCh{RXUSERCLK2[ch]}}), 
                 .TXCLK({BondingCh{TXUSERCLK2[ch]}}),
                 .RXRST(RXRST[ch +: BondingCh]),
@@ -170,20 +170,21 @@ module de10_agilex_kyokko #
    
    agilexf_xcvr 
      # ( .BondingEnable(BondingEnable), .BondingCh(BondingCh), .NumCh(NumCh))
-   xcv ( .RST(RST | GT_RST), .CLK156(CLK156), 
-       .SFP_RXP(SFP_RXP),  .SFP_RXN(SFP_RXN), 
-       .SFP_TXP(SFP_TXP),  .SFP_TXN(SFP_TXN),
-       
-       .TX_DATA  (TXS),     
-       .RX_DATA  (RXS),
-       .TX_CTRL  (TXHDRi), 
-       .RX_CTRL  (RXHDRi),
-       .TX_USRCLK(TXUSERCLK2),  
-       .RX_USRCLK(RXUSERCLK2),
-       .TX_VALID  ({NumCh{1'b1}}),    
-       .RX_BITSLIP(RXSLIP),
-       
-       .RX_LOCKED(RX_LOCKED), .PLL_LOCKED(PLL_LOCKED) );
+   xcv ( .RST(RST | GT_RST), .CLK156(CLK156),
+         .CLK100(CLK100),
+         .SFP_RXP(SFP_RXP),  .SFP_RXN(SFP_RXN), 
+         .SFP_TXP(SFP_TXP),  .SFP_TXN(SFP_TXN),
+         
+         .TX_DATA  (TXS),     
+         .RX_DATA  (RXS),
+         .TX_CTRL  (TXHDRi), 
+         .RX_CTRL  (RXHDRi),
+         .TX_USRCLK(TXUSERCLK2),  
+         .RX_USRCLK(RXUSERCLK2),
+         .TX_VALID  ({NumCh{1'b1}}),    
+         .RX_BITSLIP(RXSLIP),
+         
+         .RX_LOCKED(RX_LOCKED), .PLL_LOCKED(PLL_LOCKED) );
    
 endmodule // agf014_kyokko
 

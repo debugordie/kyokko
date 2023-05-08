@@ -14,3 +14,4 @@ set_global_assignment -name POWER_APPLY_THERMAL_MARGIN ADDITIONAL
 set_global_assignment -name IP_FILE ila.ip
 set_global_assignment -name IP_FILE vio.ip
 set_global_assignment -name IP_FILE phy_10g_8ch.ip
+set_global_assignment -name IP_FILE rst_rel.ip

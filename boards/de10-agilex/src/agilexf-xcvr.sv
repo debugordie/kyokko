@@ -3,8 +3,9 @@
 module agilexf_xcvr # ( parameter NumCh=8, BondingEnable=0, BondingCh=4)
   (input wire  RST,
    input wire                    CLK156, // 156.25 MHz refclk
-   input wire [NumCh-1:0]              SFP_RXP, SFP_RXN,
-   output wire [NumCh-1:0]             SFP_TXP, SFP_TXN,
+   input wire                    CLK100, // used with platform designer PHY
+   input wire [NumCh-1:0]        SFP_RXP, SFP_RXN,
+   output wire [NumCh-1:0]       SFP_TXP, SFP_TXN,
 
    input wire [NumCh-1:0][63:0]  TX_DATA,
    output wire [NumCh-1:0][63:0] RX_DATA,
@@ -124,8 +125,10 @@ module agilexf_xcvr # ( parameter NumCh=8, BondingEnable=0, BondingCh=4)
          wire [NumCh-1:0] TX_CORECLKIN, RX_CORECLKIN;
          wire [NumCh-1:0] TX_USRCLKi,   RX_USRCLKi;
 
-         phy_10g_8ch phy0 // width is for 4ch
-           ( .tx_dll_lock        (TX_DLL_LOCK           ), // O [7:0]
+         phy_10g_8ch_pd phy0 // width is for 4ch
+           ( .PD_CLK (CLK100),
+             .PD_RST (RST),
+             .tx_dll_lock        (TX_DLL_LOCK           ), // O [7:0]
              .reset              ({NumCh{RST}}          ), // I [7:0]
              .tx_ready           (TX_READY              ), // O [7:0]
              .rx_ready           (RX_READY              ), // O [7:0]

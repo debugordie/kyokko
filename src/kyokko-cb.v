@@ -146,7 +146,7 @@ module kyokko_cb # ( parameter BondingCh=4 )
 	       .RX_IS_CB     (RX_IS_CB[ch]),
 	       .DATA_IS_VALID(DATA_IS_VALID[ch]),
 	       .CB_STAT      (CB_STAT),
-	       .FIFO_RE      (FIFO_RDISABLE ? 0 : FIFO_RE[ch]),
+	       .FIFO_RE      (FIFO_RDISABLE ? 1'b0 : FIFO_RE[ch]),
 	       .RX_STAT_TX_CB(RX_STAT_TX_CB[ch]),
 	       .CB_READY     (|CB_STAT[4:3]),
                .CB_ENABLE    (&RX_STAT_TX_CB),
@@ -188,8 +188,6 @@ module kyokko_cb # ( parameter BondingCh=4 )
    endgenerate
 
    assign CH_UP = &LANE_UP;
-
-
 
 endmodule
 
