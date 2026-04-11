@@ -1,0 +1,20 @@
+# Kyokko
+iploc/
+
+# Vivado logs
+vivado*jou
+vivado*log
+
+# Xcelium (xmverilog)
+xcelium.d/
+waves.shm/
+xmverilog.*
+
+# Mac
+.DS_Store
+.AppleDouble
+._*
+
+# Emacs
+*~
+
