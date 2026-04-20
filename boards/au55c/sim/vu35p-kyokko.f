@@ -11,5 +11,5 @@
 
       -y ${XILINX_VIVADO}/data/verilog/src/unisims
       ${XILINX_VIVADO}/data/verilog/src/glbl.v
-      -f ${XILINX_VIVADO}/data/secureip/gtye4_common/gtye4_common_cell.list.vf
-      -f ${XILINX_VIVADO}/data/secureip/gtye4_channel/gtye4_channel_cell.list.vf
+      -f ${XILINX_VIVADO}/data/secureip/gtye4_common/gtye4_common_cell.list.f
+      -f ${XILINX_VIVADO}/data/secureip/gtye4_channel/gtye4_channel_cell.list.f

@@ -5,8 +5,8 @@ module wdelay(input wire [3:0] I,
               output reg [3:0] O);
    parameter real Dly0 = 0.1;
    parameter real Dly1 = 0.1;
-   parameter real Dly2 = 8.1;
-   parameter real Dly3 = 19.4;
+   parameter real Dly2 = 0.2;
+   parameter real Dly3 = 0.3;
    
    always @ (I) begin
       O[0] <= #Dly0 I[0];

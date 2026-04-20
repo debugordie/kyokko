@@ -14,8 +14,8 @@
       +libext+.v
       -y ${XILINX_VIVADO}/data/verilog/src/unisims
       -y ${XILINX_VIVADO}/data/verilog/src/retarget
-      -f ${XILINX_VIVADO}/data/secureip/gtxe2_common/gtxe2_common_cell.list.vf
-      -f ${XILINX_VIVADO}/data/secureip/gtxe2_channel/gtxe2_channel_cell.list.vf 
+      -f ${XILINX_VIVADO}/data/secureip/gtxe2_common/gtxe2_common_cell.list.f
+      -f ${XILINX_VIVADO}/data/secureip/gtxe2_channel/gtxe2_channel_cell.list.f 
 
       +define+NO_JTAG
       

@@ -40,7 +40,7 @@ set COREs [ list \
 create_project managed_ip_project ${PROJDIR}/managed_ip_project -part ${DEV} -ip -force
 # set_property board_part ${BOARD} [current_project]
 set_property simulator_language Verilog [current_project]
-set_property target_simulator IES [current_project]
+set_property target_simulator Xcelium [current_project]
 
 foreach c $COREs {
     lappend CORESRCS ${COREDIR}/${c}.xci
