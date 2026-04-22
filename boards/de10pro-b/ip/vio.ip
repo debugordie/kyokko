@@ -1,16 +1,27 @@
 <?xml version="1.0" ?>
+<!--Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus Prime License Agreement,
+the Altera FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Altera and sold by Altera or its authorized distributors.-->
 <ipxact:component xmlns:altera="http://www.altera.com/XMLSchema/IPXact2014/extensions" xmlns:ipxact="http://www.accellera.org/XMLSchema/IPXACT/1685-2014">
-  <ipxact:vendor>Intel Corporation</ipxact:vendor>
+  <ipxact:vendor>Altera</ipxact:vendor>
   <ipxact:library>vio</ipxact:library>
   <ipxact:name>in_system_sources_probes_0</ipxact:name>
-  <ipxact:version>19.2.0</ipxact:version>
+  <ipxact:version>19.3.0</ipxact:version>
   <ipxact:busInterfaces>
     <ipxact:busInterface>
       <ipxact:name>sources</ipxact:name>
-      <ipxact:busType vendor="altera" library="altera" name="conduit" version="20.1"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="26.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="altera" library="altera" name="conduit" version="20.1"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="26.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -44,10 +55,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>probes</ipxact:name>
-      <ipxact:busType vendor="altera" library="altera" name="conduit" version="20.1"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="26.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="altera" library="altera" name="conduit" version="20.1"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="26.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -138,10 +149,10 @@
   </ipxact:model>
   <ipxact:vendorExtensions>
     <altera:entity_info>
-      <ipxact:vendor>Intel Corporation</ipxact:vendor>
+      <ipxact:vendor>Altera</ipxact:vendor>
       <ipxact:library>vio</ipxact:library>
       <ipxact:name>altera_in_system_sources_probes</ipxact:name>
-      <ipxact:version>19.2.0</ipxact:version>
+      <ipxact:version>19.3.0</ipxact:version>
     </altera:entity_info>
     <altera:altera_module_parameters>
       <ipxact:parameters>
@@ -154,11 +165,6 @@
           <ipxact:name>gui_use_auto_index</ipxact:name>
           <ipxact:displayName>Automatic Instance Index Assignment</ipxact:displayName>
           <ipxact:value>true</ipxact:value>
-        </ipxact:parameter>
-        <ipxact:parameter parameterId="sld_auto_instance_index" type="string">
-          <ipxact:name>sld_auto_instance_index</ipxact:name>
-          <ipxact:displayName>sld_auto_instance_index</ipxact:displayName>
-          <ipxact:value>YES</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="sld_instance_index" type="int">
           <ipxact:name>sld_instance_index</ipxact:name>
@@ -195,10 +201,15 @@
           <ipxact:displayName>Use Source Clock Enable</ipxact:displayName>
           <ipxact:value>false</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="enable_metastability" type="string">
-          <ipxact:name>enable_metastability</ipxact:name>
-          <ipxact:displayName>enable_metastability</ipxact:displayName>
-          <ipxact:value>NO</ipxact:value>
+        <ipxact:parameter parameterId="reset_source" type="bit">
+          <ipxact:name>reset_source</ipxact:name>
+          <ipxact:displayName>Use Source Port as a Reset Interface</ipxact:displayName>
+          <ipxact:value>false</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="active_low_reset" type="int">
+          <ipxact:name>active_low_reset</ipxact:name>
+          <ipxact:displayName>Active low reset</ipxact:displayName>
+          <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
       </ipxact:parameters>
     </altera:altera_module_parameters>
@@ -220,6 +231,11 @@
     </altera:altera_assignments>
     <altera:altera_system_parameters>
       <ipxact:parameters>
+        <ipxact:parameter parameterId="board" type="string">
+          <ipxact:name>board</ipxact:name>
+          <ipxact:displayName>Board</ipxact:displayName>
+          <ipxact:value>default</ipxact:value>
+        </ipxact:parameter>
         <ipxact:parameter parameterId="device" type="string">
           <ipxact:name>device</ipxact:name>
           <ipxact:displayName>Device</ipxact:displayName>
@@ -272,6 +288,16 @@
           <ipxact:value>&lt;systemInfosDefinition&gt;
     &lt;connPtSystemInfos/&gt;
 &lt;/systemInfosDefinition&gt;</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="dflBitArray" type="string">
+          <ipxact:name>dflBitArray</ipxact:name>
+          <ipxact:displayName>dflBitArray</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="cpuInfo" type="string">
+          <ipxact:name>cpuInfo</ipxact:name>
+          <ipxact:displayName>cpuInfo</ipxact:displayName>
+          <ipxact:value></ipxact:value>
         </ipxact:parameter>
       </ipxact:parameters>
     </altera:altera_system_parameters>

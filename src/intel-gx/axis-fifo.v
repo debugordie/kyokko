@@ -47,7 +47,8 @@ module axis_fifo # ( parameter Width=64)
        .overflow_checking("ON"),
        .underflow_checking("ON"),
        .use_eab("ON"), // on BRAM
-       .add_ram_output_register("ON")
+       .add_ram_output_register("ON"),
+       .intended_device_family("Arria 10")
       )
    fifo
      (
@@ -92,6 +93,7 @@ module axis_async_fifo # (parameter Width=64)
        .overflow_checking("ON"),
        .underflow_checking("ON"),
        .use_eab("ON"), // on BRAM
+       .intended_device_family("Arria 10"),
        .add_ram_output_register("ON") )
    fifo 
      ( .rdclk   (m_aclk),

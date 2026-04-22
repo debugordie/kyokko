@@ -5,6 +5,9 @@ iploc/
 vivado*jou
 vivado*log
 
+# Quartus
+*.BAK.ip
+
 # Xcelium (xmverilog)
 xcelium.d/
 waves.shm/

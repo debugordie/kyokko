@@ -45,6 +45,7 @@ module fifo_66x512_async
        .read_aclr_synch("OFF"),
        .write_aclr_synch("OFF"),
        .use_eab("ON"),
+       .intended_device_family("Arria 10"),
        .add_ram_output_register("OFF") )
    fifo
      ( .data   (din), 

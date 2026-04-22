@@ -8,13 +8,13 @@
       ${KYOKKO}/src/test/*.v
 
       ${KYOKKO}/boards/c10gx/ip/atx_5g/sim/atx_5g.v
-      ${KYOKKO}/boards/c10gx/ip/atx_5g/altera_xcvr_atx_pll_a10_191/sim/*.sv
+      ${KYOKKO}/boards/c10gx/ip/atx_5g/altera_xcvr_atx_pll_a10_1911/sim/*.sv
 
       ${KYOKKO}/boards/c10gx/ip/phy_rst_ctrl_2ch/sim/phy_rst_ctrl_2ch.v
-      ${KYOKKO}/boards/c10gx/ip/phy_rst_ctrl_2ch/altera_xcvr_reset_control_191/sim/*.sv
+      ${KYOKKO}/boards/c10gx/ip/phy_rst_ctrl_2ch/altera_xcvr_reset_control_1912/sim/*.sv
       
       ${KYOKKO}/boards/c10gx/ip/phy_10g/sim/phy_10g.v
-      ${KYOKKO}/boards/c10gx/ip/phy_10g/altera_xcvr_native_a10_191/sim/*sv
+      ${KYOKKO}/boards/c10gx/ip/phy_10g/altera_xcvr_native_a10_1912/sim/*sv
 
      $QUARTUS/quartus/eda/sim_lib/altera_mf.v
       
