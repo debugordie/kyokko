@@ -1,5 +1,6 @@
 # Kyokko
 iploc/
+boards/*/ip/*/
 
 # Vivado logs
 vivado*jou
@@ -7,11 +8,15 @@ vivado*log
 
 # Quartus
 *.BAK.ip
+IpUpgradeLog.xml
 
 # Xcelium (xmverilog)
 xcelium.d/
 waves.shm/
 xmverilog.*
+bpad*.err
+xmsim_*.err
+.simvision/
 
 # Mac
 .DS_Store

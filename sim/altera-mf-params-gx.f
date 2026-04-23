@@ -1,0 +1,7 @@
+      +defparam+altpll.intended_device_family="Arria 10"
+      +defparam+altlvds.intended_device_family="Arria 10"
+      +defparam+altlvds_rx.intended_device_family="Arria 10"
+      +defparam+altlvds_tx.intended_device_family="Arria 10"
+      +defparam+altddio.intended_device_family="Arria 10"
+      +defparam+altddio_bidir.intended_device_family="Arria 10"
+      +defparam+scfifo.intended_device_family="Arria 10"

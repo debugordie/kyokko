@@ -17,7 +17,8 @@
       ${KYOKKO}/boards/hawkeye/ip/phy_10g/altera_xcvr_native_a10_1912/sim/*sv
 
      $QUARTUS/quartus/eda/sim_lib/altera_mf.v
-      
+     -f ${KYOKKO}/sim/altera-mf-params-gx.f
+       
       +xmmakelib+twentynm_ver
      $QUARTUS/quartus/eda/sim_lib/twentynm_atoms.v
      $QUARTUS/quartus/eda/sim_lib/cadence/twentynm_atoms_ncrypt.v

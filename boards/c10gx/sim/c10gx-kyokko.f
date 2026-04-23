@@ -16,7 +16,8 @@
       ${KYOKKO}/boards/c10gx/ip/phy_10g/sim/phy_10g.v
       ${KYOKKO}/boards/c10gx/ip/phy_10g/altera_xcvr_native_a10_1912/sim/*sv
 
-     $QUARTUS/quartus/eda/sim_lib/altera_mf.v
+      ${QUARTUS}/quartus/eda/sim_lib/altera_mf.v
+      -f ${KYOKKO}/sim/altera-mf-params-gx.f
       
       +xmmakelib+cyclone10gx_ver
      $QUARTUS/quartus/eda/sim_lib/cyclone10gx_atoms.v

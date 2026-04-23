@@ -21,7 +21,7 @@
 +xmendlib
 
 -f ${KYOKKO}/sim/altera-mf-params-gx.f
-      
+
 +xmmakelib+altera_lnsim_ver
   $QUARTUS/quartus/eda/sim_lib/altera_lnsim.sv
 +xmendlib
@@ -46,16 +46,16 @@
   $QUARTUS/quartus/eda/sim_lib/cta_hssi_atoms_ncrypt.sv
 +xmendlib
 
-${KYOKKO}/boards/de10pro-b/ip/atx_5g/altera_xcvr_atx_pll_s10_htile_1912/sim/*.v
-${KYOKKO}/boards/de10pro-b/ip/atx_5g/altera_xcvr_atx_pll_s10_htile_1912/sim/*.sv
-${KYOKKO}/boards/de10pro-b/ip/atx_5g/sim/atx_5g.v
+${KYOKKO}/boards/de10pro-b/ip/atx_5g_4cb/altera_xcvr_atx_pll_s10_htile_1912/sim/*.v
+${KYOKKO}/boards/de10pro-b/ip/atx_5g_4cb/altera_xcvr_atx_pll_s10_htile_1912/sim/*.sv
+${KYOKKO}/boards/de10pro-b/ip/atx_5g_4cb/sim/atx_5g_4cb.v
 
 ${KYOKKO}/boards/de10pro-b/ip/phy_rst_ctrl_4ch/altera_xcvr_reset_control_s10_1912/sim/*.v
 ${KYOKKO}/boards/de10pro-b/ip/phy_rst_ctrl_4ch/altera_xcvr_reset_control_s10_1912/sim/*.sv
 ${KYOKKO}/boards/de10pro-b/ip/phy_rst_ctrl_4ch/sim/phy_rst_ctrl_4ch.v
 
-${KYOKKO}/boards/de10pro-b/ip/phy_10g_4ch/altera_xcvr_native_s10_htile_1931/sim/*v
-${KYOKKO}/boards/de10pro-b/ip/phy_10g_4ch/sim/phy_10g_4ch.v
+${KYOKKO}/boards/de10pro-b/ip/phy_10g_4cb/altera_xcvr_native_s10_htile_1931/sim/*v
+${KYOKKO}/boards/de10pro-b/ip/phy_10g_4cb/sim/phy_10g_4cb.v
 
 ${KYOKKO}/boards/de10pro-b/ip/rst_rel/sim/rst_rel.v
 ${KYOKKO}/boards/de10pro-b/ip/rst_rel/altera_s10_user_rst_clkgate_1949/sim/altera_s10_user_rst_clkgate.sv
@@ -69,3 +69,5 @@ ${KYOKKO}/boards/s10/src/s10-kyokko.sv
 ${KYOKKO}/src/*.v
 ${KYOKKO}/src/intel-gx/fifo_66x512_async.v
 ${KYOKKO}/src/test/*.v
+
+${KYOKKO}/src/kyokko-cb.v

@@ -22,7 +22,7 @@ License and warranty:
  - Kyokko is developed without any reverse-engineering on Xilinx
    Aurora IP cores.
 
-Developers in the University of the Ryukyus, Japan:
+Developers in the Kumamoto University, Japan:
  - Yasunori Osana
  - Akinobu Tomori
 
@@ -32,7 +32,7 @@ Kyokko means "Polar light," the aurora in Japanese.
 Revision History
 ----------------------------------------
 
-You can find the releases in https://lut.eee.u-ryukyu.ac.jp/svn/kyokko/tags/.
+You can find the releases in https://github.com/debugordie/kyokko
  - 0.99   (Sep.07, 2020): the initial release
  - 0.99.1 (Feb.12, 2021): Initial support for channel bonding on KCU1500 card
  - 0.99.2 (Feb.12, 2021): Bug fixes + channel bonding support for Alveo U50
@@ -63,9 +63,9 @@ contributions are welcome.
 Getting started
 ----------------------------------------
 
-You'll need Xilinx Vivado 2025.2, Intel Quartus Prime Pro 20.1, or
+You'll need Xilinx Vivado 2025.2, Intel Quartus Prime Pro 26.1, or
 later version of them. For simulation, the development team uses
-Cadence Xcelium 19.03.
+Cadence Xcelium 24.09.
 
 First, run
  % source path/to/kyokko/settings.sh (with bash, zsh)
@@ -157,7 +157,7 @@ This will set up a complete project for synthesis and bitstream generation.
 Acknowledgments
 ----------------------------------------
 
-This work was supported by JSPS KAKENHI Grant Number 19K11879. 
+This work was supported by JSPS KAKENHI Grant Number 19K11879.
 
 This work was also supported through the activities of VDEC, The
 University of Tokyo, in collaboration with Cadence Design Systems,
